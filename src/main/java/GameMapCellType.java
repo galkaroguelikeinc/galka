@@ -4,5 +4,5 @@
  */
 
 public enum GameMapCellType {
-    // wall, empty, room, tonnell
+    // wall, empty, room, tunnel
 }

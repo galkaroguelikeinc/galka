@@ -1,5 +1,5 @@
-public interface View {
-    void create(GameMap gameMap);
+public abstract class View {
+    abstract void View(GameModel gameModel);
 
-    void showChanges();
+    abstract void showChanges();
 }
