@@ -6,11 +6,26 @@ public class GameModel {
         return new GameModel();
     }
 
+    public GameModel() {
+
+    }
+
+    public GameModel(GameCell[][] gameMap) {
+        this.gameMap = gameMap;
+    }
+
     public void generateMobsIfNeeded() {
 
     }
 
-    public GameCell getCell(int x, int y) {
-        return gameMap[x][y];
+    public GameCell getCell(int row, int col) {
+        return gameMap[row][col];
+    }
+
+    public int getRows() {
+        return gameMap.length;
+    }
+    public int getCols() {
+        return getRows() == 0 ? 0 : gameMap[0].length;
     }
 }

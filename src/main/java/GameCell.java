@@ -1,5 +1,9 @@
 import java.util.List;
 
+/**
+ * Клетка на игровой карте -- это либо стена, либо клетка внутри комнаты, либо клетка тоннеля,
+ * либо ничего (клетка ни в какой комнате), а также список из мобов, айтемов, персонажа и т.д.
+ */
 public class GameCell {
     private GameMapCellType gameMapCellType;
     private List<GameObject> gameObjectList;
