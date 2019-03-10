@@ -1,2 +1,2 @@
-public class GameCharacter {
+public class GameCharacter implements GameObject {
 }

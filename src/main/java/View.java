@@ -1,5 +1,9 @@
 public abstract class View {
-    abstract void View(GameModel gameModel);
+    private GameModel gameModel;
+
+    View(GameModel gameModel) {
+        this.gameModel = gameModel;
+    }
 
     abstract void showChanges();
 }
