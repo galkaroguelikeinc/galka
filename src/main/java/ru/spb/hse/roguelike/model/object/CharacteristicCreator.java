@@ -1,5 +1,8 @@
 package ru.spb.hse.roguelike.model.object;
 
+/**
+ * Class to create new Characteristic by its name.
+ */
 public class CharacteristicCreator {
     public static Characteristic create(String name, int value) throws UnknownCharacteristicException {
         switch (name) {

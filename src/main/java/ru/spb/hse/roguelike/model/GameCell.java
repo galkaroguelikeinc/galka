@@ -4,8 +4,8 @@ import ru.spb.hse.roguelike.model.object.alive.AliveObject;
 import ru.spb.hse.roguelike.model.object.items.Item;
 
 /**
- * Клетка на игровой карте -- это либо стена, либо клетка внутри комнаты, либо клетка тоннеля,
- * либо ничего (клетка ни в какой комнате), а также список из мобов, айтемов, персонажа и т.д.
+ * Game cell: wall, place inside the room, place inside the tunnel and place outside of the room or tunnel.
+ * Also collects Item or/and AliveObject, which is currently placed in it.
  */
 public class GameCell {
     private GameMapCellType gameMapCellType;

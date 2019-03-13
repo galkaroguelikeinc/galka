@@ -1,7 +1,5 @@
 package ru.spb.hse.roguelike.model.object;
 
-import ru.spb.hse.roguelike.model.object.Characteristic;
-
 public class MeasurableCharacteristic implements Characteristic {
     private int max;
     private int current;

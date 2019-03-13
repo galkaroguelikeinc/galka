@@ -6,17 +6,29 @@ import ru.spb.hse.roguelike.model.GameMapCellType;
 import ru.spb.hse.roguelike.model.GameModel;
 import ru.spb.hse.roguelike.view.View;
 
+/**
+ * Class to do the actions, which are supposed to be done according the game rules: moving character,
+ * do fights, deal with items etc. The class changes the model and also asks View class to show the changes.
+ */
 public class Controller {
     private View view;
     private GameModel gameModel;
     private GameCharacter character;
 
+    /**
+     * Creates new controller.
+     * @param view view to show changes
+     * @param gameModel model to change
+     */
     public Controller(View view, GameModel gameModel) {
         this.gameModel = gameModel;
         this.view = view;
         character = gameModel.generateCharacter();
     }
 
+    /**
+     * Runs the read commands until game ends.
+     */
     public void runGame() {
         while(true) {
             String command = view.readCommand();
@@ -44,10 +56,6 @@ public class Controller {
                     move(newX, newY);
                     break;
                 }
-                case "exit": {
-                    return;
-                }
-
             }
         }
     }

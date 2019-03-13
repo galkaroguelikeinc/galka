@@ -4,6 +4,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
+/**
+ * Any object of a game, that can be placed on map and have some characteristics.
+ */
 public abstract class GameObject {
     private Map<String, Characteristic> characteristics = new HashMap<>();
 

@@ -6,6 +6,9 @@ import ru.spb.hse.roguelike.model.object.items.Item;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Model: class to remember the game map and inventory. Can be modified by Controller and used by View.
+ */
 public class GameModel {
     private GameCell[][] gameMap;
     private List<Item> inventory = new ArrayList<>();
