@@ -1,4 +1,8 @@
 import org.junit.Test;
+import ru.spb.hse.roguelike.model.*;
+import ru.spb.hse.roguelike.model.object.GameObject;
+import ru.spb.hse.roguelike.model.object.items.Item;
+import ru.spb.hse.roguelike.view.TerminalView;
 
 import java.util.ArrayList;
 import java.util.Collections;

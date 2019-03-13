@@ -1,5 +1,11 @@
+package ru.spb.hse.roguelike.view;
+
 import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
 import com.googlecode.lanterna.terminal.Terminal;
+import ru.spb.hse.roguelike.model.GameCell;
+import ru.spb.hse.roguelike.model.GameMapCellType;
+import ru.spb.hse.roguelike.model.GameModel;
+import ru.spb.hse.roguelike.view.View;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -33,7 +39,7 @@ public class TerminalView extends View {
             put(GameMapCellType.empty, ' ');
             put(GameMapCellType.tunnel, '-');
         }};
-        if (!gameCell.getGameObjectList().isEmpty()) {
+        if (gameCell.hasItem() || gameCell.hasAliveObject()) {
             return '*';
         }
         return cellToSymbol.get(gameCell.getGameMapCellType());
@@ -63,5 +69,15 @@ public class TerminalView extends View {
             System.err.println("Unexpected exception while redrawing terminal." +
                     "We are sorry! Please, restart the game.");
         }
+    }
+
+    @Override
+    void showResult(boolean b) {
+
+    }
+
+    @Override
+    public String readCommand() {
+        return null;
     }
 }

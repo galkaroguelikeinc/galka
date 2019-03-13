@@ -1,3 +1,7 @@
+package ru.spb.hse.roguelike.view;
+
+import ru.spb.hse.roguelike.model.GameModel;
+
 /**
  * A View, as in Model-View-Controller, which displays the game state to the user.
  * <p>
@@ -7,7 +11,6 @@
  */
 public abstract class View {
     protected GameModel gameModel;
-
     /**
      * Create a View.
      *
@@ -21,4 +24,8 @@ public abstract class View {
      * Notify the View that gameModel has changes. It should redraw the gameModel shown to user.
      */
     public abstract void showChanges();
+
+    abstract void showResult(boolean b);
+
+    public abstract String readCommand();
 }
