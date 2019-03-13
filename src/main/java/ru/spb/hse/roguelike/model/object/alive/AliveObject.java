@@ -1,3 +1,7 @@
+package ru.spb.hse.roguelike.model.object.alive;
+
+import ru.spb.hse.roguelike.model.object.GameObject;
+
 public abstract class AliveObject extends GameObject {
     private int xPos;
     private int yPos;
@@ -7,16 +11,16 @@ public abstract class AliveObject extends GameObject {
         yPos = y;
     }
 
-    void move(int x, int y) {
+    public void move(int x, int y) {
         xPos = x;
         yPos = y;
     }
 
-    int getxPos() {
+    public int getxPos() {
         return xPos;
     }
 
-    int getyPos() {
+    public int getyPos() {
         return yPos;
     }
 }

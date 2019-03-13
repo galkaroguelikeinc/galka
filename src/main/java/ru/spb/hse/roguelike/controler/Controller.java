@@ -1,25 +1,26 @@
+package ru.spb.hse.roguelike.controler;
+
+import ru.spb.hse.roguelike.model.GameCell;
+import ru.spb.hse.roguelike.model.object.alive.GameCharacter;
+import ru.spb.hse.roguelike.model.GameMapCellType;
+import ru.spb.hse.roguelike.model.GameModel;
+import ru.spb.hse.roguelike.view.View;
+
 public class Controller {
     private View view;
     private GameModel gameModel;
     private GameCharacter character;
 
-    Controller(View view, GameModel gameModel) {
+    public Controller(View view, GameModel gameModel) {
         this.gameModel = gameModel;
         this.view = view;
         character = gameModel.generateCharacter();
-        gameModel.generateMobsIfNeeded();
     }
 
     public void runGame() {
         while(true) {
-            switch (readCommand()) {
-                case "q":
-                    view.showResult(false);
-                    return;
-                case "i":
-                    view.showInventory();
-                    gameModel.getItem(Integer.parseInt(readCommand())).use(character);
-                    break;
+            String command = view.readCommand();
+            switch (command) {
                 case "left": {
                     int newX = character.getxPos() - 1;
                     int newY = character.getyPos();
@@ -43,6 +44,9 @@ public class Controller {
                     move(newX, newY);
                     break;
                 }
+                case "exit": {
+                    return;
+                }
 
             }
         }
@@ -59,18 +63,8 @@ public class Controller {
     }
 
     private boolean isFreeCell(int x, int y) {
-        return true;
-        //GameCell cell = gameModel.getCell(x, y);
-        //if ((cell.gameMapCellType.equals(*room*) || cell.gameMapCellType.equals(*tunnel*))
-        //  && !cell.hasAliveObject()) {
-        //    return true;
-        //}
-        //return false;
+        GameCell cell = gameModel.getCell(x, y);
+        return (cell.getGameMapCellType().equals(GameMapCellType.room)
+                || cell.getGameMapCellType().equals(GameMapCellType.tunnel));
     }
-
-    private String readCommand() {
-        //read key from line
-        return "";
-    }
-
 }

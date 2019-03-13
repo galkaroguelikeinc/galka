@@ -1,3 +1,8 @@
+package ru.spb.hse.roguelike.model;
+
+import ru.spb.hse.roguelike.model.object.alive.GameCharacter;
+import ru.spb.hse.roguelike.model.object.items.Item;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,10 +25,19 @@ public class GameModel {
 
     public GameCharacter generateCharacter() {
         //create character with position, if no character exists
+        return null;
     }
 
-    public GameCell getCell(int x, int y) {
-        return gameMap[x][y];
+    public GameCell getCell(int row, int col) {
+        return gameMap[row][col];
+    }
+
+    public int getRows() {
+        return gameMap.length;
+    }
+
+    public int getCols() {
+        return getRows() == 0 ? 0 : gameMap[0].length;
     }
 
     public List<Item> getInventory() {

@@ -1,3 +1,7 @@
+package ru.spb.hse.roguelike.model.object.alive;
+
+import ru.spb.hse.roguelike.model.object.UnknownCharacteristicException;
+
 public class Spider extends Mob {
     Spider(int x, int y) throws GameCharacterException {
         super(x, y);

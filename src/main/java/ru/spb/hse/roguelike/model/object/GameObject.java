@@ -1,3 +1,5 @@
+package ru.spb.hse.roguelike.model.object;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
