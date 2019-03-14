@@ -1,27 +1,25 @@
 package ru.spb.hse.roguelike.model.object;
 
-public class MeasurableCharacteristic implements Characteristic {
+public class MeasurableCharacteristic{
     private int max;
     private int current;
 
-    MeasurableCharacteristic(int capacity){
+    public MeasurableCharacteristic(int capacity){
         max = capacity;
         current = max;
     }
     
-    public boolean decrease(int x) {
-        current -= x;
-        return current > 0;
-    }
-
-    public void increase(int x) {
-        current += x;
+    public void change(int x) {
+        current = x;
         if (current > max) {
             current = max;
         }
+        if (current < 0) {
+            current = 0;
+        }
     }
 
-    public void increaseMax(int x) {
+    public void changeMax(int x) {
         max = x;
     }
 }

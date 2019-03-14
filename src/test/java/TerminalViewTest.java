@@ -1,4 +1,4 @@
-import org.junit.Test;
+/*import org.junit.Test;
 import ru.spb.hse.roguelike.model.*;
 import ru.spb.hse.roguelike.model.object.GameObject;
 import ru.spb.hse.roguelike.model.object.items.Item;
@@ -36,4 +36,4 @@ public class TerminalViewTest {
         terminalView.showChanges();
         Thread.sleep(2000);
     }
-}
+}*/

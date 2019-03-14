@@ -23,7 +23,7 @@ public class Controller {
     public Controller(View view, GameModel gameModel) {
         this.gameModel = gameModel;
         this.view = view;
-        character = gameModel.generateCharacter();
+        character = gameModel.getCharacter();
     }
 
     /**
@@ -34,25 +34,25 @@ public class Controller {
             String command = view.readCommand();
             switch (command) {
                 case "left": {
-                    int newX = character.getxPos() - 1;
-                    int newY = character.getyPos();
+                    int newX = character.getXPos() - 1;
+                    int newY = character.getYPos();
                     move(newX, newY);
                     break;
                 }
                 case "right": {
-                    int newX = character.getxPos() + 1;
-                    int newY = character.getyPos();
+                    int newX = character.getXPos() + 1;
+                    int newY = character.getYPos();
                     move(newX, newY);break;
                 }
                 case "up": {
-                    int newX = character.getxPos();
-                    int newY = character.getyPos() - 1;
+                    int newX = character.getXPos();
+                    int newY = character.getYPos() - 1;
                     move(newX, newY);
                     break;
                 }
                 case "down": {
-                    int newX = character.getxPos();
-                    int newY = character.getyPos() + 1;
+                    int newX = character.getXPos();
+                    int newY = character.getYPos() + 1;
                     move(newX, newY);
                     break;
                 }

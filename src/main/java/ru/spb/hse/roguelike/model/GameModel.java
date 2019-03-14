@@ -12,23 +12,19 @@ import java.util.List;
 public class GameModel {
     private GameCell[][] gameMap;
     private List<Item> inventory = new ArrayList<>();
+    private GameCharacter gameCharacter;
+    private boolean isEnd = false;
 
-    public static GameModel generateMap() {
+    public GameModel() {
         //TODO (Оля сделает здесь генерацию карты)
-        return new GameModel();
     }
 
     public void generateMobsIfNeeded() {
 
     }
 
-    public void addItem(Item item) {
-        inventory.add(item);
-    }
-
-    public GameCharacter generateCharacter() {
-        //create character with position, if no character exists
-        return null;
+    public GameCharacter getCharacter() {
+        return gameCharacter;
     }
 
     public GameCell getCell(int row, int col) {
@@ -55,7 +51,15 @@ public class GameModel {
         return gameMap[x][y].takeCellItem();
     }
 
-    public Item getItem(int index) {
+    public Item getItemFromInventory(int index) {
         return inventory.get(index);
+    }
+
+    public void end() {
+        isEnd = true;
+    }
+
+    public boolean isEnd() {
+        return isEnd;
     }
 }

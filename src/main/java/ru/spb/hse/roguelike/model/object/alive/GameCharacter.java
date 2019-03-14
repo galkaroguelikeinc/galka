@@ -1,14 +1,27 @@
 package ru.spb.hse.roguelike.model.object.alive;
 
+import ru.spb.hse.roguelike.model.object.MeasurableCharacteristic;
+
 /**
- * Represents the game character (a character, that can be moved bu player and use items)
+ * Represents the game character (a character, that can be moved by player and use items)
  */
 public class GameCharacter extends AliveObject {
     private int maxInventorySize;
+    private MeasurableCharacteristic hunger;
 
-    GameCharacter(int x, int y, int maxInventorySize) {
+    public GameCharacter(int x, int y, int maxInventorySize)  {
         super(x, y);
         this.maxInventorySize = maxInventorySize;
+        hunger = new MeasurableCharacteristic(10);
+        changeMaxHealth(10);
+    }
+
+    public void changeHunger(int x) {
+        hunger.change(x);
+    }
+
+    public void changeMaxHunger(int x) {
+        hunger.changeMax(x);
     }
 
     public int getMaxInventorySize() {

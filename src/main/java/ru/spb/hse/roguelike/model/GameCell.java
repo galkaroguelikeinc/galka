@@ -12,6 +12,27 @@ public class GameCell {
     private AliveObject aliveObject;
     private Item cellItem;
 
+    public GameCell(GameMapCellType type) {
+        gameMapCellType = type;
+    }
+
+    public boolean addItem(Item item) {
+        if (hasItem()) {
+            return false;
+        }
+        cellItem = item;
+        return true;
+    }
+
+    public boolean addAliveObject(AliveObject object) {
+        if (hasAliveObject()) {
+            return false;
+        }
+        aliveObject = object;
+        return true;
+    }
+
+
     public boolean hasAliveObject() {
         return aliveObject != null;
     }
@@ -20,7 +41,7 @@ public class GameCell {
         return cellItem != null;
     }
 
-    public Item takeCellItem() {
+    Item takeCellItem() {
         Item cellItem = this.cellItem;
         this.cellItem = null;
         return cellItem;

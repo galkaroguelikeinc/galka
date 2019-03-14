@@ -7,7 +7,7 @@ import ru.spb.hse.roguelike.view.View;
 
 public class Main {
     public static void main(String[] args) {
-        GameModel model = GameModel.generateMap();
+        GameModel model = new GameModel();
         View view = new TerminalView(model);
         Controller controller = new Controller(view, model);
         controller.runGame();
