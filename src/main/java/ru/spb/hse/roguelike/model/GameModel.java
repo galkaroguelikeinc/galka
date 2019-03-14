@@ -1,23 +1,26 @@
 package ru.spb.hse.roguelike.model;
 
+import ru.spb.hse.roguelike.model.map.GameCell;
 import ru.spb.hse.roguelike.model.object.alive.GameCharacter;
 import ru.spb.hse.roguelike.model.object.items.Item;
 
-import java.util.ArrayList;
+import javax.annotation.Nonnull;
 import java.util.List;
 
 /**
  * Model: class to remember the game map and inventory. Can be modified by Controller and used by View.
  */
 public class GameModel {
-    private GameCell[][] gameMap;
-    private List<Item> inventory = new ArrayList<>();
+    private final GameCell[][] gameMap;
+    private final List<Item> inventory;
     private GameCharacter gameCharacter;
     private static final int MAX_INVENTORY_SIZE = 10;
     private boolean isEnd = false;
 
-    public GameModel() {
-        //TODO (Оля сделает здесь генерацию карты)
+    public GameModel(@Nonnull final GameCell[][] gameMap,
+                     @Nonnull final List<Item> inventory) {
+        this.gameMap = gameMap;
+        this.inventory = inventory;
     }
 
     public void generateMobsIfNeeded() {

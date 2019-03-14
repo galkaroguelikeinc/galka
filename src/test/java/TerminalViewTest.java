@@ -36,4 +36,4 @@ public class TerminalViewTest {
         terminalView.showChanges();
         Thread.sleep(2000);
     }
-}*/
+} */
