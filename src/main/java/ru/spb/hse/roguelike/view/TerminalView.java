@@ -2,10 +2,9 @@ package ru.spb.hse.roguelike.view;
 
 import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
 import com.googlecode.lanterna.terminal.Terminal;
-import ru.spb.hse.roguelike.model.GameCell;
-import ru.spb.hse.roguelike.model.GameMapCellType;
+import ru.spb.hse.roguelike.model.map.GameCell;
+import ru.spb.hse.roguelike.model.map.GameMapCellType;
 import ru.spb.hse.roguelike.model.GameModel;
-import ru.spb.hse.roguelike.view.View;
 
 import java.io.IOException;
 import java.util.HashMap;

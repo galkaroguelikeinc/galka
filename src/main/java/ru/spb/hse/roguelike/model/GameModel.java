@@ -1,25 +1,26 @@
 package ru.spb.hse.roguelike.model;
 
+import ru.spb.hse.roguelike.model.map.GameCell;
+import ru.spb.hse.roguelike.model.map.GameMap;
+import ru.spb.hse.roguelike.model.map.Room;
 import ru.spb.hse.roguelike.model.object.alive.GameCharacter;
 import ru.spb.hse.roguelike.model.object.items.Item;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Model: class to remember the game map and inventory. Can be modified by Controller and used by View.
  */
-public class GameModel {
-    private GameCell[][] gameMap;
-    private List<Item> inventory = new ArrayList<>();
+public class GameModel extends GameMap {
+    private List<Item> inventory;
 
-    public static GameModel generateMap() {
-        //TODO (Оля сделает здесь генерацию карты)
-        return new GameModel();
-    }
-
-    public void generateMobsIfNeeded() {
-
+    public GameModel(@Nonnull final List<Room> rooms,
+                     @Nonnull final GameCell[][] data,
+                     @Nonnull final List<Item> inventory) {
+        super(rooms, data);
+        this.inventory = inventory;
     }
 
     public void addItem(Item item) {
@@ -32,15 +33,15 @@ public class GameModel {
     }
 
     public GameCell getCell(int row, int col) {
-        return gameMap[row][col];
+        return data[row][col];
     }
 
     public int getRows() {
-        return gameMap.length;
+        return data.length;
     }
 
     public int getCols() {
-        return getRows() == 0 ? 0 : gameMap[0].length;
+        return getRows() == 0 ? 0 : data[0].length;
     }
 
     public List<Item> getInventory() {
@@ -52,7 +53,7 @@ public class GameModel {
     }
 
     public Item takeCellItem(int x, int y) {
-        return gameMap[x][y].takeCellItem();
+        return data[x][y].takeCellItem();
     }
 
     public Item getItem(int index) {

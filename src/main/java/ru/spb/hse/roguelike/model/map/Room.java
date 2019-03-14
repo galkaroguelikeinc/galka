@@ -1,4 +1,4 @@
-package ru.hse.galkaroguelikeinc.galka.map.model;
+package ru.spb.hse.roguelike.model.map;
 
 import java.util.Objects;
 
@@ -35,9 +35,14 @@ public class Room {
         return y;
     }
 
-    public boolean intersect(final Room r) {
-        return !(r.x >= (x + w) + 1 || x >= (r.x + r.w) + 1 || r.y >= (y + h) + 1 || y >= (r.y + r.h) + 1);
+    public boolean intersect(final Room r,
+                             int indent) {
+        return !(r.x >= (x + w) + indent ||
+                x >= (r.x + r.w) + indent ||
+                r.y >= (y + h) + indent
+                || y >= (r.y + r.h) + indent);
     }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

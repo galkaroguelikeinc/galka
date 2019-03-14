@@ -1,4 +1,4 @@
-package ru.hse.galkaroguelikeinc.galka.map.exceptions;
+package ru.spb.hse.roguelike.exceptions;
 
 public class MapGeneratorException extends Exception {
     public MapGeneratorException(String msg) {
