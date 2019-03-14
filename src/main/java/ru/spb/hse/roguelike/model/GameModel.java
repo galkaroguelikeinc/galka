@@ -1,47 +1,42 @@
 package ru.spb.hse.roguelike.model;
 
 import ru.spb.hse.roguelike.model.map.GameCell;
-import ru.spb.hse.roguelike.model.map.GameMap;
-import ru.spb.hse.roguelike.model.map.Room;
 import ru.spb.hse.roguelike.model.object.alive.GameCharacter;
 import ru.spb.hse.roguelike.model.object.items.Item;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Model: class to remember the game map and inventory. Can be modified by Controller and used by View.
  */
-public class GameModel extends GameMap {
-    private List<Item> inventory;
+public class GameModel {
+    private final GameCell[][] gameMap;
+    private final List<Item> inventory;
+    private GameCharacter gameCharacter;
+    private static final int MAX_INVENTORY_SIZE = 10;
+    private boolean isEnd = false;
 
-    public GameModel(@Nonnull final List<Room> rooms,
-                     @Nonnull final GameCell[][] data,
+    public GameModel(@Nonnull final GameCell[][] gameMap,
                      @Nonnull final List<Item> inventory) {
-        super(rooms, data);
+        this.gameMap = gameMap;
         this.inventory = inventory;
     }
 
-    public void addItem(Item item) {
-        inventory.add(item);
-    }
-
-    public GameCharacter generateCharacter() {
-        //create character with position, if no character exists
-        return null;
+    public GameCharacter getCharacter() {
+        return gameCharacter;
     }
 
     public GameCell getCell(int row, int col) {
-        return data[row][col];
+        return gameMap[row][col];
     }
 
     public int getRows() {
-        return data.length;
+        return gameMap.length;
     }
 
     public int getCols() {
-        return getRows() == 0 ? 0 : data[0].length;
+        return getRows() == 0 ? 0 : gameMap[0].length;
     }
 
     public List<Item> getInventory() {
@@ -53,10 +48,22 @@ public class GameModel extends GameMap {
     }
 
     public Item takeCellItem(int x, int y) {
-        return data[x][y].takeCellItem();
+        return gameMap[x][y].takeCellItem();
     }
 
-    public Item getItem(int index) {
+    public Item getItemFromInventory(int index) {
         return inventory.get(index);
+    }
+
+    public void end() {
+        isEnd = true;
+    }
+
+    public boolean isEnd() {
+        return isEnd;
+    }
+
+    public static int getMaxInventorySize() {
+        return MAX_INVENTORY_SIZE;
     }
 }

@@ -1,5 +1,6 @@
 package ru.spb.hse.roguelike.controler;
 
+import ru.spb.hse.roguelike.model.Generator;
 import ru.spb.hse.roguelike.model.map.GameCell;
 import ru.spb.hse.roguelike.model.object.alive.GameCharacter;
 import ru.spb.hse.roguelike.model.map.GameMapCellType;
@@ -23,7 +24,7 @@ public class Controller {
     public Controller(View view, GameModel gameModel) {
         this.gameModel = gameModel;
         this.view = view;
-        character = gameModel.generateCharacter();
+        character = Generator.generateCharacter();
     }
 
     /**

@@ -1,21 +1,22 @@
-package ru.spb.hse.roguelike.map;
+package ru.spb.hse.roguelike.model;
 
 import ru.spb.hse.roguelike.exceptions.MapGeneratorException;
-import ru.spb.hse.roguelike.model.GameModel;
 import ru.spb.hse.roguelike.model.map.GameCell;
 import ru.spb.hse.roguelike.model.map.GameMapCellType;
-import ru.spb.hse.roguelike.model.map.Room;
+import ru.spb.hse.roguelike.model.object.alive.GameCharacter;
+import ru.spb.hse.roguelike.model.object.items.Item;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Random;
 import java.util.Set;
 import java.util.TreeSet;
 
-public class MapGenerator {
+public class Generator {
     private static int MIN_ROOM_HEIGHT = 10;
     private static int MIN_ROOM_WIDTH = 10;
     private static int MAX_ROOM_HEIGHT = 40;
@@ -23,9 +24,18 @@ public class MapGenerator {
     private static int INDENT = 3;
     private static int MAX_REGENERATION_COUNT = 1000;
 
-    public static GameModel generate(int roomCount,
-                                     int width,
-                                     int height) throws MapGeneratorException {
+
+    public static GameModel generateModel(int roomCount,
+                                          int width,
+                                          int height) throws MapGeneratorException {
+        final GameCell[][] map = generateMap(roomCount, width, height);
+        final List<Item> inventories = generateInventories();
+        return new GameModel(map, inventories);
+    }
+
+    private static GameCell[][] generateMap(int roomCount,
+                                            int width,
+                                            int height) throws MapGeneratorException {
         final List<Room> rooms = new ArrayList<>();
         final Random RANDOM = new Random();
         int failedCreatingRoomAttemptCount = 0;
@@ -65,8 +75,20 @@ public class MapGenerator {
             createPath(rooms.get(i), rooms.get(i + 1), width, height, data);
         }
         markWall(data);
-        return new GameModel(rooms, data, new ArrayList<>());
+        return data;
+    }
 
+    public static GameCharacter generateCharacter() {
+        //create character with position, if no character exists
+        return null;
+    }
+
+    public static void generateMobsIfNeeded() {
+
+    }
+
+    private static List<Item> generateInventories() {
+        return new ArrayList<>();
     }
 
 
@@ -75,12 +97,12 @@ public class MapGenerator {
                                   @Nonnull final List<Room> rooms,
                                   @Nonnull GameCell[][] data) {
         rooms.parallelStream().forEach(room -> {
-            for (int x = 0; x < room.getW(); x++) {
-                for (int y = 0; y < room.getH(); y++) {
-                    if (room.getX() + x < width
-                            && room.getY() + y < height
-                            && data[room.getX() + x][room.getY() + y].getGameMapCellType() == GameMapCellType.empty) {
-                        data[room.getX() + x][room.getY() + y].setGameMapCellType(GameMapCellType.room);
+            for (int x = 0; x < room.w; x++) {
+                for (int y = 0; y < room.h; y++) {
+                    if (room.x + x < width
+                            && room.y + y < height
+                            && data[room.x + x][room.y + y].getGameMapCellType() == GameMapCellType.empty) {
+                        data[room.x + x][room.y + y].setGameMapCellType(GameMapCellType.room);
                     }
                 }
             }
@@ -171,19 +193,19 @@ public class MapGenerator {
 
     private static boolean isPointInsideRoom(@Nonnull final Point point,
                                              @Nonnull final Room room) {
-        if (point.x < room.getX()) {
+        if (point.x < room.x) {
             return false;
         }
 
-        if (point.y < room.getY()) {
+        if (point.y < room.y) {
             return false;
         }
 
-        if (point.x > room.getX() + room.getW()) {
+        if (point.x > room.x + room.w) {
             return false;
         }
 
-        return point.y <= room.getY() + room.getH();
+        return point.y <= room.y + room.h;
     }
 
     private static int cost(@Nonnull final Point point,
@@ -194,8 +216,8 @@ public class MapGenerator {
     }
 
     private static Point getMiddleOfRoom(@Nonnull final Room room) {
-        return new Point(room.getX() + room.getW() / 2,
-                room.getY() + room.getW() / 2);
+        return new Point(room.x + room.w / 2,
+                room.y + room.w / 2);
     }
 
     private static class Point {
@@ -208,4 +230,47 @@ public class MapGenerator {
 
         }
     }
+
+    private static class Room {
+        private final int x;
+        private final int y;
+        private final int w;
+        private final int h;
+
+
+        private Room(int x,
+                     int y,
+                     int w,
+                     int h) {
+            this.x = x;
+            this.y = y;
+            this.w = w;
+            this.h = h;
+        }
+
+        private boolean intersect(final Room r,
+                                  int indent) {
+            return !(r.x >= (x + w) + indent ||
+                    x >= (r.x + r.w) + indent ||
+                    r.y >= (y + h) + indent
+                    || y >= (r.y + r.h) + indent);
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            Room that = (Room) o;
+            return x == that.x
+                    && y == that.y
+                    && w == that.w
+                    && h == that.h;
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(x, y, h, w);
+        }
+    }
+
 }
