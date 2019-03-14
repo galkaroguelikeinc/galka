@@ -23,6 +23,10 @@ public class GameModel {
         this.inventory = inventory;
     }
 
+    public void generateMobsIfNeeded() {
+
+    }
+
     public GameCharacter getCharacter() {
         return gameCharacter;
     }

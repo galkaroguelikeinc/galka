@@ -1,5 +1,14 @@
+/*import org.junit.Test;
+import ru.spb.hse.roguelike.model.*;
+import ru.spb.hse.roguelike.model.object.GameObject;
+import ru.spb.hse.roguelike.model.object.items.Item;
+import ru.spb.hse.roguelike.view.TerminalView;
+
+import java.util.ArrayList;
+import java.util.Collections;
+
 public class TerminalViewTest {
-    /*@Test
+    @Test
     public void simpleUsage() throws InterruptedException {
         GameCell[][] gameMap = new GameCell[2][3];
         gameMap[0][0] = new GameCell(GameMapCellType.wall, Collections.emptyList());
@@ -26,5 +35,5 @@ public class TerminalViewTest {
         //  ++
         terminalView.showChanges();
         Thread.sleep(2000);
-    }*/
-}
+    }
+} */

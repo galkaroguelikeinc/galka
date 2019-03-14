@@ -10,13 +10,13 @@ import ru.spb.hse.roguelike.model.GameModel;
  * It could be via text printed to console, terminal pseudo-graphics, JavaFX or any other 2D graphics, 3D, VR, etc.
  */
 public abstract class View {
-    protected GameModel gameModel;
+    GameModel gameModel;
     /**
      * Create a View.
      *
      * @param gameModel stores game data which needs to be shown to user
      */
-    public View(GameModel gameModel) {
+    View(GameModel gameModel) {
         this.gameModel = gameModel;
     }
 
@@ -24,8 +24,6 @@ public abstract class View {
      * Notify the View that gameModel has changes. It should redraw the gameModel shown to user.
      */
     public abstract void showChanges();
-
-    abstract void showResult(boolean b);
 
     public abstract String readCommand();
 }

@@ -24,6 +24,22 @@ public class GameCell {
         this.cellItem = cellItem;
     }
 
+    public boolean addItem(Item item) {
+        if (hasItem()) {
+            return false;
+        }
+        cellItem = item;
+        return true;
+    }
+
+    public boolean addAliveObject(AliveObject object) {
+        if (hasAliveObject()) {
+            return false;
+        }
+        aliveObject = object;
+        return true;
+    }
+
     public boolean hasAliveObject() {
         return aliveObject != null;
     }

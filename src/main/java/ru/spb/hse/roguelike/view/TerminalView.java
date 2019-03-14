@@ -71,11 +71,6 @@ public class TerminalView extends View {
     }
 
     @Override
-    void showResult(boolean b) {
-
-    }
-
-    @Override
     public String readCommand() {
         return null;
     }
