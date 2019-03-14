@@ -17,11 +17,11 @@ import java.util.Set;
 import java.util.TreeSet;
 
 public class Generator {
-    private static int MIN_ROOM_HEIGHT = 10;
-    private static int MIN_ROOM_WIDTH = 10;
-    private static int MAX_ROOM_HEIGHT = 40;
-    private static int MAX_ROOM_WIDTH = 40;
-    private static int INDENT = 3;
+    private static int MIN_ROOM_HEIGHT = 1;
+    private static int MIN_ROOM_WIDTH = 1;
+    private static int MAX_ROOM_HEIGHT = 3;
+    private static int MAX_ROOM_WIDTH = 3;
+    private static int INDENT = 0;
     private static int MAX_REGENERATION_COUNT = 1000;
 
 
@@ -228,6 +228,19 @@ public class Generator {
             this.x = x;
             this.y = y;
 
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(x, y);
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            Point that = (Point) o;
+            return x == that.x && y == that.y;
         }
     }
 

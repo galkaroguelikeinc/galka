@@ -10,7 +10,7 @@ import ru.spb.hse.roguelike.view.View;
 public class Main {
     public static void main(String[] args) {
         try {
-            final GameModel model = Generator.generateModel(4, 80, 80);
+            final GameModel model = Generator.generateModel(2,7, 7);
             final View view = new TerminalView(model);
             Controller controller = new Controller(view, model);
             controller.runGame();
