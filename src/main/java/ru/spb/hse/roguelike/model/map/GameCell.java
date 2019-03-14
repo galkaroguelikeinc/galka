@@ -60,6 +60,6 @@ public class GameCell {
     }
 
     public void setGameMapCellType(@Nonnull GameMapCellType gameMapCellType) {
-        this.gameMapCellType = getGameMapCellType();
+        this.gameMapCellType = gameMapCellType;
     }
 }
