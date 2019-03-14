@@ -13,6 +13,7 @@ public class GameModel {
     private GameCell[][] gameMap;
     private List<Item> inventory = new ArrayList<>();
     private GameCharacter gameCharacter;
+    private static final int MAX_INVENTORY_SIZE = 10;
     private boolean isEnd = false;
 
     public GameModel() {
@@ -61,5 +62,9 @@ public class GameModel {
 
     public boolean isEnd() {
         return isEnd;
+    }
+
+    public static int getMaxInventorySize() {
+        return MAX_INVENTORY_SIZE;
     }
 }

@@ -64,7 +64,7 @@ public class Controller {
         if (isFreeCell(newX, newY)) {
             character.move(newX, newY);
             if (gameModel.getCell(newY, newX).hasItem()
-                    && gameModel.getInventory().size() != character.getMaxInventorySize()){
+                    && gameModel.getInventory().size() != GameModel.getMaxInventorySize()){
                 gameModel.addInventory(gameModel.takeCellItem(newX, newY));
             }
         }

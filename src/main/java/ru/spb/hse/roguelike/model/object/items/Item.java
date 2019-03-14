@@ -22,7 +22,7 @@ public abstract class Item {
         itemNumber++;
     }
 
-    void decreasetNumber() {
+    void decreaseNumber() {
         itemNumber--;
     }
 
