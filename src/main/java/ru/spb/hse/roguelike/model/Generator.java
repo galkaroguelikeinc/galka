@@ -167,8 +167,8 @@ public class Generator {
                     for (int[] direction : directions) {
                         int newI = i + direction[0];
                         int newJ = j + direction[1];
-                        if (newI > 0 && newI < data.length
-                                && newJ > 0 && newJ < data[i].length
+                        if (newI >= 0 && newI < data.length
+                                && newJ >= 0 && newJ < data[i].length
                                 && data[newI][newJ].getGameMapCellType() == GameMapCellType.empty) {
                             data[newI][newJ].setGameMapCellType(GameMapCellType.wall);
                         }
