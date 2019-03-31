@@ -8,6 +8,7 @@ import com.googlecode.lanterna.input.*;
 import ru.spb.hse.roguelike.model.map.GameCell;
 import ru.spb.hse.roguelike.model.map.GameMapCellType;
 import ru.spb.hse.roguelike.model.GameModel;
+import ru.spb.hse.roguelike.model.object.alive.GameCharacter;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -23,6 +24,11 @@ import java.util.Map;
  */
 public class TerminalView extends View {
     private TerminalScreen terminalScreen = null;
+    private static final char ROOM_SYMBOL = '.';
+    private static final char EMPTY_SYMBOL = ' ';
+    private static final char TUNNEL_SYMBOL = '#';
+    private static final char GAME_CHARACTER_SYMBOL = '&';
+
 
     public TerminalView(GameModel gameModel) {
         super(gameModel);
@@ -31,7 +37,8 @@ public class TerminalView extends View {
             terminalScreen = new TerminalScreen(defaultTerminalFactory.createTerminal());
             terminalScreen.startScreen();
             terminalScreen.setCursorPosition(null);
-        } catch (IOException ignored) {
+        } catch (IOException e) {
+            System.out.println("Problems with the terminal window");
         }
         if (terminalScreen == null) {
             System.err.println("Unexpected exception, couldn't create terminal." +
@@ -40,8 +47,6 @@ public class TerminalView extends View {
             return;
         }
 
-        // the terminal window is col, row from top-left corner
-        // the map is row, col from top-left corner
         try {
             for (int row = 0; row < gameModel.getRows(); row++) {
                 for (int col = 0; col < gameModel.getCols(); col++) {
@@ -59,12 +64,12 @@ public class TerminalView extends View {
 
     private char cellToSymbol(GameCell gameCell) {
         Map<GameMapCellType, Character> cellToSymbol = new HashMap<GameMapCellType, Character>() {{
-            put(GameMapCellType.room, '.');
-            put(GameMapCellType.empty, ' ');
-            put(GameMapCellType.tunnel, '#');
+            put(GameMapCellType.ROOM, ROOM_SYMBOL);
+            put(GameMapCellType.EMPTY, EMPTY_SYMBOL);
+            put(GameMapCellType.TUNNEL, TUNNEL_SYMBOL);
         }};
-        if (gameCell.hasAliveObject()) {
-            return '*';
+        if (gameCell.hasAliveObject() && gameCell.getAliveObject().getClass().equals(GameCharacter.class)) {
+            return GAME_CHARACTER_SYMBOL;
         }
         return cellToSymbol.get(gameCell.getGameMapCellType());
     }
@@ -83,21 +88,21 @@ public class TerminalView extends View {
     }
 
     @Override
-    public String readCommand() {
+    public Command readCommand() {
         try {
             KeyStroke key = terminalScreen.readInput();
             switch (key.getKeyType()) {
                 case ArrowDown:
-                    return "down";
+                    return Command.DOWN;
                 case ArrowUp:
-                    return "up";
+                    return Command.UP;
                 case ArrowLeft:
-                    return "left";
+                    return Command.LEFT;
                 case ArrowRight:
-                    return "right";
+                    return Command.RIGHT;
             }
         } catch (IOException e) {
-            System.out.println(e.getMessage());
+            System.out.println("Problems with parsing command");
         }
         return null;
     }

@@ -4,6 +4,7 @@ import ru.spb.hse.roguelike.model.map.GameCell;
 import ru.spb.hse.roguelike.model.object.alive.GameCharacter;
 import ru.spb.hse.roguelike.model.map.GameMapCellType;
 import ru.spb.hse.roguelike.model.GameModel;
+import ru.spb.hse.roguelike.view.Command;
 import ru.spb.hse.roguelike.view.View;
 
 /**
@@ -31,9 +32,9 @@ public class Controller {
      */
     public void runGame() {
         while(true) {
-            String command = view.readCommand();
+            Command command = view.readCommand();
             switch (command) {
-                case "left": {
+                case LEFT: {
                     int newX = character.getXPos() - 1;
                     int newY = character.getYPos();
                     move(newX, newY);
@@ -41,7 +42,7 @@ public class Controller {
                     view.showChanges(newX, newY);
                     break;
                 }
-                case "right": {
+                case RIGHT: {
                     int newX = character.getXPos() + 1;
                     int newY = character.getYPos();
                     move(newX, newY);
@@ -49,7 +50,7 @@ public class Controller {
                     view.showChanges(newX, newY);
                     break;
                 }
-                case "up": {
+                case UP: {
                     int newX = character.getXPos();
                     int newY = character.getYPos() - 1;
                     move(newX, newY);
@@ -57,7 +58,7 @@ public class Controller {
                     view.showChanges(newX, newY);
                     break;
                 }
-                case "down": {
+                case DOWN: {
                     int newX = character.getXPos();
                     int newY = character.getYPos() + 1;
                     move(newX, newY);
@@ -83,7 +84,7 @@ public class Controller {
 
     private boolean isFreeCell(int x, int y) {
         GameCell cell = gameModel.getCell(x, y);
-        return cell != null && (cell.getGameMapCellType().equals(GameMapCellType.room)
-                || cell.getGameMapCellType().equals(GameMapCellType.tunnel));
+        return cell != null && (cell.getGameMapCellType().equals(GameMapCellType.ROOM)
+                || cell.getGameMapCellType().equals(GameMapCellType.TUNNEL));
     }
 }

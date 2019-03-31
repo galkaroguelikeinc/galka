@@ -16,13 +16,17 @@ import java.util.Random;
 import java.util.Set;
 import java.util.TreeSet;
 
+/**
+ * Class to generate game model pieces: rooms, inventory, character and mobs.
+ */
 public class Generator {
-    private static int MIN_ROOM_HEIGHT = 1;
-    private static int MIN_ROOM_WIDTH = 1;
-    private static int MAX_ROOM_HEIGHT = 5;
-    private static int MAX_ROOM_WIDTH = 5;
+    private static final int MIN_ROOM_HEIGHT = 1;
+    private static final int MIN_ROOM_WIDTH = 1;
+    private static final int MAX_ROOM_HEIGHT = 5;
+    private static final int MAX_ROOM_WIDTH = 5;
     private static int INDENT = 0;
-    private static int MAX_REGENERATION_COUNT = 1000;
+    private static final int MAX_REGENERATION_COUNT = 1000;
+    private static final Random RANDOM = new Random();
 
 
     public static GameModel generateModel(int roomCount,
@@ -37,7 +41,6 @@ public class Generator {
         return new GameModel(map, inventories, character);
     }
 
-    private static final Random RANDOM = new Random();
     private static List<Room> generateRooms(int roomCount,
                                             int width,
                                             int height) throws MapGeneratorException {
@@ -76,7 +79,7 @@ public class Generator {
         final GameCell[][] data = new GameCell[width][height];
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
-                data[x][y] = new GameCell(GameMapCellType.empty, null, null);
+                data[x][y] = new GameCell(GameMapCellType.EMPTY, null, null);
             }
         }
         markRooms(width, height, rooms, data);
@@ -111,8 +114,8 @@ public class Generator {
                 for (int y = 0; y < room.h; y++) {
                     if (room.x + x < width
                             && room.y + y < height
-                            && data[room.x + x][room.y + y].getGameMapCellType() == GameMapCellType.empty) {
-                        data[room.x + x][room.y + y].setGameMapCellType(GameMapCellType.room);
+                            && data[room.x + x][room.y + y].getGameMapCellType() == GameMapCellType.EMPTY) {
+                        data[room.x + x][room.y + y].setGameMapCellType(GameMapCellType.ROOM);
                     }
                 }
             }
@@ -168,34 +171,14 @@ public class Generator {
 
     }
 
-    private static void markWall(@Nonnull GameCell[][] data) {
-        final int[][] directions = {{1, 0}, {0, 1}, {-1, 0}, {0, -1}, {1, 1}, {1, -1}, {-1, -1}, {-1, 1}};
-        for (int i = 0; i < data.length; i++) {
-            for (int j = 0; j < data[i].length; j++) {
-                if (data[i][j].getGameMapCellType() == GameMapCellType.room
-                        || data[i][j].getGameMapCellType() == GameMapCellType.tunnel) {
-                    for (int[] direction : directions) {
-                        int newI = i + direction[0];
-                        int newJ = j + direction[1];
-                        if (newI >= 0 && newI < data.length
-                                && newJ >= 0 && newJ < data[i].length
-                                && data[newI][newJ].getGameMapCellType() == GameMapCellType.empty) {
-                            data[newI][newJ].setGameMapCellType(GameMapCellType.wall);
-                        }
-                    }
-                }
-            }
-        }
-    }
-
     private static void markPath(@Nonnull GameCell[][] data,
                                  @Nonnull final Point start,
                                  @Nonnull final Point finish,
                                  @Nonnull final HashMap<Point, Point> parent) {
         Point curPoint = new Point(finish.x, finish.y);
         while (!curPoint.equals(start)) {
-            if (data[curPoint.x][curPoint.y].getGameMapCellType() == GameMapCellType.empty) {
-                data[curPoint.x][curPoint.y].setGameMapCellType(GameMapCellType.tunnel);
+            if (data[curPoint.x][curPoint.y].getGameMapCellType() == GameMapCellType.EMPTY) {
+                data[curPoint.x][curPoint.y].setGameMapCellType(GameMapCellType.TUNNEL);
             }
             curPoint = parent.get(curPoint);
         }

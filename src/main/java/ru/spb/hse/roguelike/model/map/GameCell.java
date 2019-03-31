@@ -58,6 +58,10 @@ public class GameCell {
         return cellItem;
     }
 
+    public AliveObject getAliveObject() {
+        return aliveObject;
+    }
+
     @Nonnull
     public GameMapCellType getGameMapCellType() {
         return gameMapCellType;

@@ -25,5 +25,9 @@ public abstract class View {
      */
     public abstract void showChanges(int col, int row);
 
-    public abstract String readCommand();
+    /**
+     * Reads the command from user input
+     * @return command which was read
+     */
+    public abstract Command readCommand();
 }
