@@ -23,7 +23,11 @@ public abstract class View {
     /**
      * Notify the View that gameModel has changes. It should redraw the gameModel shown to user.
      */
-    public abstract void showChanges();
+    public abstract void showChanges(int col, int row);
 
-    public abstract String readCommand();
+    /**
+     * Reads the command from user input
+     * @return command which was read
+     */
+    public abstract Command readCommand();
 }

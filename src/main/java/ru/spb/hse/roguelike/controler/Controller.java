@@ -1,10 +1,10 @@
 package ru.spb.hse.roguelike.controler;
 
-import ru.spb.hse.roguelike.model.Generator;
 import ru.spb.hse.roguelike.model.map.GameCell;
 import ru.spb.hse.roguelike.model.object.alive.GameCharacter;
 import ru.spb.hse.roguelike.model.map.GameMapCellType;
 import ru.spb.hse.roguelike.model.GameModel;
+import ru.spb.hse.roguelike.view.Command;
 import ru.spb.hse.roguelike.view.View;
 
 /**
@@ -24,7 +24,7 @@ public class Controller {
     public Controller(View view, GameModel gameModel) {
         this.gameModel = gameModel;
         this.view = view;
-        character = Generator.generateCharacter();
+        character = gameModel.getCharacter();
     }
 
     /**
@@ -32,29 +32,38 @@ public class Controller {
      */
     public void runGame() {
         while(true) {
-            String command = view.readCommand();
+            Command command = view.readCommand();
             switch (command) {
-                case "left": {
+                case LEFT: {
                     int newX = character.getXPos() - 1;
                     int newY = character.getYPos();
                     move(newX, newY);
+                    view.showChanges(newX + 1, newY);
+                    view.showChanges(newX, newY);
                     break;
                 }
-                case "right": {
+                case RIGHT: {
                     int newX = character.getXPos() + 1;
                     int newY = character.getYPos();
-                    move(newX, newY);break;
+                    move(newX, newY);
+                    view.showChanges(newX - 1, newY);
+                    view.showChanges(newX, newY);
+                    break;
                 }
-                case "up": {
+                case UP: {
                     int newX = character.getXPos();
                     int newY = character.getYPos() - 1;
                     move(newX, newY);
+                    view.showChanges(newX, newY + 1);
+                    view.showChanges(newX, newY);
                     break;
                 }
-                case "down": {
+                case DOWN: {
                     int newX = character.getXPos();
                     int newY = character.getYPos() + 1;
                     move(newX, newY);
+                    view.showChanges(newX, newY - 1);
+                    view.showChanges(newX, newY);
                     break;
                 }
             }
@@ -63,8 +72,10 @@ public class Controller {
 
     private void move(int newX, int newY) {
         if (isFreeCell(newX, newY)) {
+            gameModel.getCell(character.getXPos(), character.getYPos()).removeAliveObject();
             character.move(newX, newY);
-            if (gameModel.getCell(newY, newX).hasItem()
+            gameModel.getCell(newX, newY).addAliveObject(character);
+            if (gameModel.getCell(newX, newY).hasItem()
                     && gameModel.getInventory().size() != GameModel.getMaxInventorySize()){
                 gameModel.addInventory(gameModel.takeCellItem(newX, newY));
             }
@@ -73,7 +84,7 @@ public class Controller {
 
     private boolean isFreeCell(int x, int y) {
         GameCell cell = gameModel.getCell(x, y);
-        return (cell.getGameMapCellType().equals(GameMapCellType.room)
-                || cell.getGameMapCellType().equals(GameMapCellType.tunnel));
+        return cell != null && (cell.getGameMapCellType().equals(GameMapCellType.ROOM)
+                || cell.getGameMapCellType().equals(GameMapCellType.TUNNEL));
     }
 }
