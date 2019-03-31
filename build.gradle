@@ -10,15 +10,27 @@ repositories {
     mavenCentral()
 }
 
-jar {
-    manifest {
-        attributes 'Main-Class': 'ru.spb.hse.roguelike.Main'
-    }
-    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+configurations {
+    // configuration that holds jars to include in the jar
+    extraLibs
 }
 
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
-    implementation 'com.google.code.findbugs:jsr305:3.0.2'
-    implementation 'com.googlecode.lanterna:lanterna:3.0.1'
+    extraLibs 'com.google.code.findbugs:jsr305:3.0.2'
+    extraLibs 'com.googlecode.lanterna:lanterna:3.0.1'
+    configurations.compile.extendsFrom(configurations.extraLibs)
+}
+
+jar {
+
+    doFirst {
+        manifest {
+            attributes 'Main-Class': "ru.spb.hse.roguelike.Main"
+        }
+        from {
+            configurations.extraLibs.collect { it.isDirectory() ? it : zipTree(it) }
+        }
+    }
+    exclude 'META-INF/*.RSA', 'META-INF/*.SF', 'META-INF/*.DSA'
 }

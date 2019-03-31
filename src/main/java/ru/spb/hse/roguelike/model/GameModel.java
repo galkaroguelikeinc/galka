@@ -17,10 +17,11 @@ public class GameModel {
     private static final int MAX_INVENTORY_SIZE = 10;
     private boolean isEnd = false;
 
-    public GameModel(@Nonnull final GameCell[][] gameMap,
-                     @Nonnull final List<Item> inventory) {
+    GameModel(@Nonnull final GameCell[][] gameMap,
+                     @Nonnull final List<Item> inventory, GameCharacter character) {
         this.gameMap = gameMap;
         this.inventory = inventory;
+        this.gameCharacter = character;
     }
 
     public void generateMobsIfNeeded() {
@@ -32,6 +33,9 @@ public class GameModel {
     }
 
     public GameCell getCell(int row, int col) {
+        if (row < 0 || row >= gameMap.length || col < 0 || col >= gameMap[0].length) {
+            return null;
+        }
         return gameMap[row][col];
     }
 

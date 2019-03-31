@@ -4,14 +4,13 @@ import ru.spb.hse.roguelike.controler.Controller;
 import ru.spb.hse.roguelike.exceptions.MapGeneratorException;
 import ru.spb.hse.roguelike.model.GameModel;
 import ru.spb.hse.roguelike.model.Generator;
-import ru.spb.hse.roguelike.model.map.GameMapCellType;
 import ru.spb.hse.roguelike.view.TerminalView;
 import ru.spb.hse.roguelike.view.View;
 
 public class Main {
     public static void main(String[] args) {
         try {
-            final GameModel model = Generator.generateModel(2,7, 7);
+            final GameModel model = Generator.generateModel(4,20, 20);
             /*
             для проверки карты
             for (int i = 0; i < 7; i ++) {

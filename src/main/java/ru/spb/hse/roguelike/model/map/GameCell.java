@@ -40,6 +40,10 @@ public class GameCell {
         return true;
     }
 
+    public void removeAliveObject() {
+        aliveObject = null;
+    }
+
     public boolean hasAliveObject() {
         return aliveObject != null;
     }

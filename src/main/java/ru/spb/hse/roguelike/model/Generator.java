@@ -19,8 +19,8 @@ import java.util.TreeSet;
 public class Generator {
     private static int MIN_ROOM_HEIGHT = 1;
     private static int MIN_ROOM_WIDTH = 1;
-    private static int MAX_ROOM_HEIGHT = 3;
-    private static int MAX_ROOM_WIDTH = 3;
+    private static int MAX_ROOM_HEIGHT = 5;
+    private static int MAX_ROOM_WIDTH = 5;
     private static int INDENT = 0;
     private static int MAX_REGENERATION_COUNT = 1000;
 
@@ -28,16 +28,21 @@ public class Generator {
     public static GameModel generateModel(int roomCount,
                                           int width,
                                           int height) throws MapGeneratorException {
-        final GameCell[][] map = generateMap(roomCount, width, height);
+        List<Room> rooms = generateRooms(roomCount, width, height);
+        final GameCell[][] map = generateMap(rooms, width, height);
+        int characterRoom = RANDOM.nextInt(roomCount);
+        GameCharacter character = generateCharacter(rooms.get(characterRoom));
+        map[character.getXPos()][character.getYPos()].addAliveObject(character);
         final List<Item> inventories = generateInventories();
-        return new GameModel(map, inventories);
+        return new GameModel(map, inventories, character);
     }
 
-    private static GameCell[][] generateMap(int roomCount,
+    private static final Random RANDOM = new Random();
+    private static List<Room> generateRooms(int roomCount,
                                             int width,
                                             int height) throws MapGeneratorException {
+
         final List<Room> rooms = new ArrayList<>();
-        final Random RANDOM = new Random();
         int failedCreatingRoomAttemptCount = 0;
         int regenerationCount = 0;
         while (rooms.size() < roomCount) {
@@ -62,8 +67,12 @@ public class Generator {
                 throw new MapGeneratorException("Failed to generate map");
             }
         }
+        return rooms;
+    }
 
-
+    private static GameCell[][] generateMap(List<Room> rooms,
+                                            int width,
+                                            int height) throws MapGeneratorException {
         final GameCell[][] data = new GameCell[width][height];
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
@@ -74,13 +83,14 @@ public class Generator {
         for (int i = 0; i < rooms.size() - 1; i++) {
             createPath(rooms.get(i), rooms.get(i + 1), width, height, data);
         }
-        markWall(data);
+        //markWall(data);
         return data;
     }
 
-    public static GameCharacter generateCharacter() {
-        //create character with position, if no character exists
-        return null;
+    private static GameCharacter generateCharacter(Room room) {
+        int x = room.x + RANDOM.nextInt(room.w);
+        int y = room.y + RANDOM.nextInt(room.h);
+        return new GameCharacter(x, y);
     }
 
     public static void generateMobsIfNeeded() {

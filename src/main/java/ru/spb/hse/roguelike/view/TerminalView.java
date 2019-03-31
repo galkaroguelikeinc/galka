@@ -1,7 +1,10 @@
 package ru.spb.hse.roguelike.view;
 
+import com.googlecode.lanterna.TerminalPosition;
+import com.googlecode.lanterna.TextCharacter;
+import com.googlecode.lanterna.screen.TerminalScreen;
 import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
-import com.googlecode.lanterna.terminal.Terminal;
+import com.googlecode.lanterna.input.*;
 import ru.spb.hse.roguelike.model.map.GameCell;
 import ru.spb.hse.roguelike.model.map.GameMapCellType;
 import ru.spb.hse.roguelike.model.GameModel;
@@ -19,34 +22,18 @@ import java.util.Map;
  * It uses Lanterna, the terminal type guess is also done by Lanterna.
  */
 public class TerminalView extends View {
-    private Terminal terminal = null;
+    private TerminalScreen terminalScreen = null;
 
     public TerminalView(GameModel gameModel) {
         super(gameModel);
         DefaultTerminalFactory defaultTerminalFactory = new DefaultTerminalFactory();
         try {
-            terminal = defaultTerminalFactory.createTerminal();
+            terminalScreen = new TerminalScreen(defaultTerminalFactory.createTerminal());
+            terminalScreen.startScreen();
+            terminalScreen.setCursorPosition(null);
         } catch (IOException ignored) {
         }
-        showChanges();
-    }
-
-    private char cellToSymbol(GameCell gameCell) {
-        Map<GameMapCellType, Character> cellToSymbol = new HashMap<GameMapCellType, Character>() {{
-            put(GameMapCellType.wall, '#');
-            put(GameMapCellType.room, '+');
-            put(GameMapCellType.empty, ' ');
-            put(GameMapCellType.tunnel, '-');
-        }};
-        if (gameCell.hasItem() || gameCell.hasAliveObject()) {
-            return '*';
-        }
-        return cellToSymbol.get(gameCell.getGameMapCellType());
-    }
-
-    @Override
-    public void showChanges() {
-        if (terminal == null) {
+        if (terminalScreen == null) {
             System.err.println("Unexpected exception, couldn't create terminal." +
                     "We are sorry! Please, restart the game.");
             System.exit(1);
@@ -58,9 +45,9 @@ public class TerminalView extends View {
         try {
             for (int row = 0; row < gameModel.getRows(); row++) {
                 for (int col = 0; col < gameModel.getCols(); col++) {
-                    terminal.setCursorPosition(col, row);
-                    terminal.putCharacter(cellToSymbol(gameModel.getCell(row, col)));
-                    terminal.flush();
+                    terminalScreen.setCharacter(new TerminalPosition(row, col),
+                            new TextCharacter(cellToSymbol(gameModel.getCell(row, col))));
+                    terminalScreen.refresh();
                 }
             }
         } catch (IOException e) {
@@ -70,8 +57,48 @@ public class TerminalView extends View {
         }
     }
 
+    private char cellToSymbol(GameCell gameCell) {
+        Map<GameMapCellType, Character> cellToSymbol = new HashMap<GameMapCellType, Character>() {{
+            put(GameMapCellType.room, '.');
+            put(GameMapCellType.empty, ' ');
+            put(GameMapCellType.tunnel, '#');
+        }};
+        if (gameCell.hasAliveObject()) {
+            return '*';
+        }
+        return cellToSymbol.get(gameCell.getGameMapCellType());
+    }
+
+    @Override
+    public void showChanges(int row, int col) {
+        try {
+            terminalScreen.setCharacter(new TerminalPosition(row, col),
+                            new TextCharacter(cellToSymbol(gameModel.getCell(row, col))));
+            terminalScreen.refresh();
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.err.println("Unexpected exception while redrawing terminal." +
+                    "We are sorry! Please, restart the game.");
+        }
+    }
+
     @Override
     public String readCommand() {
+        try {
+            KeyStroke key = terminalScreen.readInput();
+            switch (key.getKeyType()) {
+                case ArrowDown:
+                    return "down";
+                case ArrowUp:
+                    return "up";
+                case ArrowLeft:
+                    return "left";
+                case ArrowRight:
+                    return "right";
+            }
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
         return null;
     }
 }
