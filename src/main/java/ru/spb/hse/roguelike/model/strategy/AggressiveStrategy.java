@@ -1,6 +1,7 @@
 package ru.spb.hse.roguelike.model.strategy;
 
 import ru.spb.hse.roguelike.model.map.GameCell;
+import ru.spb.hse.roguelike.model.object.alive.GameCharacter;
 import ru.spb.hse.roguelike.model.object.alive.Mob;
 
 import javax.annotation.Nonnull;
@@ -8,7 +9,9 @@ import javax.annotation.Nonnull;
 public class AggressiveStrategy implements MobStrategy{
 
     @Override
-    public void move(@Nonnull GameCell[][] map, @Nonnull Mob mob) {
+    public void move(@Nonnull GameCell[][] map,
+                     @Nonnull Mob mob,
+                     @Nonnull GameCharacter gameCharacter) {
 
     }
 }
