@@ -45,10 +45,6 @@ public class GameModel {
         saveAliveObjectCoordinates();
     }
 
-    public void generateMobsIfNeeded() {
-
-    }
-
     public GameCharacter getCharacter() {
         return gameCharacter;
     }
