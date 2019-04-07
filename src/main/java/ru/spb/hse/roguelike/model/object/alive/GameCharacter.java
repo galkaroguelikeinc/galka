@@ -17,7 +17,11 @@ public class GameCharacter extends AliveObject {
         food_fullness.change(x);
     }
 
-    public void changeMaxHunger(int x) {
+    public void changeMaxFoodFullness(int x) {
         food_fullness.changeMax(x);
+    }
+
+    public int getFoodFullness() {
+        return food_fullness.getCurentValue();
     }
 }

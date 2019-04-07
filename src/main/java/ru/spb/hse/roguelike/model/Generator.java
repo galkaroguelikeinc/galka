@@ -1,6 +1,5 @@
 package ru.spb.hse.roguelike.model;
 
-import ru.spb.hse.roguelike.exceptions.MapGeneratorException;
 import ru.spb.hse.roguelike.model.map.GameCell;
 import ru.spb.hse.roguelike.model.map.GameMapCellType;
 import ru.spb.hse.roguelike.model.object.alive.GameCharacter;

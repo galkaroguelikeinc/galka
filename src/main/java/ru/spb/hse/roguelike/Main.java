@@ -1,7 +1,7 @@
 package ru.spb.hse.roguelike;
 
 import ru.spb.hse.roguelike.controler.Controller;
-import ru.spb.hse.roguelike.exceptions.MapGeneratorException;
+import ru.spb.hse.roguelike.model.MapGeneratorException;
 import ru.spb.hse.roguelike.model.GameModel;
 import ru.spb.hse.roguelike.model.Generator;
 import ru.spb.hse.roguelike.view.TerminalView;

@@ -32,27 +32,28 @@ public class Controller {
      */
     public void runGame() throws ViewException {
         while (true) {
-            Command command = view.readCommand();
-            if (command == null) {
-                continue;
+            executeCommand();
+        }
+    }
+
+    void executeCommand() throws ViewException {
+        Command command = view.readCommand();
+        switch (command) {
+            case LEFT: {
+                handleMove(0, -1);
+                break;
             }
-            switch (command) {
-                case LEFT: {
-                    handleMove(-1, 0);
-                    break;
-                }
-                case RIGHT: {
-                    handleMove(1, 0);
-                    break;
-                }
-                case UP: {
-                    handleMove(0, -1);
-                    break;
-                }
-                case DOWN: {
-                    handleMove(0, 1);
-                    break;
-                }
+            case RIGHT: {
+                handleMove(0, 1);
+                break;
+            }
+            case UP: {
+                handleMove(-1, 0);
+                break;
+            }
+            case DOWN: {
+                handleMove(1, 0);
+                break;
             }
         }
     }
