@@ -96,7 +96,6 @@ public class Generator {
         return new ArrayList<>();
     }
 
-
     private static void markRooms(int width,
                                   int height,
                                   @Nonnull List<Room> rooms,
@@ -114,7 +113,6 @@ public class Generator {
         });
     }
 
-
     private static void createPath(@Nonnull Room startRoom,
                                    @Nonnull Room finishRoom,
                                    int width,
@@ -127,13 +125,11 @@ public class Generator {
                 Comparator.<Point>comparingInt(p -> cost(p, finishRoom))
                         .thenComparingInt(p -> p.x)
                         .thenComparingInt(p -> p.y));
-        int[][] directions = {{1, 0}, {0, 1}, {-1, 0}, {0, -1}};
         HashMap<Point, Point> parent = new HashMap<>();
         while (!finishRoom.isPointInside(curPoint)) {
             visit.add(curPoint);
-            for (int i = 0; i < 4; i++) {
-                Point p = new Point(curPoint.x + directions[i][0],
-                        curPoint.y + directions[i][1]);
+            for (Direction d : Direction.values()) {
+                Point p = new Point(curPoint.x + d.dx, curPoint.y + d.dy);
                 if (!visit.contains(p)
                         && p.x > 0
                         && p.x < width
@@ -170,6 +166,21 @@ public class Generator {
         Point middle = room.getMiddle();
         return (point.x - middle.x) * (point.x - middle.x) +
                 (point.y - middle.x) * (point.y - middle.y);
+    }
+
+    enum Direction {
+        LEFT(-1, 0),
+        UP(0, 1),
+        RIGHT(1, 0),
+        DOWN(0, -1);
+
+        public final int dx;
+        public final int dy;
+
+        Direction(int dx, int dy) {
+            this.dx = dx;
+            this.dy = dy;
+        }
     }
 
     private static class Point {
