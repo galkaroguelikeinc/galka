@@ -1,11 +1,10 @@
 package ru.spb.hse.roguelike.controler;
 
-import ru.spb.hse.roguelike.model.map.GameCell;
-import ru.spb.hse.roguelike.model.object.alive.GameCharacter;
-import ru.spb.hse.roguelike.model.map.GameMapCellType;
 import ru.spb.hse.roguelike.model.GameModel;
+import ru.spb.hse.roguelike.model.object.alive.GameCharacter;
 import ru.spb.hse.roguelike.view.Command;
 import ru.spb.hse.roguelike.view.View;
+import ru.spb.hse.roguelike.view.ViewException;
 
 /**
  * Class to do the actions, which are supposed to be done according the game rules: moving character,
@@ -18,7 +17,8 @@ public class Controller {
 
     /**
      * Creates new controller.
-     * @param view view to show changes
+     *
+     * @param view      view to show changes
      * @param gameModel model to change
      */
     public Controller(View view, GameModel gameModel) {
@@ -30,61 +30,42 @@ public class Controller {
     /**
      * Runs the read commands until game ends.
      */
-    public void runGame() {
-        while(true) {
+    public void runGame() throws ViewException {
+        while (true) {
             Command command = view.readCommand();
+            if (command == null) {
+                continue;
+            }
             switch (command) {
                 case LEFT: {
-                    int newX = character.getXPos() - 1;
-                    int newY = character.getYPos();
-                    move(newX, newY);
-                    view.showChanges(newX + 1, newY);
-                    view.showChanges(newX, newY);
+                    handleMove(-1, 0);
                     break;
                 }
                 case RIGHT: {
-                    int newX = character.getXPos() + 1;
-                    int newY = character.getYPos();
-                    move(newX, newY);
-                    view.showChanges(newX - 1, newY);
-                    view.showChanges(newX, newY);
+                    handleMove(1, 0);
                     break;
                 }
                 case UP: {
-                    int newX = character.getXPos();
-                    int newY = character.getYPos() - 1;
-                    move(newX, newY);
-                    view.showChanges(newX, newY + 1);
-                    view.showChanges(newX, newY);
+                    handleMove(0, -1);
                     break;
                 }
                 case DOWN: {
-                    int newX = character.getXPos();
-                    int newY = character.getYPos() + 1;
-                    move(newX, newY);
-                    view.showChanges(newX, newY - 1);
-                    view.showChanges(newX, newY);
+                    handleMove(0, 1);
                     break;
                 }
             }
         }
     }
 
-    private void move(int newX, int newY) {
-        if (isFreeCell(newX, newY)) {
-            gameModel.getCell(character.getXPos(), character.getYPos()).removeAliveObject();
-            character.move(newX, newY);
-            gameModel.getCell(newX, newY).addAliveObject(character);
-            if (gameModel.getCell(newX, newY).hasItem()
-                    && gameModel.getInventory().size() != GameModel.getMaxInventorySize()){
-                gameModel.addInventory(gameModel.takeCellItem(newX, newY));
-            }
+    private void handleMove(int rowDiff, int colDiff) throws ViewException {
+        int oldRow = gameModel.getAliveObjectRow(character);
+        int oldCol = gameModel.getAliveObjectCol(character);
+        boolean moved = gameModel.moveAliveObjectDiff(character, rowDiff, colDiff);
+        if (moved) {
+            view.showChanges(oldRow, oldCol);
+            int newRow = gameModel.getAliveObjectRow(character);
+            int newCol = gameModel.getAliveObjectCol(character);
+            view.showChanges(newRow, newCol);
         }
-    }
-
-    private boolean isFreeCell(int x, int y) {
-        GameCell cell = gameModel.getCell(x, y);
-        return cell != null && (cell.getGameMapCellType().equals(GameMapCellType.ROOM)
-                || cell.getGameMapCellType().equals(GameMapCellType.TUNNEL));
     }
 }

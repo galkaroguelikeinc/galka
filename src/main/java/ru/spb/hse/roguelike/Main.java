@@ -6,6 +6,7 @@ import ru.spb.hse.roguelike.model.GameModel;
 import ru.spb.hse.roguelike.model.Generator;
 import ru.spb.hse.roguelike.view.TerminalView;
 import ru.spb.hse.roguelike.view.View;
+import ru.spb.hse.roguelike.view.ViewException;
 
 public class Main {
     public static void main(String[] args) {
@@ -16,6 +17,8 @@ public class Main {
             controller.runGame();
         } catch (MapGeneratorException e) {
             System.out.println("Map creation problems: " + e.getMessage());
+        } catch (ViewException e) {
+            System.out.println("Game graphics (view) problems. Please, restart the game.");
         }
     }
 }

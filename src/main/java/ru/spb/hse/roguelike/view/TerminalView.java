@@ -2,12 +2,12 @@ package ru.spb.hse.roguelike.view;
 
 import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TextCharacter;
+import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.screen.TerminalScreen;
 import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
-import com.googlecode.lanterna.input.*;
+import ru.spb.hse.roguelike.model.GameModel;
 import ru.spb.hse.roguelike.model.map.GameCell;
 import ru.spb.hse.roguelike.model.map.GameMapCellType;
-import ru.spb.hse.roguelike.model.GameModel;
 import ru.spb.hse.roguelike.model.object.alive.GameCharacter;
 
 import java.io.IOException;
@@ -23,30 +23,33 @@ import java.util.Map;
  * It uses Lanterna, the terminal type guess is also done by Lanterna.
  */
 public class TerminalView extends View {
-    private TerminalScreen terminalScreen = null;
     private static final char ROOM_SYMBOL = '.';
     private static final char EMPTY_SYMBOL = ' ';
     private static final char TUNNEL_SYMBOL = '#';
     private static final char GAME_CHARACTER_SYMBOL = '&';
+    private static Map<GameMapCellType, Character> CELL_TYPE_TO_SYMBOL = new HashMap<GameMapCellType, Character>() {{
+        put(GameMapCellType.ROOM, ROOM_SYMBOL);
+        put(GameMapCellType.EMPTY, EMPTY_SYMBOL);
+        put(GameMapCellType.TUNNEL, TUNNEL_SYMBOL);
+    }};
+    private TerminalScreen terminalScreen;
+    private GameModel gameModel;
 
-
-    public TerminalView(GameModel gameModel) {
-        super(gameModel);
+    /**
+     * Create a terminal view.
+     *
+     * @param gameModel stores game data which needs to be shown to user
+     */
+    public TerminalView(GameModel gameModel) throws ViewException {
+        this.gameModel = gameModel;
         DefaultTerminalFactory defaultTerminalFactory = new DefaultTerminalFactory();
         try {
             terminalScreen = new TerminalScreen(defaultTerminalFactory.createTerminal());
             terminalScreen.startScreen();
             terminalScreen.setCursorPosition(null);
         } catch (IOException e) {
-            System.out.println("Problems with the terminal window");
+            throw new ViewException();
         }
-        if (terminalScreen == null) {
-            System.err.println("Unexpected exception, couldn't create terminal." +
-                    "We are sorry! Please, restart the game.");
-            System.exit(1);
-            return;
-        }
-
         try {
             for (int row = 0; row < gameModel.getRows(); row++) {
                 for (int col = 0; col < gameModel.getCols(); col++) {
@@ -56,34 +59,25 @@ public class TerminalView extends View {
                 }
             }
         } catch (IOException e) {
-            e.printStackTrace();
-            System.err.println("Unexpected exception while redrawing terminal." +
-                    "We are sorry! Please, restart the game.");
+            throw new ViewException();
         }
     }
 
     private char cellToSymbol(GameCell gameCell) {
-        Map<GameMapCellType, Character> cellToSymbol = new HashMap<GameMapCellType, Character>() {{
-            put(GameMapCellType.ROOM, ROOM_SYMBOL);
-            put(GameMapCellType.EMPTY, EMPTY_SYMBOL);
-            put(GameMapCellType.TUNNEL, TUNNEL_SYMBOL);
-        }};
         if (gameCell.hasAliveObject() && gameCell.getAliveObject().getClass().equals(GameCharacter.class)) {
             return GAME_CHARACTER_SYMBOL;
         }
-        return cellToSymbol.get(gameCell.getGameMapCellType());
+        return CELL_TYPE_TO_SYMBOL.get(gameCell.getGameMapCellType());
     }
 
     @Override
-    public void showChanges(int row, int col) {
+    public void showChanges(int row, int col) throws ViewException {
         try {
             terminalScreen.setCharacter(new TerminalPosition(row, col),
-                            new TextCharacter(cellToSymbol(gameModel.getCell(row, col))));
+                    new TextCharacter(cellToSymbol(gameModel.getCell(row, col))));
             terminalScreen.refresh();
         } catch (IOException e) {
-            e.printStackTrace();
-            System.err.println("Unexpected exception while redrawing terminal." +
-                    "We are sorry! Please, restart the game.");
+            throw new ViewException();
         }
     }
 
