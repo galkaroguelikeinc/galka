@@ -16,9 +16,9 @@ public class GameCell {
     private AliveObject aliveObject;
     private Item cellItem;
 
-    public GameCell(@Nonnull final GameMapCellType gameMapCellType,
-                    @Nullable final AliveObject aliveObject,
-                    @Nullable final Item cellItem) {
+    public GameCell(@Nonnull GameMapCellType gameMapCellType,
+                    @Nullable AliveObject aliveObject,
+                    @Nullable Item cellItem) {
         this.gameMapCellType = gameMapCellType;
         this.aliveObject = aliveObject;
         this.cellItem = cellItem;

@@ -7,14 +7,7 @@ import ru.spb.hse.roguelike.model.object.alive.GameCharacter;
 import ru.spb.hse.roguelike.model.object.items.Item;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Random;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 
 /**
  * Class to generate game model pieces: rooms, inventory, character and mobs.
@@ -24,20 +17,22 @@ public class Generator {
     private static final int MIN_ROOM_WIDTH = 1;
     private static final int MAX_ROOM_HEIGHT = 5;
     private static final int MAX_ROOM_WIDTH = 5;
-    private static int INDENT = 0;
+    private static final int INDENT = 0;
+    private static final int MAX_FAILED_CREATING_ROOM_ATTEMPT_COUNT = 10;
     private static final int MAX_REGENERATION_COUNT = 1000;
     private static final Random RANDOM = new Random();
-
 
     public static GameModel generateModel(int roomCount,
                                           int width,
                                           int height) throws MapGeneratorException {
         List<Room> rooms = generateRooms(roomCount, width, height);
-        final GameCell[][] map = generateMap(rooms, width, height);
-        int characterRoom = RANDOM.nextInt(roomCount);
-        GameCharacter character = generateCharacter(rooms.get(characterRoom));
-        map[character.getXPos()][character.getYPos()].addAliveObject(character);
-        final List<Item> inventories = generateInventories();
+        GameCell[][] map = generateMap(rooms, width, height);
+        Room characterRoom = rooms.get(RANDOM.nextInt(roomCount));
+        GameCharacter character = generateCharacter();
+        int row = characterRoom.x + RANDOM.nextInt(characterRoom.w);
+        int col = characterRoom.y + RANDOM.nextInt(characterRoom.h);
+        map[row][col].addAliveObject(character);
+        List<Item> inventories = generateInventories();
         return new GameModel(map, inventories, character);
     }
 
@@ -45,23 +40,23 @@ public class Generator {
                                             int width,
                                             int height) throws MapGeneratorException {
 
-        final List<Room> rooms = new ArrayList<>();
+        List<Room> rooms = new ArrayList<>();
         int failedCreatingRoomAttemptCount = 0;
         int regenerationCount = 0;
         while (rooms.size() < roomCount) {
-            final int roomWidth = MIN_ROOM_WIDTH + RANDOM.nextInt(MAX_ROOM_WIDTH - MIN_ROOM_WIDTH + 1);
-            final int roomHeight = MIN_ROOM_HEIGHT + RANDOM.nextInt(MAX_ROOM_HEIGHT - MIN_ROOM_HEIGHT + 1);
-            final int roomX = INDENT + RANDOM.nextInt(width - roomWidth - 2 * INDENT + 1);
-            final int roomY = INDENT + RANDOM.nextInt(height - roomHeight - 2 * INDENT + 1);
-            final Room curRoom = new Room(roomX, roomY, roomWidth, roomHeight);
-            final boolean ok = rooms.parallelStream().noneMatch(room -> room.intersect(curRoom, 2));
+            int roomWidth = MIN_ROOM_WIDTH + RANDOM.nextInt(MAX_ROOM_WIDTH - MIN_ROOM_WIDTH + 1);
+            int roomHeight = MIN_ROOM_HEIGHT + RANDOM.nextInt(MAX_ROOM_HEIGHT - MIN_ROOM_HEIGHT + 1);
+            int roomX = INDENT + RANDOM.nextInt(width - roomWidth - 2 * INDENT + 1);
+            int roomY = INDENT + RANDOM.nextInt(height - roomHeight - 2 * INDENT + 1);
+            Room curRoom = new Room(roomX, roomY, roomWidth, roomHeight);
+            boolean ok = rooms.parallelStream().noneMatch(room -> room.intersect(curRoom, 2));
             if (ok) {
                 rooms.add(curRoom);
                 failedCreatingRoomAttemptCount = 0;
             } else {
                 failedCreatingRoomAttemptCount++;
             }
-            if (failedCreatingRoomAttemptCount > 10 && regenerationCount < MAX_REGENERATION_COUNT) {
+            if (failedCreatingRoomAttemptCount > MAX_FAILED_CREATING_ROOM_ATTEMPT_COUNT) {
                 failedCreatingRoomAttemptCount = 0;
                 regenerationCount++;
                 rooms.clear();
@@ -76,7 +71,7 @@ public class Generator {
     private static GameCell[][] generateMap(List<Room> rooms,
                                             int width,
                                             int height) throws MapGeneratorException {
-        final GameCell[][] data = new GameCell[width][height];
+        GameCell[][] data = new GameCell[width][height];
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
                 data[x][y] = new GameCell(GameMapCellType.EMPTY, null, null);
@@ -90,10 +85,8 @@ public class Generator {
         return data;
     }
 
-    private static GameCharacter generateCharacter(Room room) {
-        int x = room.x + RANDOM.nextInt(room.w);
-        int y = room.y + RANDOM.nextInt(room.h);
-        return new GameCharacter(x, y);
+    private static GameCharacter generateCharacter() {
+        return new GameCharacter();
     }
 
     public static void generateMobsIfNeeded() {
@@ -107,7 +100,7 @@ public class Generator {
 
     private static void markRooms(int width,
                                   int height,
-                                  @Nonnull final List<Room> rooms,
+                                  @Nonnull List<Room> rooms,
                                   @Nonnull GameCell[][] data) {
         rooms.parallelStream().forEach(room -> {
             for (int x = 0; x < room.w; x++) {
@@ -123,33 +116,24 @@ public class Generator {
     }
 
 
-    private static void createPath(@Nonnull final Room startRoom,
-                                   @Nonnull final Room finishRoom,
-                                   final int width,
-                                   final int height,
+    private static void createPath(@Nonnull Room startRoom,
+                                   @Nonnull Room finishRoom,
+                                   int width,
+                                   int height,
                                    @Nonnull GameCell[][] data) throws MapGeneratorException {
-
-        final Point startPoint = getMiddleOfRoom(startRoom);
+        Point startPoint = startRoom.getMiddle();
         Point curPoint = new Point(startPoint.x, startPoint.y);
-        final Set<Point> visit = new HashSet<>();
-        final TreeSet<Point> active = new TreeSet<>((o1, o2) -> {
-            int cost1 = cost(o1, finishRoom);
-            int cost2 = cost(o2, finishRoom);
-            if (cost1 != cost2) {
-                return cost1 - cost2;
-            }
-            if (o1.x != o2.x) {
-                return o1.x - o2.x;
-            }
-            return o1.y - o2.y;
-        });
-        final int[][] directions = {{1, 0}, {0, 1}, {-1, 0}, {0, -1}};
-        final HashMap<Point, Point> parent = new HashMap<>();
-        while (!isPointInsideRoom(curPoint, finishRoom)) {
+        Set<Point> visit = new HashSet<>();
+        final TreeSet<Point> active = new TreeSet<>(
+                Comparator.<Point>comparingInt(p -> cost(p, finishRoom))
+                        .thenComparingInt(p -> p.x)
+                        .thenComparingInt(p -> p.y));
+        int[][] directions = {{1, 0}, {0, 1}, {-1, 0}, {0, -1}};
+        HashMap<Point, Point> parent = new HashMap<>();
+        while (!finishRoom.isPointInside(curPoint)) {
             visit.add(curPoint);
-
             for (int i = 0; i < 4; i++) {
-                final Point p = new Point(curPoint.x + directions[i][0],
+                Point p = new Point(curPoint.x + directions[i][0],
                         curPoint.y + directions[i][1]);
                 if (!visit.contains(p)
                         && p.x > 0
@@ -167,14 +151,12 @@ public class Generator {
             active.remove(curPoint);
         }
         markPath(data, startPoint, curPoint, parent);
-
-
     }
 
     private static void markPath(@Nonnull GameCell[][] data,
-                                 @Nonnull final Point start,
-                                 @Nonnull final Point finish,
-                                 @Nonnull final HashMap<Point, Point> parent) {
+                                 @Nonnull Point start,
+                                 @Nonnull Point finish,
+                                 @Nonnull HashMap<Point, Point> parent) {
         Point curPoint = new Point(finish.x, finish.y);
         while (!curPoint.equals(start)) {
             if (data[curPoint.x][curPoint.y].getGameMapCellType() == GameMapCellType.EMPTY) {
@@ -184,38 +166,16 @@ public class Generator {
         }
     }
 
-    private static boolean isPointInsideRoom(@Nonnull final Point point,
-                                             @Nonnull final Room room) {
-        if (point.x < room.x) {
-            return false;
-        }
-
-        if (point.y < room.y) {
-            return false;
-        }
-
-        if (point.x > room.x + room.w) {
-            return false;
-        }
-
-        return point.y <= room.y + room.h;
-    }
-
-    private static int cost(@Nonnull final Point point,
-                            @Nonnull final Room room) {
-        final Point middle = getMiddleOfRoom(room);
+    private static int cost(@Nonnull Point point,
+                            @Nonnull Room room) {
+        Point middle = room.getMiddle();
         return (point.x - middle.x) * (point.x - middle.x) +
                 (point.y - middle.x) * (point.y - middle.y);
     }
 
-    private static Point getMiddleOfRoom(@Nonnull final Room room) {
-        return new Point(room.x + room.w / 2,
-                room.y + room.w / 2);
-    }
-
     private static class Point {
-        private final int x;
-        private final int y;
+        private int x;
+        private int y;
 
         private Point(int x, int y) {
             this.x = x;
@@ -238,10 +198,10 @@ public class Generator {
     }
 
     private static class Room {
-        private final int x;
-        private final int y;
-        private final int w;
-        private final int h;
+        private int x;
+        private int y;
+        private int w;
+        private int h;
 
 
         private Room(int x,
@@ -254,7 +214,27 @@ public class Generator {
             this.h = h;
         }
 
-        private boolean intersect(final Room r,
+        private boolean isPointInside(@Nonnull Point point) {
+            if (point.x < x) {
+                return false;
+            }
+
+            if (point.y < y) {
+                return false;
+            }
+
+            if (point.x > x + w) {
+                return false;
+            }
+
+            return point.y <= y + h;
+        }
+
+        private Point getMiddle() {
+            return new Point(x + w / 2, y + w / 2);
+        }
+
+        private boolean intersect(Room r,
                                   int indent) {
             return !(r.x >= (x + w) + indent ||
                     x >= (r.x + r.w) + indent ||
