@@ -116,11 +116,12 @@ public class GameModel {
         return moveAliveObject(aliveObject, row + rowDiff, col + colDiff);
     }
 
-    public boolean moveAliveObject(AliveObject aliveObject, int newRow, int newCol) {
+    private boolean moveAliveObject(AliveObject aliveObject, int newRow, int newCol) {
         if (!aliveObjectToRow.containsKey(aliveObject) ||
                 newRow < 0 || newRow >= gameMap.length ||
                 newCol < 0 || newCol >= gameMap[newRow].length ||
-                gameMap[newRow][newCol].getGameMapCellType() == EMPTY) {
+                gameMap[newRow][newCol].getGameMapCellType() == EMPTY ||
+                gameMap[newRow][newCol].hasAliveObject()) {
             return false;
         }
 
@@ -131,10 +132,6 @@ public class GameModel {
         gameMap[newRow][newCol].addAliveObject(aliveObject);
         aliveObjectToRow.put(aliveObject, newRow);
         aliveObjectToCol.put(aliveObject, newCol);
-        if (gameMap[newRow][newCol].hasItem() &&
-                getInventory().size() != getMaxInventorySize()) {
-            addItem(takeCellItem(newRow, newCol));
-        }
         return true;
     }
 }

@@ -23,6 +23,10 @@ public abstract class AliveObject {
         power.change(x);
     }
 
+    public int getPower() {
+        //return power.;
+    }
+
     public void changeMaxPower(int x) {
         power.changeMax(x);
     }
