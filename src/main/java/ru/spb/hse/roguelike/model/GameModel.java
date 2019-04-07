@@ -45,10 +45,6 @@ public class GameModel {
         saveAliveObjectCoordinates();
     }
 
-    public void generateMobsIfNeeded() {
-
-    }
-
     public GameCharacter getCharacter() {
         return gameCharacter;
     }
@@ -116,7 +112,7 @@ public class GameModel {
         return moveAliveObject(aliveObject, row + rowDiff, col + colDiff);
     }
 
-    private boolean moveAliveObject(AliveObject aliveObject, int newRow, int newCol) {
+    public boolean moveAliveObject(AliveObject aliveObject, int newRow, int newCol) {
         if (!aliveObjectToRow.containsKey(aliveObject) ||
                 newRow < 0 || newRow >= gameMap.length ||
                 newCol < 0 || newCol >= gameMap[newRow].length ||

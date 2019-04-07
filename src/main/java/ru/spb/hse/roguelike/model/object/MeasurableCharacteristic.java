@@ -30,4 +30,8 @@ public class MeasurableCharacteristic {
     public void changeMax(int x) {
         max = x;
     }
+
+    public int getCurentValue() {
+        return current;
+    }
 }

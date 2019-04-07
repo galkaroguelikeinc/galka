@@ -6,18 +6,22 @@ import ru.spb.hse.roguelike.model.object.MeasurableCharacteristic;
  * Represents the game character (a character, that can be moved by player and use items)
  */
 public class GameCharacter extends AliveObject {
-    private MeasurableCharacteristic food_fullness;
+    private MeasurableCharacteristic foodFullness;
 
     public GameCharacter() {
-        food_fullness = new MeasurableCharacteristic(10);
+        foodFullness = new MeasurableCharacteristic(10);
         changeMaxHealth(10);
     }
 
     public void changeFoodFullness(int x) {
-        food_fullness.change(x);
+        foodFullness.change(x);
     }
 
-    public void changeMaxHunger(int x) {
-        food_fullness.changeMax(x);
+    public void changeMaxFoodFullness(int x) {
+        foodFullness.changeMax(x);
+    }
+
+    public int getFoodFullness() {
+        return foodFullness.getCurentValue();
     }
 }

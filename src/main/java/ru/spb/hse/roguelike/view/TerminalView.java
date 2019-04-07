@@ -53,7 +53,7 @@ public class TerminalView extends View {
         try {
             for (int row = 0; row < gameModel.getRows(); row++) {
                 for (int col = 0; col < gameModel.getCols(); col++) {
-                    terminalScreen.setCharacter(new TerminalPosition(row, col),
+                    terminalScreen.setCharacter(new TerminalPosition(col, row),
                             new TextCharacter(cellToSymbol(gameModel.getCell(row, col))));
                     terminalScreen.refresh();
                 }
@@ -73,7 +73,7 @@ public class TerminalView extends View {
     @Override
     public void showChanges(int row, int col) throws ViewException {
         try {
-            terminalScreen.setCharacter(new TerminalPosition(row, col),
+            terminalScreen.setCharacter(new TerminalPosition(col, row),
                     new TextCharacter(cellToSymbol(gameModel.getCell(row, col))));
             terminalScreen.refresh();
         } catch (IOException e) {

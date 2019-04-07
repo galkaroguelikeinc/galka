@@ -31,4 +31,8 @@ public abstract class Item {
     boolean isEmpty() {
         return itemNumber <= 0;
     }
+
+    public int getItemNumber() {
+        return itemNumber;
+    }
 }

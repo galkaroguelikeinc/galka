@@ -1,4 +1,4 @@
-package ru.spb.hse.roguelike.exceptions;
+package ru.spb.hse.roguelike.model;
 
 /**
  * Thrown if problems with map generator: wrong sizes etc.

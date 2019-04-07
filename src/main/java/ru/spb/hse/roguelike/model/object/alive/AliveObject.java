@@ -24,7 +24,11 @@ public abstract class AliveObject {
     }
 
     public int getPower() {
-        //return power.;
+        return power.getCurentValue();
+    }
+
+    public int getHealth() {
+        return power.getCurentValue();
     }
 
     public void changeMaxPower(int x) {
