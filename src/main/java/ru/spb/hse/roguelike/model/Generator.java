@@ -6,38 +6,104 @@ import ru.spb.hse.roguelike.model.object.alive.GameCharacter;
 import ru.spb.hse.roguelike.model.object.items.Item;
 
 import javax.annotation.Nonnull;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.util.*;
+import java.util.function.Function;
 
 /**
  * Class to generate game model pieces: rooms, inventory, character and mobs.
  */
 public class Generator {
-    private static final int MIN_ROOM_HEIGHT = 1;
-    private static final int MIN_ROOM_WIDTH = 1;
-    private static final int MAX_ROOM_HEIGHT = 5;
-    private static final int MAX_ROOM_WIDTH = 5;
-    private static final int INDENT = 0;
-    private static final int MAX_FAILED_CREATING_ROOM_ATTEMPT_COUNT = 10;
-    private static final int MAX_REGENERATION_COUNT = 1000;
+    private final int MIN_ROOM_HEIGHT = 3;
+    private final int MIN_ROOM_WIDTH = 3;
+    private final int MAX_ROOM_HEIGHT = 7;
+    private final int MAX_ROOM_WIDTH = 7;
+    private final int INDENT = 0;
+    private final int MAX_FAILED_CREATING_ROOM_ATTEMPT_COUNT = 10;
+    private final int MAX_REGENERATION_COUNT = 1000;
+    private static final char ROOM_SYMBOL = '.';
+    private static final char EMPTY_SYMBOL = ' ';
+    private static final char TUNNEL_SYMBOL = '#';
     private static final Random RANDOM = new Random();
 
-    public static GameModel generateModel(int roomCount,
-                                          int width,
-                                          int height) throws MapGeneratorException {
+    public GameModel generateModel(int roomCount,
+                                   int width,
+                                   int height) throws MapGeneratorException {
         List<Room> rooms = generateRooms(roomCount, width, height);
         GameCell[][] map = generateMap(rooms, width, height);
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
+                if (map[i][j].getGameMapCellType() == GameMapCellType.TUNNEL) {
+                    System.out.print("#");
+                }
+                if (map[i][j].getGameMapCellType() == GameMapCellType.EMPTY) {
+                    System.out.print(" ");
+                }
+                if (map[i][j].getGameMapCellType() == GameMapCellType.ROOM) {
+                    System.out.print(".");
+                }
+            }
+            System.out.println();
+
+        }
         Room characterRoom = rooms.get(RANDOM.nextInt(roomCount));
-        GameCharacter character = generateCharacter();
-        int row = characterRoom.x + RANDOM.nextInt(characterRoom.w);
-        int col = characterRoom.y + RANDOM.nextInt(characterRoom.h);
-        map[row][col].addAliveObject(character);
+        GameCharacter gameCharacter = generateCharacter(map,
+                characterRoom.row + RANDOM.nextInt(characterRoom.height),
+                characterRoom.col + RANDOM.nextInt(characterRoom.width));
         List<Item> inventories = generateInventories();
-        return new GameModel(map, inventories, character);
+        return new GameModel(map, inventories, gameCharacter);
     }
 
-    private static List<Room> generateRooms(int roomCount,
-                                            int width,
-                                            int height) throws MapGeneratorException {
+    public GameModel generateModel(String fileName,
+                                   Function<Character, GameMapCellType> decoder) throws FileNotFoundException, MapGeneratorException {
+        Scanner scanner = new Scanner(new FileInputStream(fileName));
+        List<String> lines = new ArrayList<>();
+        while (scanner.hasNextLine()) {
+            lines.add(scanner.nextLine());
+        }
+        if (!isValidModel(lines, decoder)) {
+            throw new MapGeneratorException("Invalid model from file " + fileName);
+        }
+        int width = lines.get(0).length();
+        int height = lines.size();
+        GameCell[][] map = new GameCell[height][width];
+        List<Point> roomsPoint = new ArrayList<>();
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
+                map[i][j] = new GameCell(decoder.apply(lines.get(i).charAt(j)), null, null);
+                if (decoder.apply(lines.get(i).charAt(j)) == GameMapCellType.ROOM) {
+                    roomsPoint.add(new Point(i, j));
+                }
+            }
+        }
+        Point pointForGameCharacter = roomsPoint.get(RANDOM.nextInt(roomsPoint.size()));
+        GameCharacter gameCharacter = generateCharacter(map,
+                pointForGameCharacter.row,
+                pointForGameCharacter.col);
+        List<Item> inventories = generateInventories();
+        return new GameModel(map, inventories, gameCharacter);
+
+    }
+
+    private boolean isValidModel(List<String> lines,
+                                 Function<Character, GameMapCellType> decoder) {
+        if (lines == null || lines.size() == 0) {
+            return false;
+        }
+        int width = lines.get(0).length();
+        for (String line : lines) {
+            if (line.length() != width) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private List<Room> generateRooms(int roomCount,
+                                     int width,
+                                     int height) throws MapGeneratorException {
 
         List<Room> rooms = new ArrayList<>();
         int failedCreatingRoomAttemptCount = 0;
@@ -45,9 +111,9 @@ public class Generator {
         while (rooms.size() < roomCount) {
             int roomWidth = MIN_ROOM_WIDTH + RANDOM.nextInt(MAX_ROOM_WIDTH - MIN_ROOM_WIDTH + 1);
             int roomHeight = MIN_ROOM_HEIGHT + RANDOM.nextInt(MAX_ROOM_HEIGHT - MIN_ROOM_HEIGHT + 1);
-            int roomX = INDENT + RANDOM.nextInt(width - roomWidth - 2 * INDENT + 1);
-            int roomY = INDENT + RANDOM.nextInt(height - roomHeight - 2 * INDENT + 1);
-            Room curRoom = new Room(roomX, roomY, roomWidth, roomHeight);
+            int roomCol = INDENT + RANDOM.nextInt(width - roomWidth - 2 * INDENT + 1);
+            int roomRow = INDENT + RANDOM.nextInt(height - roomHeight - 2 * INDENT + 1);
+            Room curRoom = new Room(roomRow, roomCol, roomWidth, roomHeight);
             boolean ok = rooms.parallelStream().noneMatch(room -> room.intersect(curRoom, 2));
             if (ok) {
                 rooms.add(curRoom);
@@ -67,13 +133,21 @@ public class Generator {
         return rooms;
     }
 
-    private static GameCell[][] generateMap(List<Room> rooms,
-                                            int width,
-                                            int height) throws MapGeneratorException {
-        GameCell[][] data = new GameCell[width][height];
-        for (int x = 0; x < width; x++) {
-            for (int y = 0; y < height; y++) {
-                data[x][y] = new GameCell(GameMapCellType.EMPTY, null, null);
+    private GameCharacter generateCharacter(GameCell[][] map,
+                                            int row,
+                                            int col) {
+        GameCharacter character = generateCharacter();
+        map[row][col].addAliveObject(character);
+        return character;
+    }
+
+    private GameCell[][] generateMap(List<Room> rooms,
+                                     int width,
+                                     int height) throws MapGeneratorException {
+        GameCell[][] data = new GameCell[height][width];
+        for (int row = 0; row < height; row++) {
+            for (int col = 0; col < width; col++) {
+                data[row][col] = new GameCell(GameMapCellType.EMPTY, null, null);
             }
         }
         markRooms(width, height, rooms, data);
@@ -84,57 +158,57 @@ public class Generator {
         return data;
     }
 
-    private static GameCharacter generateCharacter() {
+    private GameCharacter generateCharacter() {
         return new GameCharacter();
     }
 
-    public static void generateMobsIfNeeded() {
+    public void generateMobsIfNeeded() {
 
     }
 
-    private static List<Item> generateInventories() {
+    private List<Item> generateInventories() {
         return new ArrayList<>();
     }
 
-    private static void markRooms(int width,
-                                  int height,
-                                  @Nonnull List<Room> rooms,
-                                  @Nonnull GameCell[][] data) {
+    private void markRooms(int width,
+                           int height,
+                           @Nonnull List<Room> rooms,
+                           @Nonnull GameCell[][] data) {
         rooms.parallelStream().forEach(room -> {
-            for (int x = 0; x < room.w; x++) {
-                for (int y = 0; y < room.h; y++) {
-                    if (room.x + x < width
-                            && room.y + y < height
-                            && data[room.x + x][room.y + y].getGameMapCellType() == GameMapCellType.EMPTY) {
-                        data[room.x + x][room.y + y].setGameMapCellType(GameMapCellType.ROOM);
+            for (int row = 0; row < room.height; row++) {
+                for (int col = 0; col < room.width; col++) {
+                    if (room.row + row < height
+                            && room.col + col < width
+                            && data[room.row + row][room.col + col].getGameMapCellType() == GameMapCellType.EMPTY) {
+                        data[room.row + row][room.col + col].setGameMapCellType(GameMapCellType.ROOM);
                     }
                 }
             }
         });
     }
 
-    private static void createPath(@Nonnull Room startRoom,
-                                   @Nonnull Room finishRoom,
-                                   int width,
-                                   int height,
-                                   @Nonnull GameCell[][] data) throws MapGeneratorException {
+    private void createPath(@Nonnull Room startRoom,
+                            @Nonnull Room finishRoom,
+                            int width,
+                            int height,
+                            @Nonnull GameCell[][] data) throws MapGeneratorException {
         Point startPoint = startRoom.getMiddle();
-        Point curPoint = new Point(startPoint.x, startPoint.y);
+        Point curPoint = new Point(startPoint.row, startPoint.col);
         Set<Point> visit = new HashSet<>();
         final TreeSet<Point> active = new TreeSet<>(
                 Comparator.<Point>comparingInt(p -> cost(p, finishRoom))
-                        .thenComparingInt(p -> p.x)
-                        .thenComparingInt(p -> p.y));
+                        .thenComparingInt(p -> p.row)
+                        .thenComparingInt(p -> p.col));
         HashMap<Point, Point> parent = new HashMap<>();
         while (!finishRoom.isPointInside(curPoint)) {
             visit.add(curPoint);
             for (Direction d : Direction.values()) {
-                Point p = new Point(curPoint.x + d.dx, curPoint.y + d.dy);
+                Point p = new Point(curPoint.row + d.dx, curPoint.col + d.dy);
                 if (!visit.contains(p)
-                        && p.x > 0
-                        && p.x < width
-                        && p.y > 0
-                        && p.y < height) {
+                        && p.row > 0
+                        && p.row < width
+                        && p.col > 0
+                        && p.col < height) {
                     active.add(p);
                     parent.put(p, curPoint);
                 }
@@ -148,24 +222,24 @@ public class Generator {
         markPath(data, startPoint, curPoint, parent);
     }
 
-    private static void markPath(@Nonnull GameCell[][] data,
-                                 @Nonnull Point start,
-                                 @Nonnull Point finish,
-                                 @Nonnull HashMap<Point, Point> parent) {
-        Point curPoint = new Point(finish.x, finish.y);
+    private void markPath(@Nonnull GameCell[][] data,
+                          @Nonnull Point start,
+                          @Nonnull Point finish,
+                          @Nonnull HashMap<Point, Point> parent) {
+        Point curPoint = new Point(finish.row, finish.col);
         while (!curPoint.equals(start)) {
-            if (data[curPoint.x][curPoint.y].getGameMapCellType() == GameMapCellType.EMPTY) {
-                data[curPoint.x][curPoint.y].setGameMapCellType(GameMapCellType.TUNNEL);
+            if (data[curPoint.row][curPoint.col].getGameMapCellType() == GameMapCellType.EMPTY) {
+                data[curPoint.row][curPoint.col].setGameMapCellType(GameMapCellType.TUNNEL);
             }
             curPoint = parent.get(curPoint);
         }
     }
 
-    private static int cost(@Nonnull Point point,
-                            @Nonnull Room room) {
+    private int cost(@Nonnull Point point,
+                     @Nonnull Room room) {
         Point middle = room.getMiddle();
-        return (point.x - middle.x) * (point.x - middle.x) +
-                (point.y - middle.x) * (point.y - middle.y);
+        return (point.row - middle.row) * (point.row - middle.row) +
+                (point.col - middle.col) * (point.col - middle.col);
     }
 
     enum Direction {
@@ -183,19 +257,19 @@ public class Generator {
         }
     }
 
-    private static class Point {
-        private int x;
-        private int y;
+    private class Point {
+        private int row;
+        private int col;
 
-        private Point(int x, int y) {
-            this.x = x;
-            this.y = y;
+        private Point(int row, int col) {
+            this.row = row;
+            this.col = col;
 
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(x, y);
+            return Objects.hash(row, col);
         }
 
         @Override
@@ -203,53 +277,53 @@ public class Generator {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
             Point that = (Point) o;
-            return x == that.x && y == that.y;
+            return row == that.row && col == that.col;
         }
     }
 
-    private static class Room {
-        private int x;
-        private int y;
-        private int w;
-        private int h;
+    private class Room {
+        private int row;
+        private int col;
+        private int width;
+        private int height;
 
 
-        private Room(int x,
-                     int y,
-                     int w,
-                     int h) {
-            this.x = x;
-            this.y = y;
-            this.w = w;
-            this.h = h;
+        private Room(int row,
+                     int col,
+                     int width,
+                     int height) {
+            this.row = row;
+            this.col = col;
+            this.width = width;
+            this.height = height;
         }
 
         private boolean isPointInside(@Nonnull Point point) {
-            if (point.x < x) {
+            if (point.row < row) {
                 return false;
             }
 
-            if (point.y < y) {
+            if (point.col < col) {
                 return false;
             }
 
-            if (point.x > x + w) {
+            if (point.row > row + width) {
                 return false;
             }
 
-            return point.y <= y + h;
+            return point.col <= col + height;
         }
 
         private Point getMiddle() {
-            return new Point(x + w / 2, y + w / 2);
+            return new Point(row + width / 2, col + height / 2);
         }
 
         private boolean intersect(Room r,
                                   int indent) {
-            return !(r.x >= (x + w) + indent ||
-                    x >= (r.x + r.w) + indent ||
-                    r.y >= (y + h) + indent
-                    || y >= (r.y + r.h) + indent);
+            return !(r.row >= (row + width) + indent ||
+                    row >= (r.row + r.width) + indent ||
+                    r.col >= (col + height) + indent
+                    || col >= (r.col + r.height) + indent);
         }
 
         @Override
@@ -257,15 +331,15 @@ public class Generator {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
             Room that = (Room) o;
-            return x == that.x
-                    && y == that.y
-                    && w == that.w
-                    && h == that.h;
+            return row == that.row
+                    && col == that.col
+                    && width == that.width
+                    && height == that.height;
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(x, y, h, w);
+            return Objects.hash(row, col, height, width);
         }
     }
 
