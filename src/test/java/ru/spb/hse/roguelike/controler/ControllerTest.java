@@ -16,11 +16,9 @@ import static org.junit.Assert.*;
  */
 public class ControllerTest {
 
-    final Generator generator = new Generator();
-
     @Test
     public void moveLeftTest() throws MapGeneratorException, ViewException {
-        GameModel gameModel = generator.generateModel(1, 5, 5);
+        GameModel gameModel = new Generator().generateModel(1, 7, 7);
         gameModel.getCell(0, 3).setGameMapCellType(GameMapCellType.ROOM);
         gameModel.getCell(0, 2).setGameMapCellType(GameMapCellType.ROOM);
         gameModel.moveAliveObject(gameModel.getCharacter(), 0, 3);

@@ -1,7 +1,6 @@
 package ru.spb.hse.roguelike.model;
 
 import org.junit.Test;
-import ru.spb.hse.roguelike.model.map.GameCell;
 import ru.spb.hse.roguelike.model.map.GameMapCellType;
 
 import java.io.FileNotFoundException;
@@ -9,6 +8,9 @@ import java.util.function.Function;
 
 import static org.junit.Assert.*;
 
+/**
+ * Tests generating the map from file and randomly.
+ */
 public class GeneratorTest {
     private final Generator generator = new Generator();
 

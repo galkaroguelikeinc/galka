@@ -32,21 +32,6 @@ public class Generator {
                                    int height) throws MapGeneratorException {
         List<Room> rooms = generateRooms(roomCount, width, height);
         GameCell[][] map = generateMap(rooms, width, height);
-        for (int i = 0; i < height; i++) {
-            for (int j = 0; j < width; j++) {
-                if (map[i][j].getGameMapCellType() == GameMapCellType.TUNNEL) {
-                    System.out.print("#");
-                }
-                if (map[i][j].getGameMapCellType() == GameMapCellType.EMPTY) {
-                    System.out.print(" ");
-                }
-                if (map[i][j].getGameMapCellType() == GameMapCellType.ROOM) {
-                    System.out.print(".");
-                }
-            }
-            System.out.println();
-
-        }
         Room characterRoom = rooms.get(RANDOM.nextInt(roomCount));
         GameCharacter gameCharacter = generateCharacter(map,
                 characterRoom.row + RANDOM.nextInt(characterRoom.height),
