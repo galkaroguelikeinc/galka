@@ -37,14 +37,14 @@ public class Generator {
         return new GameModel(map, inventories, gameCharacter);
     }
 
-    public GameModel generateModel(String fileName,
-                                   Function<Character, GameMapCellType> decoder) throws FileNotFoundException, MapGeneratorException {
+    GameModel generateModel(String fileName,
+                            Function<Character, GameMapCellType> decoder) throws FileNotFoundException, MapGeneratorException {
         Scanner scanner = new Scanner(new FileInputStream(fileName));
         List<String> lines = new ArrayList<>();
         while (scanner.hasNextLine()) {
             lines.add(scanner.nextLine());
         }
-        if (!isValidModel(lines, decoder)) {
+        if (!isValidModel(lines)) {
             throw new MapGeneratorException("Invalid model from file " + fileName);
         }
         int width = lines.get(0).length();
@@ -68,8 +68,7 @@ public class Generator {
 
     }
 
-    private boolean isValidModel(List<String> lines,
-                                 Function<Character, GameMapCellType> decoder) {
+    private boolean isValidModel(List<String> lines) {
         if (lines == null || lines.size() == 0) {
             return false;
         }
@@ -136,7 +135,6 @@ public class Generator {
         for (int i = 0; i < rooms.size() - 1; i++) {
             createPath(rooms.get(i), rooms.get(i + 1), width, height, data);
         }
-        //markWall(data);
         return data;
     }
 
