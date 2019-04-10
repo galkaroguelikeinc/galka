@@ -22,9 +22,6 @@ public class Generator {
     private final int INDENT = 0;
     private final int MAX_FAILED_CREATING_ROOM_ATTEMPT_COUNT = 10;
     private final int MAX_REGENERATION_COUNT = 1000;
-    private static final char ROOM_SYMBOL = '.';
-    private static final char EMPTY_SYMBOL = ' ';
-    private static final char TUNNEL_SYMBOL = '#';
     private static final Random RANDOM = new Random();
 
     public GameModel generateModel(int roomCount,
