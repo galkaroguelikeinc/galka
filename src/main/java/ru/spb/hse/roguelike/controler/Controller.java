@@ -63,8 +63,8 @@ public class Controller {
                             new Point(gameModel.getAliveObjectRow(mob), gameModel.getAliveObjectCol(mob)));
                     break;
             }
-            int oldRow = gameModel.getAliveObjectCol(mob);
-            int oldCol = gameModel.getAliveObjectRow(mob);
+            int oldRow = gameModel.getAliveObjectRow(mob);
+            int oldCol = gameModel.getAliveObjectCol(mob);
             gameModel.moveAliveObject(mob, point.getRow(), point.getCol());
             view.showChanges(oldRow, oldCol);
             view.showChanges(point.getRow(), point.getCol());

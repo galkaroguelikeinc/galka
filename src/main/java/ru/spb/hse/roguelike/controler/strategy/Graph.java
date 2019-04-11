@@ -1,6 +1,8 @@
 package ru.spb.hse.roguelike.controler.strategy;
 
 import ru.spb.hse.roguelike.model.GameModel;
+
+import ru.spb.hse.roguelike.model.map.Direction;
 import ru.spb.hse.roguelike.model.map.Point;
 
 import javax.annotation.Nonnull;
@@ -26,17 +28,16 @@ public class Graph {
             for (int col = 0; col < gameModel.getCols(); col++) {
                 Point curPoint = new Point(row, col);
                 adjacencyList.put(curPoint, new ArrayList<>());
-                if (row > 0 && gameModel.getCell(row - 1, col).getGameMapCellType() != EMPTY) {
-                    adjacencyList.get(curPoint).add(new Point(row - 1, col));
-                }
-                if (row < gameModel.getRows() - 1 && gameModel.getCell(row + 1, col).getGameMapCellType() != EMPTY) {
-                    adjacencyList.get(curPoint).add(new Point(row + 1, col));
-                }
-                if (col > 0 && gameModel.getCell(row, col - 1).getGameMapCellType() != EMPTY) {
-                    adjacencyList.get(curPoint).add(new Point(row, col - 1));
-                }
-                if (col < gameModel.getCols() - 1 && gameModel.getCell(row, col + 1).getGameMapCellType() != EMPTY) {
-                    adjacencyList.get(curPoint).add(new Point(row, col + 1));
+                for (Direction direction : Direction.values()) {
+                    if (row + direction.dx >= 0 &&
+                            row + direction.dx < gameModel.getRows() &&
+                            col + direction.dy >= 0 &&
+                            col + direction.dy < gameModel.getCols() &&
+                            gameModel.getCell(row + direction.dx, col + direction.dy)
+                                    .getGameMapCellType() != EMPTY) {
+                        adjacencyList.get(curPoint).add(new Point(row + direction.dx,
+                                col + direction.dy));
+                    }
                 }
             }
         }
@@ -44,7 +45,7 @@ public class Graph {
     }
 
     public int bfs(@Nonnull Point start,
-                    @Nonnull Point finish) throws StrategyException {
+                   @Nonnull Point finish) throws StrategyException {
         Map<Point, Boolean> visit = new HashMap<>();
         LinkedList<Point> queue = new LinkedList<>();
         Map<Point, Point> prev = new HashMap<>();
@@ -52,7 +53,7 @@ public class Graph {
         while (!queue.isEmpty()) {
             Point curPoint = queue.getFirst();
             visit.put(curPoint, true);
-            if (curPoint == finish) {
+            if (curPoint.equals(finish)) {
                 return getPath(prev, finish, start);
             }
             for (Point child : adjacencyList.get(curPoint)) {
@@ -62,6 +63,7 @@ public class Graph {
                 prev.put(child, curPoint);
                 queue.add(child);
             }
+            queue.remove();
         }
         throw new StrategyException("failed to create bfs path");
     }
