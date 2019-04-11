@@ -19,7 +19,7 @@ public class Generator {
     private final int MIN_ROOM_WIDTH = 3;
     private final int MAX_ROOM_HEIGHT = 7;
     private final int MAX_ROOM_WIDTH = 7;
-    private final int INDENT = 0;
+    private final int INDENT = 1;
     private final int MAX_FAILED_CREATING_ROOM_ATTEMPT_COUNT = 10;
     private final int MAX_REGENERATION_COUNT = 1000;
     private static final Random RANDOM = new Random();
@@ -300,10 +300,10 @@ public class Generator {
 
         private boolean intersect(Room r,
                                   int indent) {
-            return !(r.row >= (row + width) + indent ||
-                    row >= (r.row + r.width) + indent ||
-                    r.col >= (col + height) + indent
-                    || col >= (r.col + r.height) + indent);
+            return !(r.row > (row + height) + indent ||
+                    row > (r.row + r.height) + indent ||
+                    r.col > (col + width) + indent
+                    || col > (r.col + r.width) + indent);
         }
 
         @Override
