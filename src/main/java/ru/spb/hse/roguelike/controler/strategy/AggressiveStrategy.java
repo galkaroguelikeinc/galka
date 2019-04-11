@@ -1,14 +1,14 @@
-package ru.spb.hse.roguelike.model.strategy;
+package ru.spb.hse.roguelike.controler.strategy;
 
 import ru.spb.hse.roguelike.model.GameModel;
-import ru.spb.hse.roguelike.model.object.alive.Mob;
+import ru.spb.hse.roguelike.model.map.Point;
 
 import javax.annotation.Nonnull;
 
 public class AggressiveStrategy implements MobStrategy {
     @Override
     public void move(@Nonnull GameModel gameModel,
-                     @Nonnull Mob mob) {
+                     @Nonnull Point mobPoint) {
 
     }
 }

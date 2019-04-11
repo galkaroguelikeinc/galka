@@ -1,7 +1,9 @@
 package ru.spb.hse.roguelike.model;
 
+import ru.spb.hse.roguelike.model.map.Direction;
 import ru.spb.hse.roguelike.model.map.GameCell;
 import ru.spb.hse.roguelike.model.map.GameMapCellType;
+import ru.spb.hse.roguelike.model.map.Point;
 import ru.spb.hse.roguelike.model.object.alive.GameCharacter;
 import ru.spb.hse.roguelike.model.object.items.Item;
 
@@ -61,8 +63,8 @@ public class Generator {
         }
         Point pointForGameCharacter = roomsPoint.get(RANDOM.nextInt(roomsPoint.size()));
         GameCharacter gameCharacter = generateCharacter(map,
-                pointForGameCharacter.row,
-                pointForGameCharacter.col);
+                pointForGameCharacter.getRow(),
+                pointForGameCharacter.getCol());
         List<Item> inventories = generateInventories();
         return new GameModel(map, inventories, gameCharacter);
 
@@ -173,22 +175,22 @@ public class Generator {
                             int height,
                             @Nonnull GameCell[][] data) throws MapGeneratorException {
         Point startPoint = startRoom.getMiddle();
-        Point curPoint = new Point(startPoint.row, startPoint.col);
+        Point curPoint = new Point(startPoint.getRow(), startPoint.getCol());
         Set<Point> visit = new HashSet<>();
         final TreeSet<Point> active = new TreeSet<>(
                 Comparator.<Point>comparingInt(p -> cost(p, finishRoom))
-                        .thenComparingInt(p -> p.row)
-                        .thenComparingInt(p -> p.col));
+                        .thenComparingInt(Point::getRow)
+                        .thenComparingInt(Point::getCol));
         HashMap<Point, Point> parent = new HashMap<>();
         while (!finishRoom.isPointInside(curPoint)) {
             visit.add(curPoint);
             for (Direction d : Direction.values()) {
-                Point p = new Point(curPoint.row + d.dx, curPoint.col + d.dy);
+                Point p = new Point(curPoint.getRow() + d.dx, curPoint.getCol() + d.dy);
                 if (!visit.contains(p)
-                        && p.row > 0
-                        && p.row < height
-                        && p.col > 0
-                        && p.col < width) {
+                        && p.getRow() > 0
+                        && p.getRow() < height
+                        && p.getCol() > 0
+                        && p.getCol() < width) {
                     active.add(p);
                     parent.put(p, curPoint);
                 }
@@ -206,10 +208,10 @@ public class Generator {
                           @Nonnull Point start,
                           @Nonnull Point finish,
                           @Nonnull HashMap<Point, Point> parent) {
-        Point curPoint = new Point(finish.row, finish.col);
+        Point curPoint = new Point(finish.getRow(), finish.getCol());
         while (!curPoint.equals(start)) {
-            if (data[curPoint.row][curPoint.col].getGameMapCellType() == GameMapCellType.EMPTY) {
-                data[curPoint.row][curPoint.col].setGameMapCellType(GameMapCellType.TUNNEL);
+            if (data[curPoint.getRow()][curPoint.getCol()].getGameMapCellType() == GameMapCellType.EMPTY) {
+                data[curPoint.getRow()][curPoint.getCol()].setGameMapCellType(GameMapCellType.TUNNEL);
             }
             curPoint = parent.get(curPoint);
         }
@@ -218,48 +220,11 @@ public class Generator {
     private int cost(@Nonnull Point point,
                      @Nonnull Room room) {
         Point middle = room.getMiddle();
-        return (point.row - middle.row) * (point.row - middle.row) +
-                (point.col - middle.col) * (point.col - middle.col);
+        return (point.getRow() - middle.getRow()) * (point.getRow() - middle.getRow()) +
+                (point.getCol() - middle.getCol()) * (point.getCol() - middle.getCol());
     }
 
-    enum Direction {
-        LEFT(-1, 0),
-        UP(0, 1),
-        RIGHT(1, 0),
-        DOWN(0, -1);
 
-        public final int dx;
-        public final int dy;
-
-        Direction(int dx, int dy) {
-            this.dx = dx;
-            this.dy = dy;
-        }
-    }
-
-    private class Point {
-        private int row;
-        private int col;
-
-        private Point(int row, int col) {
-            this.row = row;
-            this.col = col;
-
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(row, col);
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            Point that = (Point) o;
-            return row == that.row && col == that.col;
-        }
-    }
 
     private class Room {
         private int row;
@@ -279,19 +244,19 @@ public class Generator {
         }
 
         private boolean isPointInside(@Nonnull Point point) {
-            if (point.row < row) {
+            if (point.getRow() < row) {
                 return false;
             }
 
-            if (point.col < col) {
+            if (point.getCol() < col) {
                 return false;
             }
 
-            if (point.row > row + height) {
+            if (point.getRow() > row + height) {
                 return false;
             }
 
-            return point.col <= col + width;
+            return point.getCol() <= col + width;
         }
 
         private Point getMiddle() {
