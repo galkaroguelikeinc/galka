@@ -7,8 +7,8 @@ import javax.annotation.Nonnull;
 
 public class PassiveStrategy implements MobStrategy {
     @Override
-    public void move(@Nonnull GameModel gameModel,
-                     @Nonnull Point mobPoint) {
-
+    public Point move(@Nonnull GameModel gameModel,
+                      @Nonnull Point mobPoint) {
+        return mobPoint;
     }
 }

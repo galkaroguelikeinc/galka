@@ -15,15 +15,15 @@ import java.util.List;
 
 public class CowardlyStrategy implements MobStrategy {
     @Override
-    public void move(@Nonnull GameModel gameModel,
-                     @Nonnull Point mobPoint) {
+    public Point move(@Nonnull GameModel gameModel,
+                      @Nonnull Point mobPoint) {
         if (!valid(gameModel, mobPoint)) {
             throw new SecurityException("unable to get mob from cell " + mobPoint);
         }
-        List<Point> gameCharacterPoints = findGameCharacter(gameModel);
-        if (gameCharacterPoints.size() == 0) {
-            throw new SecurityException("unable to find gameCharacter");
-        }
+        GameCharacter gameCharacter = gameModel.getCharacter();
+        Point gameCharacterPoint = new Point(gameModel.getAliveObjectRow(gameCharacter),
+                gameModel.getAliveObjectRow(gameCharacter));
+        return getNewPosition(gameModel, mobPoint, gameCharacterPoint);
     }
 
     private boolean valid(@Nonnull GameModel gameModel,
@@ -65,20 +65,5 @@ public class CowardlyStrategy implements MobStrategy {
             }
         }
         return mobPoint;
-    }
-
-    @Nonnull
-    private List<Point> findGameCharacter(GameModel gameModel) {
-        List<Point> result = new ArrayList<>();
-        for (int row = 0; row < gameModel.getRows(); row++) {
-            for (int col = 0; col < gameModel.getRows(); col++) {
-                GameCell cell = gameModel.getCell(row, col);
-                if (cell.hasAliveObject()
-                        && cell.getAliveObject() instanceof GameCharacter) {
-                    result.add(new Point(row, col));
-                }
-            }
-        }
-        return result;
     }
 }
