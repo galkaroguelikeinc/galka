@@ -37,7 +37,7 @@ public class GameModel {
         }
     }
 
-    GameModel(@Nonnull final GameCell[][] gameMap,
+    public GameModel(@Nonnull final GameCell[][] gameMap,
               @Nonnull final List<Item> inventory, GameCharacter character) {
         this.gameMap = gameMap;
         this.inventory = inventory;
