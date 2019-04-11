@@ -287,15 +287,15 @@ public class Generator {
                 return false;
             }
 
-            if (point.row > row + width) {
+            if (point.row > row + height) {
                 return false;
             }
 
-            return point.col <= col + height;
+            return point.col <= col + width;
         }
 
         private Point getMiddle() {
-            return new Point(row + width / 2, col + height / 2);
+            return new Point(row + height / 2, col + width / 2);
         }
 
         private boolean intersect(Room r,
