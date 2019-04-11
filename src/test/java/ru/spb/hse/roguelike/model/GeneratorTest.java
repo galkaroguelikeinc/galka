@@ -2,6 +2,7 @@ package ru.spb.hse.roguelike.model;
 
 import org.junit.Test;
 import ru.spb.hse.roguelike.model.map.GameMapCellType;
+import ru.spb.hse.roguelike.model.object.alive.Mob;
 
 import java.io.FileNotFoundException;
 import java.util.function.Function;
@@ -62,6 +63,20 @@ public class GeneratorTest {
         }
     }
 
+    @Test
+    public void testGenerateMob() throws MapGeneratorException {
+        GameModel gameModel = generator.generateModel(3, 20, 25);
+        int actualMobsCount = 0;
+        for (int i = 0; i < 25; i++) {
+            for (int j = 0; j < 20; j++) {
+                if (gameModel.getCell(i, j).hasAliveObject()
+                        && gameModel.getCell(i, j).getAliveObject() instanceof Mob) {
+                    actualMobsCount++;
+                }
+            }
+        }
+        assertEquals(3, actualMobsCount);
+    }
 
 
 }

@@ -5,6 +5,8 @@ import ru.spb.hse.roguelike.model.map.GameCell;
 import ru.spb.hse.roguelike.model.map.GameMapCellType;
 import ru.spb.hse.roguelike.model.map.Point;
 import ru.spb.hse.roguelike.model.object.alive.GameCharacter;
+import ru.spb.hse.roguelike.model.object.alive.Mob;
+import ru.spb.hse.roguelike.model.object.alive.MobStrategyType;
 import ru.spb.hse.roguelike.model.object.items.Item;
 
 import javax.annotation.Nonnull;
@@ -24,6 +26,7 @@ public class Generator {
     private final int INDENT = 1;
     private final int MAX_FAILED_CREATING_ROOM_ATTEMPT_COUNT = 10;
     private final int MAX_REGENERATION_COUNT = 1000;
+    private final int MAX_COUNT_MOBS_IN_ROOM = 2;
     private static final Random RANDOM = new Random();
 
     public GameModel generateModel(int roomCount,
@@ -36,6 +39,7 @@ public class Generator {
                 characterRoom.row + RANDOM.nextInt(characterRoom.height),
                 characterRoom.col + RANDOM.nextInt(characterRoom.width));
         List<Item> inventories = generateInventories();
+        generateMobs(rooms, map);
         return new GameModel(map, inventories, gameCharacter);
     }
 
@@ -66,6 +70,7 @@ public class Generator {
                 pointForGameCharacter.getRow(),
                 pointForGameCharacter.getCol());
         List<Item> inventories = generateInventories();
+        generateMobs(findRooms(map), map);
         return new GameModel(map, inventories, gameCharacter);
 
     }
@@ -116,6 +121,37 @@ public class Generator {
         return rooms;
     }
 
+    private List<Room> findRooms(GameCell[][] map) {
+        List<Room> rooms = new ArrayList<>();
+        for (int row = 0; row < map.length; row++) {
+            for (int col = 0; col < map[row].length; col++) {
+                if (map[row][col].getGameMapCellType() == GameMapCellType.ROOM) {
+                    if ((row == 0 || map[row - 1][col].getGameMapCellType() != GameMapCellType.ROOM) &&
+                            (col == 0 || map[row][col - 1].getGameMapCellType() != GameMapCellType.ROOM)) {
+                        int width = findEndOfRoom(map, row, col, Direction.RIGHT);
+                        int height = findEndOfRoom(map, row, col, Direction.UP);
+                        rooms.add(new Room(row, col, width, height));
+                    }
+                }
+            }
+        }
+        return rooms;
+    }
+
+    private int findEndOfRoom(GameCell[][] map, int beginRow, int beginCol, Direction direction) {
+        int size = 1;
+        int curRow = beginRow;
+        int curCol = beginCol;
+        while (curRow + direction.dy < map.length
+                && curCol + direction.dx < map[curRow + direction.dy].length
+                && map[curRow + direction.dy][curCol + direction.dx].getGameMapCellType() == GameMapCellType.ROOM) {
+            size++;
+            curRow += direction.dy;
+            curCol += direction.dx;
+        }
+        return size;
+    }
+
     private GameCharacter generateCharacter(GameCell[][] map,
                                             int row,
                                             int col) {
@@ -144,8 +180,25 @@ public class Generator {
         return new GameCharacter();
     }
 
-    public void generateMobsIfNeeded() {
+    private void generateMobs(@Nonnull List<Room> rooms,
+                              @Nonnull GameCell[][] map) {
+        rooms.forEach(room -> generateMobsInRoom(room, map));
+    }
 
+    private void generateMobsInRoom(@Nonnull Room room,
+                                    @Nonnull GameCell[][] map) {
+        int fullMobsCount = RANDOM.nextInt(MAX_COUNT_MOBS_IN_ROOM - 1) + 1;
+        MobStrategyType[] allTypes = MobStrategyType.values();
+        int curMobsCount = 0;
+        while (curMobsCount < fullMobsCount) {
+            int row = room.row + RANDOM.nextInt(room.height);
+            int col = room.col + RANDOM.nextInt(room.width);
+            MobStrategyType strategyType = allTypes[RANDOM.nextInt(allTypes.length)];
+            if (!map[row][col].hasAliveObject()) {
+                map[row][col].addAliveObject(new Mob(strategyType));
+                curMobsCount++;
+            }
+        }
     }
 
     private List<Item> generateInventories() {
@@ -223,7 +276,6 @@ public class Generator {
         return (point.getRow() - middle.getRow()) * (point.getRow() - middle.getRow()) +
                 (point.getCol() - middle.getCol()) * (point.getCol() - middle.getCol());
     }
-
 
 
     private class Room {
