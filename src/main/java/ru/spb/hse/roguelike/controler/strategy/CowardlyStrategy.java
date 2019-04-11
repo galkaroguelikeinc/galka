@@ -2,7 +2,6 @@ package ru.spb.hse.roguelike.controler.strategy;
 
 import ru.spb.hse.roguelike.model.GameModel;
 import ru.spb.hse.roguelike.model.map.Direction;
-import ru.spb.hse.roguelike.model.map.GameCell;
 import ru.spb.hse.roguelike.model.map.Point;
 import ru.spb.hse.roguelike.model.object.alive.AliveObject;
 import ru.spb.hse.roguelike.model.object.alive.GameCharacter;
@@ -10,8 +9,6 @@ import ru.spb.hse.roguelike.model.object.alive.Mob;
 import ru.spb.hse.roguelike.model.object.alive.MobStrategyType;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.List;
 
 public class CowardlyStrategy implements MobStrategy {
     @Override
