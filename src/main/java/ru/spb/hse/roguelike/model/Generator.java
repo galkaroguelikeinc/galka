@@ -186,9 +186,9 @@ public class Generator {
                 Point p = new Point(curPoint.row + d.dx, curPoint.col + d.dy);
                 if (!visit.contains(p)
                         && p.row > 0
-                        && p.row < width
+                        && p.row < height
                         && p.col > 0
-                        && p.col < height) {
+                        && p.col < width) {
                     active.add(p);
                     parent.put(p, curPoint);
                 }

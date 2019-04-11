@@ -12,7 +12,7 @@ public class Main {
     public static void main(String[] args) {
         try {
             Generator generator = new Generator();
-            GameModel model = generator.generateModel(2, 10, 10);
+            GameModel model = generator.generateModel(3, 20, 20);
             View view = new TerminalView(model);
             Controller controller = new Controller(view, model);
             controller.runGame();
