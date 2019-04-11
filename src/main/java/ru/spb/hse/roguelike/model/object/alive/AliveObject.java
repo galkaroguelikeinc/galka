@@ -8,8 +8,8 @@ import ru.spb.hse.roguelike.model.object.MeasurableCharacteristic;
 public abstract class AliveObject {
     private static final int DEFAULT_HEALTH = 1;
     private static final int DEFAULT_POWER = 1;
-    private final MeasurableCharacteristic health;
-    private final MeasurableCharacteristic power;
+    private MeasurableCharacteristic health;
+    private MeasurableCharacteristic power;
 
     public void changeHealth(int x) {
         health.change(x);
@@ -28,7 +28,7 @@ public abstract class AliveObject {
     }
 
     public int getHealth() {
-        return power.getCurentValue();
+        return health.getCurentValue();
     }
 
     public void changeMaxPower(int x) {

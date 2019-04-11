@@ -6,9 +6,8 @@ import ru.spb.hse.roguelike.model.object.alive.GameCharacter;
 import ru.spb.hse.roguelike.model.object.items.Item;
 
 import javax.annotation.Nonnull;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static ru.spb.hse.roguelike.model.map.GameMapCellType.EMPTY;
 
@@ -35,6 +34,10 @@ public class GameModel {
                 }
             }
         }
+    }
+
+    public Set<AliveObject> getMobs() {
+        return aliveObjectToCol.keySet().stream().filter(x -> !x.equals(gameCharacter)).collect(Collectors.toSet());
     }
 
     public GameModel(@Nonnull final GameCell[][] gameMap,
@@ -128,6 +131,18 @@ public class GameModel {
         gameMap[newRow][newCol].addAliveObject(aliveObject);
         aliveObjectToRow.put(aliveObject, newRow);
         aliveObjectToCol.put(aliveObject, newCol);
+        return true;
+    }
+
+    public boolean removeAliveObject(AliveObject aliveObject) {
+        if (!aliveObjectToRow.containsKey(aliveObject)) {
+            return false;
+        }
+        int row = aliveObjectToRow.get(aliveObject);
+        int col = aliveObjectToCol.get(aliveObject);
+        gameMap[row][col].removeAliveObject();
+        aliveObjectToRow.remove(aliveObject);
+        aliveObjectToCol.remove(aliveObject);
         return true;
     }
 }

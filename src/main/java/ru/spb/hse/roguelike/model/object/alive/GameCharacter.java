@@ -11,6 +11,7 @@ public class GameCharacter extends AliveObject {
     public GameCharacter() {
         foodFullness = new MeasurableCharacteristic(10);
         changeMaxHealth(10);
+        changeHealth(10);
     }
 
     public void changeFoodFullness(int x) {

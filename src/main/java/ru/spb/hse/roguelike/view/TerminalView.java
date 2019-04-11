@@ -27,6 +27,7 @@ public class TerminalView extends View {
     private static final char EMPTY_SYMBOL = ' ';
     private static final char TUNNEL_SYMBOL = '#';
     private static final char GAME_CHARACTER_SYMBOL = '&';
+    private static final char MOB_SYMBOL = 'M';
     private static Map<GameMapCellType, Character> CELL_TYPE_TO_SYMBOL = new HashMap<GameMapCellType, Character>() {{
         put(GameMapCellType.ROOM, ROOM_SYMBOL);
         put(GameMapCellType.EMPTY, EMPTY_SYMBOL);
@@ -64,8 +65,12 @@ public class TerminalView extends View {
     }
 
     private char cellToSymbol(GameCell gameCell) {
-        if (gameCell.hasAliveObject() && gameCell.getAliveObject().getClass().equals(GameCharacter.class)) {
-            return GAME_CHARACTER_SYMBOL;
+        if (gameCell.hasAliveObject()) {
+            if (gameCell.getAliveObject().getClass().equals(GameCharacter.class)) {
+                return GAME_CHARACTER_SYMBOL;
+            } else {
+                return MOB_SYMBOL;
+            }
         }
         return CELL_TYPE_TO_SYMBOL.get(gameCell.getGameMapCellType());
     }
