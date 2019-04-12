@@ -14,22 +14,35 @@ public class AggressiveStrategy implements MobStrategy {
     @Override
     public Point move(@Nonnull GameModel gameModel,
                       @Nonnull Point mobPoint) {
-        if (!valid(gameModel, mobPoint)) {
-            throw new SecurityException("unable to get mob from cell " + mobPoint);
-        }
         GameCharacter gameCharacter = gameModel.getCharacter();
         Point gameCharacterPoint = new Point(gameModel.getAliveObjectRow(gameCharacter),
                 gameModel.getAliveObjectRow(gameCharacter));
+        if (!valid(gameModel, mobPoint, gameCharacterPoint)) {
+            throw new SecurityException("unable to get mob from cell " + mobPoint);
+        }
+
         return getNewPosition(gameModel, mobPoint, gameCharacterPoint);
     }
 
     private boolean valid(@Nonnull GameModel gameModel,
-                          @Nonnull Point mobPoint) {
+                          @Nonnull Point mobPoint,
+                          @Nonnull Point gameCharacterPoint) {
         if (mobPoint.getRow() < 0 || mobPoint.getRow() >= gameModel.getRows()
                 || mobPoint.getCol() < 0 || mobPoint.getCol() >= gameModel.getCols()) {
             return false;
         }
         if (!gameModel.getCell(mobPoint.getRow(), mobPoint.getCol()).hasAliveObject()) {
+            return false;
+        }
+        if (gameCharacterPoint.getRow() < 0 || gameCharacterPoint.getRow() >= gameModel.getRows()
+                || gameCharacterPoint.getCol() < 0 || gameCharacterPoint.getCol() >= gameModel.getCols()) {
+            return false;
+        }
+        if (!gameModel.getCell(gameCharacterPoint.getRow(), gameCharacterPoint.getCol()).hasAliveObject()) {
+            return false;
+        }
+        AliveObject gameCharacter = gameModel.getCell(mobPoint.getRow(), mobPoint.getCol()).getAliveObject();
+        if (!(gameCharacter instanceof GameCharacter)) {
             return false;
         }
         AliveObject aliveObject = gameModel.getCell(mobPoint.getRow(), mobPoint.getCol()).getAliveObject();
@@ -55,7 +68,7 @@ public class AggressiveStrategy implements MobStrategy {
             Point curPoint = new Point(mobPoint.getRow() + d.dx, mobPoint.getCol() + d.dy);
             int curDistance = 0;
             try {
-                curDistance = graph.bfs(mobPoint, curPoint);
+                curDistance = graph.bfs(curPoint, gameCharacter);
                 if (curDistance < minDistance) {
                     minDistance = curDistance;
                     pointWithMinDistance = curPoint;
