@@ -287,11 +287,11 @@ public class Generator {
                 return false;
             }
 
-            if (point.row > row + height) {
+            if (point.row >= row + height) {
                 return false;
             }
 
-            return point.col <= col + width;
+            return point.col < col + width;
         }
 
         private Point getMiddle() {
