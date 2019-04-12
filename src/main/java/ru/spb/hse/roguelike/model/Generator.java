@@ -304,11 +304,11 @@ public class Generator {
                 return false;
             }
 
-            if (point.getRow() > row + height) {
+            if (point.getRow() >= row + height) {
                 return false;
             }
 
-            return point.getCol() <= col + width;
+            return point.getCol() < col + width;
         }
 
         private Point getMiddle() {
