@@ -1,6 +1,7 @@
 package ru.spb.hse.roguelike.controler;
 
 import org.junit.Test;
+import ru.spb.hse.roguelike.Point;
 import ru.spb.hse.roguelike.model.MapGeneratorException;
 import ru.spb.hse.roguelike.model.GameModel;
 import ru.spb.hse.roguelike.model.Generator;
@@ -20,13 +21,13 @@ public class ControllerTest {
     public void moveLeftTest() throws MapGeneratorException, ViewException {
         for (int k = 0; k < 1000; k++) {
             GameModel gameModel = new Generator().generateModel(3, 20, 25);
-            gameModel.getCell(0, 3).setGameMapCellType(GameMapCellType.ROOM);
-            gameModel.getCell(0, 2).setGameMapCellType(GameMapCellType.ROOM);
-            gameModel.moveAliveObject(gameModel.getCharacter(), 0, 3);
+            gameModel.getCell(new Point(0, 3)).setGameMapCellType(GameMapCellType.ROOM);
+            gameModel.getCell(new Point(0, 2)).setGameMapCellType(GameMapCellType.ROOM);
+            gameModel.moveAliveObject(gameModel.getCharacter(), new Point(0, 3));
 
             Controller controller = new Controller(new View() {
                 @Override
-                public void showChanges(int row, int col) {
+                public void showChanges(Point point) {
                 }
 
                 @Override
@@ -36,8 +37,8 @@ public class ControllerTest {
             }, gameModel);
 
             controller.executeCommand();
-            assertEquals(new Integer(0), gameModel.getAliveObjectRow(gameModel.getCharacter()));
-            assertEquals(new Integer(2), gameModel.getAliveObjectCol(gameModel.getCharacter()));
+            assertEquals(0, gameModel.getAliveObjectPoint(gameModel.getCharacter()).getRow());
+            assertEquals(2, gameModel.getAliveObjectPoint(gameModel.getCharacter()).getCol());
         }
     }
 }

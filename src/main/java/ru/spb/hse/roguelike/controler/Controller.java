@@ -1,5 +1,6 @@
 package ru.spb.hse.roguelike.controler;
 
+import ru.spb.hse.roguelike.Point;
 import ru.spb.hse.roguelike.model.GameModel;
 import ru.spb.hse.roguelike.model.object.alive.GameCharacter;
 import ru.spb.hse.roguelike.view.Command;
@@ -59,14 +60,12 @@ public class Controller {
     }
 
     private void handleMove(int rowDiff, int colDiff) throws ViewException {
-        int oldRow = gameModel.getAliveObjectRow(character);
-        int oldCol = gameModel.getAliveObjectCol(character);
-        boolean moved = gameModel.moveAliveObjectDiff(character, rowDiff, colDiff);
+        Point oldPoint = gameModel.getAliveObjectPoint(character);
+        boolean moved = gameModel.moveAliveObjectDiff(character, new Point(rowDiff, colDiff));
         if (moved) {
-            view.showChanges(oldRow, oldCol);
-            int newRow = gameModel.getAliveObjectRow(character);
-            int newCol = gameModel.getAliveObjectCol(character);
-            view.showChanges(newRow, newCol);
+            view.showChanges(oldPoint);
+            Point newPoint = gameModel.getAliveObjectPoint(character);
+            view.showChanges(newPoint);
         }
     }
 }

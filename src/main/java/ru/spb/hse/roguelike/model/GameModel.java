@@ -1,5 +1,6 @@
 package ru.spb.hse.roguelike.model;
 
+import ru.spb.hse.roguelike.Point;
 import ru.spb.hse.roguelike.model.map.GameCell;
 import ru.spb.hse.roguelike.model.object.alive.AliveObject;
 import ru.spb.hse.roguelike.model.object.alive.GameCharacter;
@@ -22,16 +23,14 @@ public class GameModel {
     private static final int MAX_INVENTORY_SIZE = 10;
     private boolean isEnd = false;
 
-    private Map<AliveObject, Integer> aliveObjectToRow = new HashMap<>();
-    private Map<AliveObject, Integer> aliveObjectToCol = new HashMap<>();
+    private Map<AliveObject, Point> aliveObjectToPoint = new HashMap<>();
 
     private void saveAliveObjectCoordinates() {
         for (int row = 0; row < gameMap.length; row++) {
             for (int col = 0; col < gameMap[row].length; col++) {
                 if (gameMap[row][col].hasAliveObject()) {
                     AliveObject aliveObject = gameMap[row][col].getAliveObject();
-                    aliveObjectToRow.put(aliveObject, row);
-                    aliveObjectToCol.put(aliveObject, col);
+                    aliveObjectToPoint.put(aliveObject, new Point(row, col));
                 }
             }
         }
@@ -49,11 +48,12 @@ public class GameModel {
         return gameCharacter;
     }
 
-    public GameCell getCell(int row, int col) {
-        if (row < 0 || row >= gameMap.length || col < 0 || col >= gameMap[0].length) {
+    public GameCell getCell(Point point) {
+        if (point.getRow() < 0 || point.getRow() >= gameMap.length ||
+                point.getCol() < 0 || point.getCol() >= gameMap[0].length) {
             return null;
         }
-        return gameMap[row][col];
+        return gameMap[point.getRow()][point.getCol()];
     }
 
     public int getRows() {
@@ -72,8 +72,8 @@ public class GameModel {
         inventory.add(item);
     }
 
-    public Item takeCellItem(int row, int col) {
-        return gameMap[row][col].takeCellItem();
+    public Item takeCellItem(Point point) {
+        return gameMap[point.getRow()][point.getCol()].takeCellItem();
     }
 
     public Item getItemFromInventory(int index) {
@@ -92,45 +92,46 @@ public class GameModel {
         return MAX_INVENTORY_SIZE;
     }
 
-    public Integer getAliveObjectRow(AliveObject aliveObject) {
-        if (!aliveObjectToRow.containsKey(aliveObject)) {
+    public Point getAliveObjectPoint(AliveObject aliveObject) {
+        if (!aliveObjectToPoint.containsKey(aliveObject)) {
             return null;
         }
-        return aliveObjectToRow.get(aliveObject);
+        return aliveObjectToPoint.get(aliveObject);
     }
 
-    public Integer getAliveObjectCol(AliveObject aliveObject) {
-        if (!aliveObjectToCol.containsKey(aliveObject)) {
-            return null;
-        }
-        return aliveObjectToCol.get(aliveObject);
+    public boolean moveAliveObjectDiff(AliveObject aliveObject, Point diff) {
+        Point point  = aliveObjectToPoint.get(aliveObject);
+        return moveAliveObject(aliveObject, point.add(diff));
     }
 
-    public boolean moveAliveObjectDiff(AliveObject aliveObject, int rowDiff, int colDiff) {
-        int row = aliveObjectToRow.get(aliveObject);
-        int col = aliveObjectToCol.get(aliveObject);
-        return moveAliveObject(aliveObject, row + rowDiff, col + colDiff);
-    }
-
-    public boolean moveAliveObject(AliveObject aliveObject, int newRow, int newCol) {
-        if (!aliveObjectToRow.containsKey(aliveObject) ||
-                newRow < 0 || newRow >= gameMap.length ||
-                newCol < 0 || newCol >= gameMap[newRow].length ||
-                gameMap[newRow][newCol].getGameMapCellType() == EMPTY) {
+    public boolean moveAliveObject(AliveObject aliveObject, Point newPoint) {
+        if (!aliveObjectToPoint.containsKey(aliveObject) ||
+                getCell(newPoint) == null ||
+                getCell(newPoint).getGameMapCellType() == EMPTY) {
             return false;
         }
 
 
-        int row = aliveObjectToRow.get(aliveObject);
-        int col = aliveObjectToCol.get(aliveObject);
-        gameMap[row][col].removeAliveObject();
-        gameMap[newRow][newCol].addAliveObject(aliveObject);
-        aliveObjectToRow.put(aliveObject, newRow);
-        aliveObjectToCol.put(aliveObject, newCol);
-        if (gameMap[newRow][newCol].hasItem() &&
+        Point point = aliveObjectToPoint.get(aliveObject);
+        removeAliveObject(point);
+        addAliveObject(newPoint, aliveObject);
+        if (hasItem(newPoint) &&
                 getInventory().size() != getMaxInventorySize()) {
-            addItem(takeCellItem(newRow, newCol));
+            addItem(takeCellItem(point));
         }
         return true;
+    }
+
+    private void removeAliveObject(Point point) {
+        gameMap[point.getRow()][point.getCol()].removeAliveObject();
+    }
+
+    private void addAliveObject(Point point, AliveObject aliveObject) {
+        gameMap[point.getRow()][point.getCol()].addAliveObject(aliveObject);
+        aliveObjectToPoint.put(aliveObject, point);
+    }
+
+    private boolean hasItem(Point point) {
+        return gameMap[point.getRow()][point.getCol()].hasItem();
     }
 }
