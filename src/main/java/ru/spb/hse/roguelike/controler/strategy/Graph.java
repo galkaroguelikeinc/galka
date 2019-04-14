@@ -50,9 +50,9 @@ public class Graph {
         LinkedList<Point> queue = new LinkedList<>();
         Map<Point, Point> prev = new HashMap<>();
         queue.add(start);
+        visit.put(start, true);
         while (!queue.isEmpty()) {
             Point curPoint = queue.getFirst();
-            visit.put(curPoint, true);
             if (curPoint.equals(finish)) {
                 return getPath(prev, finish, start);
             }
@@ -62,6 +62,7 @@ public class Graph {
                 }
                 prev.put(child, curPoint);
                 queue.add(child);
+                visit.put(child, true);
             }
             queue.remove();
         }
