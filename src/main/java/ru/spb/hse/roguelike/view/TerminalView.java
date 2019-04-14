@@ -5,10 +5,15 @@ import com.googlecode.lanterna.TextCharacter;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.screen.TerminalScreen;
 import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
+import ru.spb.hse.roguelike.controler.strategy.AggressiveStrategy;
+import ru.spb.hse.roguelike.controler.strategy.CowardlyStrategy;
+import ru.spb.hse.roguelike.controler.strategy.PassiveStrategy;
 import ru.spb.hse.roguelike.model.GameModel;
 import ru.spb.hse.roguelike.model.map.GameCell;
 import ru.spb.hse.roguelike.model.map.GameMapCellType;
+import ru.spb.hse.roguelike.model.map.Point;
 import ru.spb.hse.roguelike.model.object.alive.GameCharacter;
+import ru.spb.hse.roguelike.model.object.alive.Mob;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -27,7 +32,9 @@ public class TerminalView extends View {
     private static final char EMPTY_SYMBOL = ' ';
     private static final char TUNNEL_SYMBOL = '#';
     private static final char GAME_CHARACTER_SYMBOL = '&';
-    private static final char MOB_SYMBOL = 'M';
+    private static final char AGGRESSIVE_MOB_SYMBOL = 'A';
+    private static final char PASSIVE_MOB_SYMBOL = 'P';
+    private static final char COWARD_MOB_SYMBOL = 'C';
     private static Map<GameMapCellType, Character> CELL_TYPE_TO_SYMBOL = new HashMap<GameMapCellType, Character>() {{
         put(GameMapCellType.ROOM, ROOM_SYMBOL);
         put(GameMapCellType.EMPTY, EMPTY_SYMBOL);
@@ -69,7 +76,15 @@ public class TerminalView extends View {
             if (gameCell.getAliveObject().getClass().equals(GameCharacter.class)) {
                 return GAME_CHARACTER_SYMBOL;
             } else {
-                return MOB_SYMBOL;
+                switch (((Mob) gameCell.getAliveObject()).getMobStrategyType()) {
+                    case PASSIVE:
+                        return PASSIVE_MOB_SYMBOL;
+                    case AGGRESSIVE:
+                        return AGGRESSIVE_MOB_SYMBOL;
+                    case COWARDLY:
+                        return COWARD_MOB_SYMBOL;
+                }
+                return ' ';
             }
         }
         return CELL_TYPE_TO_SYMBOL.get(gameCell.getGameMapCellType());

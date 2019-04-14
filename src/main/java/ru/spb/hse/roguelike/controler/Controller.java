@@ -117,7 +117,6 @@ public class Controller {
     }
 
     private boolean fightMob(int row, int col) throws ViewException {
-        System.out.println("fight");
         int gameCharacterHit = RANDOM.nextInt(2);
         int mobHit = RANDOM.nextInt(2);
         if (mobHit == 1) {
@@ -127,9 +126,7 @@ public class Controller {
             }
         }
         if (gameCharacterHit == 1) {
-            //System.out.println(gameModel.getCell(row, col).getAliveObject().getHealth() - character.getPower());
             gameModel.getCell(row, col).getAliveObject().changeHealth(gameModel.getCell(row, col).getAliveObject().getHealth() - character.getPower());
-            System.out.println(gameModel.getCell(row, col).getAliveObject().getHealth());
             if (gameModel.getCell(row, col).getAliveObject().getHealth() == 0) {
                 gameModel.removeAliveObject(gameModel.getCell(row, col).getAliveObject());
                 view.showChanges(row, col);
