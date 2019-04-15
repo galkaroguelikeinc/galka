@@ -24,15 +24,17 @@ public class Graph {
             for (int col = 0; col < gameModel.getCols(); col++) {
                 Point curPoint = new Point(row, col);
                 adjacencyList.put(curPoint, new ArrayList<>());
-                for (Direction direction : Direction.values()) {
-                    if (row + direction.dx >= 0 &&
-                            row + direction.dx < gameModel.getRows() &&
-                            col + direction.dy >= 0 &&
-                            col + direction.dy < gameModel.getCols() &&
-                            gameModel.getCell(new Point(row + direction.dx, col + direction.dy))
-                                    .getGameMapCellType() != EMPTY) {
-                          adjacencyList.get(curPoint).add(new Point(row + direction.dx,
-                                col + direction.dy));
+                if (gameModel.getCell(curPoint).getGameMapCellType() != EMPTY) {
+                    for (Direction direction : Direction.values()) {
+                        if (row + direction.dx >= 0 &&
+                                row + direction.dx < gameModel.getRows() &&
+                                col + direction.dy >= 0 &&
+                                col + direction.dy < gameModel.getCols() &&
+                                gameModel.getCell(new Point(row + direction.dx, col + direction.dy))
+                                        .getGameMapCellType() != EMPTY) {
+                            adjacencyList.get(curPoint).add(new Point(row + direction.dx,
+                                    col + direction.dy));
+                        }
                     }
                 }
             }
