@@ -8,6 +8,7 @@ sourceCompatibility = 1.8
 
 repositories {
     mavenCentral()
+    jcenter()
 }
 
 configurations {
@@ -19,6 +20,7 @@ dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
     extraLibs 'com.google.code.findbugs:jsr305:3.0.2'
     extraLibs 'com.googlecode.lanterna:lanterna:3.0.1'
+    testImplementation 'org.mockito:mockito-core:2.7.22'
     configurations.compile.extendsFrom(configurations.extraLibs)
 }
 

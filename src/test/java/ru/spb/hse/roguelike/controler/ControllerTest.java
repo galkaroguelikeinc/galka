@@ -12,6 +12,8 @@ import ru.spb.hse.roguelike.view.View;
 import ru.spb.hse.roguelike.view.ViewException;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * Tests changing game character positions when command from view received.
@@ -26,16 +28,9 @@ public class ControllerTest {
             gameModel.getCell(new Point(0, 2)).setGameMapCellType(GameMapCellType.ROOM);
             gameModel.moveAliveObject(gameModel.getCharacter(), new Point(0, 3));
 
-            Controller controller = new Controller(new View() {
-                @Override
-                public void showChanges(Point point) {
-                }
-
-                @Override
-                public Command readCommand() {
-                    return Command.LEFT;
-                }
-            }, gameModel);
+            View view = mock(View.class);
+            when(view.readCommand()).thenReturn(Command.LEFT);
+            Controller controller = new Controller(view, gameModel);
 
             controller.executeCommand();
             assertEquals(0, gameModel.getAliveObjectPoint(gameModel.getCharacter()).getRow());
