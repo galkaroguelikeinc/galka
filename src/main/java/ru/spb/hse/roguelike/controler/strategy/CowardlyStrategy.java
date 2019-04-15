@@ -5,7 +5,9 @@ import ru.spb.hse.roguelike.model.UnknownObjectException;
 import ru.spb.hse.roguelike.model.map.Direction;
 import ru.spb.hse.roguelike.Point;
 import ru.spb.hse.roguelike.model.map.GameMapCellType;
+import ru.spb.hse.roguelike.model.object.alive.AliveObject;
 import ru.spb.hse.roguelike.model.object.alive.GameCharacter;
+import ru.spb.hse.roguelike.model.object.alive.Mob;
 
 import javax.annotation.Nonnull;
 
@@ -18,21 +20,19 @@ public class CowardlyStrategy extends MobStrategy {
         }
         GameCharacter gameCharacter = gameModel.getCharacter();
         Point gameCharacterPoint = gameModel.getAliveObjectPoint(gameCharacter);
-        return getNewPosition(gameModel, mobPoint, gameCharacterPoint);
+        try {
+            return getNewPosition(gameModel, mobPoint, gameCharacterPoint);
+        } catch (StrategyException e) {
+            return mobPoint;
+        }
     }
 
     private Point getNewPosition(@Nonnull GameModel gameModel,
                                  @Nonnull Point mobPoint,
-                                 @Nonnull Point gameCharacter) throws UnknownObjectException {
+                                 @Nonnull Point gameCharacter) throws StrategyException {
         Graph graph = Graph.of(gameModel);
-        int initialDistance;
         int maxDistance;
         Point pointWithMaxDistance;
-        try {
-            initialDistance = graph.bfs(mobPoint, gameCharacter);
-        } catch (StrategyException e) {
-            return mobPoint;
-        }
         maxDistance = -1;
         pointWithMaxDistance = mobPoint;
         for (Direction d : Direction.values()) {
@@ -40,7 +40,7 @@ public class CowardlyStrategy extends MobStrategy {
             int curDistance = 0;
             try {
                 curDistance = graph.bfs(curPoint, gameCharacter);
-                if (curDistance >= maxDistance) {
+                if (!existMob(curPoint, gameModel) && curDistance >= maxDistance) {
                     maxDistance = curDistance;
                     pointWithMaxDistance = curPoint;
                 }
@@ -49,8 +49,17 @@ public class CowardlyStrategy extends MobStrategy {
             }
         }
         if (gameModel.getCell(pointWithMaxDistance).getGameMapCellType() == GameMapCellType.EMPTY) {
-            throw new UnknownObjectException("");
+            throw new StrategyException("Failed  to move cowardly mob");
         }
         return pointWithMaxDistance;
+    }
+
+    private boolean existMob(Point point,
+                             GameModel gameModel) {
+        if (!gameModel.getCell(point).hasAliveObject()) {
+            return false;
+        }
+        AliveObject aliveObject = gameModel.getCell(point).getAliveObject();
+        return aliveObject instanceof Mob;
     }
 }
