@@ -3,7 +3,7 @@ package ru.spb.hse.roguelike.model;
 import ru.spb.hse.roguelike.model.map.Direction;
 import ru.spb.hse.roguelike.model.map.GameCell;
 import ru.spb.hse.roguelike.model.map.GameMapCellType;
-import ru.spb.hse.roguelike.model.map.Point;
+import ru.spb.hse.roguelike.Point;
 import ru.spb.hse.roguelike.model.object.alive.GameCharacter;
 import ru.spb.hse.roguelike.model.object.alive.Mob;
 import ru.spb.hse.roguelike.model.object.alive.MobStrategyType;
@@ -228,7 +228,7 @@ public class Generator {
                             int height,
                             @Nonnull GameCell[][] data) throws MapGeneratorException {
         Point startPoint = startRoom.getMiddle();
-        Point curPoint = new Point(startPoint.getRow(), startPoint.getCol());
+        Point curPoint = startPoint;
         Set<Point> visit = new HashSet<>();
         final TreeSet<Point> active = new TreeSet<>(
                 Comparator.<Point>comparingInt(p -> cost(p, finishRoom))
@@ -261,7 +261,7 @@ public class Generator {
                           @Nonnull Point start,
                           @Nonnull Point finish,
                           @Nonnull HashMap<Point, Point> parent) {
-        Point curPoint = new Point(finish.getRow(), finish.getCol());
+        Point curPoint = finish;
         while (!curPoint.equals(start)) {
             if (data[curPoint.getRow()][curPoint.getCol()].getGameMapCellType() == GameMapCellType.EMPTY) {
                 data[curPoint.getRow()][curPoint.getCol()].setGameMapCellType(GameMapCellType.TUNNEL);

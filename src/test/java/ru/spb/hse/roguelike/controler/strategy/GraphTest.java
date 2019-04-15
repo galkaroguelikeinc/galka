@@ -4,7 +4,7 @@ import org.junit.Test;
 import ru.spb.hse.roguelike.model.GameModel;
 import ru.spb.hse.roguelike.model.map.GameCell;
 import ru.spb.hse.roguelike.model.map.GameMapCellType;
-import ru.spb.hse.roguelike.model.map.Point;
+import ru.spb.hse.roguelike.Point;
 import ru.spb.hse.roguelike.model.object.alive.GameCharacter;
 
 import java.util.ArrayList;

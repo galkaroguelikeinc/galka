@@ -3,14 +3,10 @@ package ru.spb.hse.roguelike.controler.strategy;
 import ru.spb.hse.roguelike.model.GameModel;
 
 import ru.spb.hse.roguelike.model.map.Direction;
-import ru.spb.hse.roguelike.model.map.Point;
+import ru.spb.hse.roguelike.Point;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static ru.spb.hse.roguelike.model.map.GameMapCellType.EMPTY;
 
@@ -33,9 +29,9 @@ public class Graph {
                             row + direction.dx < gameModel.getRows() &&
                             col + direction.dy >= 0 &&
                             col + direction.dy < gameModel.getCols() &&
-                            gameModel.getCell(row + direction.dx, col + direction.dy)
+                            gameModel.getCell(new Point(row + direction.dx, col + direction.dy))
                                     .getGameMapCellType() != EMPTY) {
-                        adjacencyList.get(curPoint).add(new Point(row + direction.dx,
+                          adjacencyList.get(curPoint).add(new Point(row + direction.dx,
                                 col + direction.dy));
                     }
                 }

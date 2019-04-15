@@ -1,5 +1,7 @@
 package ru.spb.hse.roguelike.view;
 
+import ru.spb.hse.roguelike.Point;
+
 /**
  * A View, as in Model-View-Controller, which displays the game state to the user.
  * <p>
@@ -11,7 +13,7 @@ public abstract class View {
     /**
      * Notify the View that gameModel has changes. It should redraw the gameModel shown to user.
      */
-    public abstract void showChanges(int row, int col) throws ViewException;
+    public abstract void showChanges(Point point) throws ViewException;
 
     /**
      * Reads the command from user input

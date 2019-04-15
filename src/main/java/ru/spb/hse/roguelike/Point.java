@@ -1,4 +1,4 @@
-package ru.spb.hse.roguelike.model.map;
+package ru.spb.hse.roguelike;
 
 import java.util.Objects;
 
@@ -9,7 +9,6 @@ public class Point {
     public Point(int row, int col) {
         this.row = row;
         this.col = col;
-
     }
 
     public int getCol() {
@@ -18,6 +17,10 @@ public class Point {
 
     public int getRow() {
         return row;
+    }
+
+    public Point add(Point point) {
+        return new Point(this.row + point.row, this.col + point.col);
     }
 
     @Override

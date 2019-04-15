@@ -1,7 +1,7 @@
 package ru.spb.hse.roguelike.controler.strategy;
 
 import ru.spb.hse.roguelike.model.GameModel;
-import ru.spb.hse.roguelike.model.map.Point;
+import ru.spb.hse.roguelike.Point;
 
 import javax.annotation.Nonnull;
 

@@ -8,10 +8,10 @@ import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
 import ru.spb.hse.roguelike.controler.strategy.AggressiveStrategy;
 import ru.spb.hse.roguelike.controler.strategy.CowardlyStrategy;
 import ru.spb.hse.roguelike.controler.strategy.PassiveStrategy;
+import ru.spb.hse.roguelike.Point;
 import ru.spb.hse.roguelike.model.GameModel;
 import ru.spb.hse.roguelike.model.map.GameCell;
 import ru.spb.hse.roguelike.model.map.GameMapCellType;
-import ru.spb.hse.roguelike.model.map.Point;
 import ru.spb.hse.roguelike.model.object.alive.GameCharacter;
 import ru.spb.hse.roguelike.model.object.alive.Mob;
 
@@ -62,7 +62,7 @@ public class TerminalView extends View {
             for (int row = 0; row < gameModel.getRows(); row++) {
                 for (int col = 0; col < gameModel.getCols(); col++) {
                     terminalScreen.setCharacter(new TerminalPosition(col, row),
-                            new TextCharacter(cellToSymbol(gameModel.getCell(row, col))));
+                            new TextCharacter(cellToSymbol(gameModel.getCell(new Point(row, col)))));
                     terminalScreen.refresh();
                 }
             }
@@ -91,10 +91,10 @@ public class TerminalView extends View {
     }
 
     @Override
-    public void showChanges(int row, int col) throws ViewException {
+    public void showChanges(Point point) throws ViewException {
         try {
-            terminalScreen.setCharacter(new TerminalPosition(col, row),
-                    new TextCharacter(cellToSymbol(gameModel.getCell(row, col))));
+            terminalScreen.setCharacter(new TerminalPosition(point.getCol(), point.getRow()),
+                    new TextCharacter(cellToSymbol(gameModel.getCell(point))));
             terminalScreen.refresh();
         } catch (IOException e) {
             throw new ViewException();

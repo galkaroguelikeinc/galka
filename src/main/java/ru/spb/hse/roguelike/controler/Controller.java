@@ -1,10 +1,12 @@
 package ru.spb.hse.roguelike.controler;
 
+import com.sun.org.apache.regexp.internal.RE;
 import ru.spb.hse.roguelike.controler.strategy.AggressiveStrategy;
 import ru.spb.hse.roguelike.controler.strategy.CowardlyStrategy;
 import ru.spb.hse.roguelike.controler.strategy.PassiveStrategy;
+import ru.spb.hse.roguelike.Point;
+import ru.spb.hse.roguelike.controler.strategy.StrategyException;
 import ru.spb.hse.roguelike.model.GameModel;
-import ru.spb.hse.roguelike.model.map.Point;
 import ru.spb.hse.roguelike.model.object.alive.AliveObject;
 import ru.spb.hse.roguelike.model.object.alive.GameCharacter;
 import ru.spb.hse.roguelike.model.object.alive.Mob;
@@ -51,23 +53,23 @@ public class Controller {
             Point point = null;
             switch (((Mob) mob).getMobStrategyType()) {
                 case PASSIVE:
-                    point = new PassiveStrategy().move(gameModel,
-                            new Point(gameModel.getAliveObjectRow(mob), gameModel.getAliveObjectCol(mob)));
+                    point = new PassiveStrategy().move(gameModel, gameModel.getAliveObjectPoint(mob));
                     break;
                 case AGGRESSIVE:
                     point = new AggressiveStrategy().move(gameModel,
-                            new Point(gameModel.getAliveObjectRow(mob), gameModel.getAliveObjectCol(mob)));
+                            gameModel.getAliveObjectPoint(mob));
                     break;
                 case COWARDLY:
-                    point = new CowardlyStrategy().move(gameModel,
-                            new Point(gameModel.getAliveObjectRow(mob), gameModel.getAliveObjectCol(mob)));
+                    point = new CowardlyStrategy().move(gameModel, gameModel.getAliveObjectPoint(mob));
                     break;
             }
-            int oldRow = gameModel.getAliveObjectRow(mob);
-            int oldCol = gameModel.getAliveObjectCol(mob);
-            gameModel.moveAliveObject(mob, point.getRow(), point.getCol());
-            view.showChanges(oldRow, oldCol);
-            view.showChanges(point.getRow(), point.getCol());
+            if (gameModel.getCell(point).hasAliveObject()) {
+
+            }
+            Point oldPoint = gameModel.getAliveObjectPoint(mob);
+            gameModel.moveAliveObject(mob, point);
+            view.showChanges(oldPoint);
+            view.showChanges(point);
         }
 
     }
@@ -95,41 +97,46 @@ public class Controller {
     }
 
     private boolean handleMove(int rowDiff, int colDiff) throws ViewException {
-        int oldRow = gameModel.getAliveObjectRow(character);
-        int oldCol = gameModel.getAliveObjectCol(character);
-        boolean moved = gameModel.moveAliveObjectDiff(character, rowDiff, colDiff);
+        Point diff = new Point(rowDiff, colDiff);
+        Point oldPoint = gameModel.getAliveObjectPoint(character);
+        boolean moved = gameModel.moveAliveObjectDiff(character, diff);
+        Point point = oldPoint.add(diff);
         if (moved) {
-            view.showChanges(oldRow, oldCol);
-            int newRow = gameModel.getAliveObjectRow(character);
-            int newCol = gameModel.getAliveObjectCol(character);
-            if (gameModel.getCell(newRow, newCol).hasItem() &&
+            view.showChanges(oldPoint);
+            if (gameModel.getCell(point).hasItem() &&
                     gameModel.getInventory().size() != GameModel.getMaxInventorySize()) {
-                gameModel.addItem(gameModel.takeCellItem(newRow, newCol));
+                gameModel.addItem(gameModel.takeCellItem(point));
             }
-            view.showChanges(newRow, newCol);
+            view.showChanges(point);
         } else {
-            if (gameModel.getCell(oldRow + rowDiff, oldCol + colDiff) != null &&
-                 gameModel.getCell(oldRow + rowDiff, oldCol + colDiff).hasAliveObject()) {
-                return fightMob(oldRow + rowDiff, oldCol + colDiff);
+            if (gameModel.getCell(point) != null &&
+                 gameModel.getCell(point).hasAliveObject()) {
+                return fightMob(point);
             }
         }
         return true;
     }
 
-    private boolean fightMob(int row, int col) throws ViewException {
+    private boolean fightMob(Point point) throws ViewException {
+        System.out.println("fight");
         int gameCharacterHit = RANDOM.nextInt(2);
         int mobHit = RANDOM.nextInt(2);
         if (mobHit == 1) {
-            gameModel.getCharacter().changeHealth(gameModel.getCharacter().getHealth() - gameModel.getCell(row, col).getAliveObject().getPower());
+            gameModel.getCharacter().changeHealth(gameModel.getCharacter().getHealth() - gameModel.getCell(point).getAliveObject().getPower());
             if (gameModel.getCharacter().getHealth() == 0) {
                 return false;
             }
         }
         if (gameCharacterHit == 1) {
-            gameModel.getCell(row, col).getAliveObject().changeHealth(gameModel.getCell(row, col).getAliveObject().getHealth() - character.getPower());
-            if (gameModel.getCell(row, col).getAliveObject().getHealth() == 0) {
-                gameModel.removeAliveObject(gameModel.getCell(row, col).getAliveObject());
-                view.showChanges(row, col);
+            System.out.println(gameModel.getCell(point).getAliveObject().getHealth());
+            System.out.println(gameModel.getCell(point).getAliveObject().getHealth() - character.getPower());
+            gameModel.getCell(point).getAliveObject().changeHealth(gameModel.getCell(point).getAliveObject().getHealth() - character.getPower());
+            if (gameModel.getCell(point).getAliveObject().getHealth() == 0) {
+                gameModel.removeAliveObject(point);
+                Point oldPoint = gameModel.getAliveObjectPoint(gameModel.getCharacter());
+                gameModel.moveAliveObject(gameModel.getCharacter(), point);
+                view.showChanges(point);
+                view.showChanges(oldPoint);
             }
         }
         return true;
