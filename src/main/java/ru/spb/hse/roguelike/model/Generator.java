@@ -37,7 +37,7 @@ public class Generator {
         return new GameModel(map, inventories, gameCharacter, 10);
     }
 
-    GameModel generateModel(String fileName, Function<Character, GameMapCellType> decoder)
+    public GameModel generateModel(String fileName, Function<Character, GameMapCellType> decoder)
             throws FileNotFoundException, MapGeneratorException {
         Scanner scanner = new Scanner(new FileInputStream(fileName));
         List<String> lines = new ArrayList<>();
