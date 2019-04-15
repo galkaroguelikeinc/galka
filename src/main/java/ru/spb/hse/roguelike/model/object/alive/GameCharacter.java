@@ -14,11 +14,11 @@ public class GameCharacter extends AliveObject {
         setMaxHealth(10);
     }
 
-    public void changeFoodFullness(int x) {
+    public void setFoodFullness(int x) {
         foodFullness.setCurrentValue(x);
     }
 
-    public void changeMaxFoodFullness(int x) {
+    public void setMaxFoodFullness(int x) {
         foodFullness.setMaxValue(x);
     }
 
