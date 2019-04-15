@@ -48,8 +48,6 @@ public class CowardlyStrategy extends MobStrategy {
                 //path not exist
             }
         }
-        System.out.println(mobPoint);
-        System.out.println(pointWithMaxDistance);
         if (gameModel.getCell(pointWithMaxDistance).getGameMapCellType() == GameMapCellType.EMPTY) {
             throw new UnknownObjectException("");
         }
