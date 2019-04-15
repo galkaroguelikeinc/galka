@@ -6,37 +6,27 @@ import ru.spb.hse.roguelike.model.object.MeasurableCharacteristic;
  * An object that can move on its own. It can act and has measurable characteristics.
  */
 public abstract class AliveObject {
-    private static final int DEFAULT_HEALTH = 1;
-    private static final int DEFAULT_POWER = 1;
     private MeasurableCharacteristic health;
     private MeasurableCharacteristic power;
 
-    public void changeHealth(int x) {
-        health.change(x);
+    AliveObject(MeasurableCharacteristic health, MeasurableCharacteristic power) {
+        this.health = health;
+        this.power = power;
     }
 
-    public void changeMaxHealth(int x) {
-        health.changeMax(x);
+    public void setCurrentHealth(int x) {
+        health.setCurrentValue(x);
     }
 
-    public void changePower(int x) {
-        power.change(x);
+    public void setMaxHealth(int x) {
+        health.setMaxValue(x);
     }
 
-    public int getPower() {
-        return power.getCurentValue();
+    public void setCurrentPower(int x) {
+        power.setCurrentValue(x);
     }
 
-    public int getHealth() {
-        return health.getCurentValue();
-    }
-
-    public void changeMaxPower(int x) {
-        power.changeMax(x);
-    }
-
-    AliveObject() {
-        health = new MeasurableCharacteristic(DEFAULT_HEALTH);
-        power = new MeasurableCharacteristic(DEFAULT_POWER);
+    public void setMaxPower(int x) {
+        power.setMaxValue(x);
     }
 }

@@ -6,15 +6,15 @@ import ru.spb.hse.roguelike.model.object.alive.GameCharacter;
  * Increases food fullness.
  */
 public abstract class Food extends Item {
-    private int foodFullnessImprover;
+    private int foodValue;
 
-    Food(GameCharacter gameCharacter, int foodAmount) {
+    Food(GameCharacter gameCharacter, int foodValue) {
         super(gameCharacter);
-        foodFullnessImprover = foodAmount;
+        this.foodValue = foodValue;
     }
 
     @Override
     public void use() {
-        getGameCharacter().changeFoodFullness(foodFullnessImprover * super.getItemNumber());
+        getGameCharacter().setFoodFullness(foodValue * super.getItemNumber());
     }
 }

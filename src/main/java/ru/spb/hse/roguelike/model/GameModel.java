@@ -19,9 +19,18 @@ public class GameModel {
     private final GameCell[][] gameMap;
     private final List<Item> inventory;
     private final GameCharacter gameCharacter;
-    private static final int MAX_INVENTORY_SIZE = 10;
+    private final int maxInventorySize;
+    private final Map<AliveObject, Point> aliveObjectToPoint = new HashMap<>();
+    private boolean isEnd = false;
 
-    private Map<AliveObject, Point> aliveObjectToPoint = new HashMap<>();
+    public GameModel(@Nonnull final GameCell[][] gameMap,
+                     @Nonnull final List<Item> inventory, GameCharacter character, int maxInventorySize) {
+        this.gameMap = gameMap;
+        this.inventory = inventory;
+        this.gameCharacter = character;
+        this.maxInventorySize = maxInventorySize;
+        saveAliveObjectCoordinates();
+    }
 
     private void saveAliveObjectCoordinates() {
         for (int row = 0; row < gameMap.length; row++) {
@@ -36,14 +45,6 @@ public class GameModel {
 
     public Set<AliveObject> getMobs() {
         return aliveObjectToPoint.keySet().stream().filter(x -> !x.equals(gameCharacter)).collect(Collectors.toSet());
-    }
-
-    public GameModel(@Nonnull final GameCell[][] gameMap,
-              @Nonnull final List<Item> inventory, GameCharacter character) {
-        this.gameMap = gameMap;
-        this.inventory = inventory;
-        this.gameCharacter = character;
-        saveAliveObjectCoordinates();
     }
 
     public GameCharacter getCharacter() {
@@ -82,19 +83,27 @@ public class GameModel {
         return inventory.get(index);
     }
 
-    public static int getMaxInventorySize() {
-        return MAX_INVENTORY_SIZE;
+    public void end() {
+        isEnd = true;
     }
 
-    public Point getAliveObjectPoint(AliveObject aliveObject) {
+    public boolean isEnd() {
+        return isEnd;
+    }
+
+    public int getMaxInventorySize() {
+        return maxInventorySize;
+    }
+
+    public Point getAliveObjectPoint(AliveObject aliveObject) throws UnknownObjectException {
         if (!aliveObjectToPoint.containsKey(aliveObject)) {
-            return null;
+            throw new UnknownObjectException("This game model doesn't contain any information on the alive object.");
         }
         return aliveObjectToPoint.get(aliveObject);
     }
 
     public boolean moveAliveObjectDiff(AliveObject aliveObject, Point diff) {
-        Point point  = aliveObjectToPoint.get(aliveObject);
+        Point point = aliveObjectToPoint.get(aliveObject);
         return moveAliveObject(aliveObject, point.add(diff));
     }
 

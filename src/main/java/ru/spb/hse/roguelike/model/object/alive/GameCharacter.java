@@ -9,20 +9,20 @@ public class GameCharacter extends AliveObject {
     private MeasurableCharacteristic foodFullness;
 
     public GameCharacter() {
+        super(new MeasurableCharacteristic(1), new MeasurableCharacteristic(1));
         foodFullness = new MeasurableCharacteristic(10);
-        changeMaxHealth(10);
-        changeHealth(10);
+        setMaxHealth(10);
     }
 
-    public void changeFoodFullness(int x) {
-        foodFullness.change(x);
+    public void setFoodFullness(int x) {
+        foodFullness.setCurrentValue(x);
     }
 
-    public void changeMaxFoodFullness(int x) {
-        foodFullness.changeMax(x);
+    public void setMaxFoodFullness(int x) {
+        foodFullness.setMaxValue(x);
     }
 
     public int getFoodFullness() {
-        return foodFullness.getCurentValue();
+        return foodFullness.getCurrentValue();
     }
 }

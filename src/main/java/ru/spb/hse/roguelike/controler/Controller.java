@@ -6,6 +6,7 @@ import ru.spb.hse.roguelike.controler.strategy.PassiveStrategy;
 import ru.spb.hse.roguelike.Point;
 import ru.spb.hse.roguelike.model.GameModel;
 import ru.spb.hse.roguelike.model.object.alive.AliveObject;
+import ru.spb.hse.roguelike.model.UnknownObjectException;
 import ru.spb.hse.roguelike.model.object.alive.GameCharacter;
 import ru.spb.hse.roguelike.model.object.alive.Mob;
 import ru.spb.hse.roguelike.view.Command;
@@ -29,7 +30,7 @@ public class Controller {
      * Creates new controller.
      *
      * @param view      view to show changes
-     * @param gameModel model to change
+     * @param gameModel model to setCurrentValue
      */
     public Controller(View view, GameModel gameModel) {
         this.gameModel = gameModel;
