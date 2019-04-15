@@ -9,9 +9,8 @@ public class GameCharacter extends AliveObject {
     private MeasurableCharacteristic foodFullness;
 
     public GameCharacter() {
-        super(new MeasurableCharacteristic(1), new MeasurableCharacteristic(1));
+        super(new MeasurableCharacteristic(10), new MeasurableCharacteristic(1));
         foodFullness = new MeasurableCharacteristic(10);
-        setMaxHealth(10);
     }
 
     public void setFoodFullness(int x) {
