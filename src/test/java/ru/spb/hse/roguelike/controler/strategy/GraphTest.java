@@ -50,7 +50,10 @@ public class GraphTest {
         map[5][2] = new GameCell(GameMapCellType.EMPTY, null, null);
         map[5][3] = new GameCell(GameMapCellType.ROOM, null, null);
         map[5][4] = new GameCell(GameMapCellType.ROOM, null, null);
-        GameModel gameModel = new GameModel(map, new ArrayList<>(), new GameCharacter());
+        GameModel gameModel = new GameModel(map,
+                new ArrayList<>(),
+                new GameCharacter(),
+                10);
         Graph graph = Graph.of(gameModel);
         assertEquals(5, graph.bfs(new Point(1, 1), new Point(4, 3)));
         assertEquals(2, graph.bfs(new Point(0, 0), new Point(1, 1)));

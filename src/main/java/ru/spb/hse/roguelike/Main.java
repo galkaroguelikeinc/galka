@@ -4,6 +4,7 @@ import ru.spb.hse.roguelike.controler.Controller;
 import ru.spb.hse.roguelike.model.MapGeneratorException;
 import ru.spb.hse.roguelike.model.GameModel;
 import ru.spb.hse.roguelike.model.Generator;
+import ru.spb.hse.roguelike.model.UnknownObjectException;
 import ru.spb.hse.roguelike.model.map.GameMapCellType;
 import ru.spb.hse.roguelike.view.TerminalView;
 import ru.spb.hse.roguelike.view.View;
@@ -42,6 +43,8 @@ public class Main {
             System.out.println("File " + args[0] + " not found");
         } catch (IOException | InterruptedException e) {
             System.out.println("Game graphics (view) problems. Please, restart the game.");
+        } catch (UnknownObjectException e) {
+            System.out.println("Unknown exception. Please, restart the game");
         }
     }
 }

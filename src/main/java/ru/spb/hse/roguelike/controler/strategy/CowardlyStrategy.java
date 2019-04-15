@@ -1,6 +1,7 @@
 package ru.spb.hse.roguelike.controler.strategy;
 
 import ru.spb.hse.roguelike.model.GameModel;
+import ru.spb.hse.roguelike.model.UnknownObjectException;
 import ru.spb.hse.roguelike.model.map.Direction;
 import ru.spb.hse.roguelike.Point;
 import ru.spb.hse.roguelike.model.object.alive.GameCharacter;
@@ -10,7 +11,7 @@ import javax.annotation.Nonnull;
 public class CowardlyStrategy extends MobStrategy {
     @Override
     public Point move(@Nonnull GameModel gameModel,
-                      @Nonnull Point mobPoint) {
+                      @Nonnull Point mobPoint) throws UnknownObjectException {
         if (isInvalid(gameModel, mobPoint)) {
             throw new SecurityException("unable to get mob from cell " + mobPoint);
         }

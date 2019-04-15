@@ -41,12 +41,12 @@ public class Controller {
     /**
      * Runs the read commands until game ends.
      */
-    public void runGame() throws IOException, InterruptedException {
-        while (executeCommand() && moveMobs());
+    public void runGame() throws IOException, InterruptedException, UnknownObjectException {
+        while (executeCommand() && moveMobs()) ;
         view.end();
     }
 
-    private boolean moveMobs() throws ViewException {
+    private boolean moveMobs() throws ViewException, UnknownObjectException {
         for (AliveObject mob : gameModel.getMobs()) {
             Point oldPoint = gameModel.getAliveObjectPoint(mob);
             Point point = null;
@@ -73,7 +73,7 @@ public class Controller {
         return true;
     }
 
-    boolean executeCommand() throws ViewException {
+    boolean executeCommand() throws ViewException, UnknownObjectException {
         Command command = view.readCommand();
         if (command == null) {
             return true;
@@ -95,7 +95,7 @@ public class Controller {
         return true;
     }
 
-    private boolean handleMove(int rowDiff, int colDiff) throws ViewException {
+    private boolean handleMove(int rowDiff, int colDiff) throws ViewException, UnknownObjectException {
         Point diff = new Point(rowDiff, colDiff);
         Point oldPoint = gameModel.getAliveObjectPoint(character);
         boolean moved = gameModel.moveAliveObjectDiff(character, diff);
@@ -103,13 +103,13 @@ public class Controller {
         if (moved) {
             view.showChanges(oldPoint);
             if (gameModel.getCell(point).hasItem() &&
-                    gameModel.getInventory().size() != GameModel.getMaxInventorySize()) {
+                    gameModel.getInventory().size() != gameModel.getMaxInventorySize()) {
                 gameModel.addItem(gameModel.takeCellItem(point));
             }
             view.showChanges(point);
         } else {
             if (gameModel.getCell(point) != null &&
-                 gameModel.getCell(point).hasAliveObject()) {
+                    gameModel.getCell(point).hasAliveObject()) {
                 return fightMob(point);
             }
         }
@@ -121,14 +121,14 @@ public class Controller {
         int mobHit = RANDOM.nextInt(2);
         Mob mob = (Mob) gameModel.getCell(point).getAliveObject();
         if (mobHit == 1) {
-            character.changeHealth(character.getHealth() - mob.getPower());
-            if (character.getHealth() == 0) {
+            character.setCurrentHealth(character.getCurrentHealth() - mob.getCurrentPower());
+            if (character.getCurrentHealth() == 0) {
                 return false;
             }
         }
         if (gameCharacterHit == 1) {
-            mob.changeHealth(mob.getHealth() - character.getPower());
-            if (mob.getHealth() == 0) {
+            mob.setCurrentHealth(mob.getCurrentHealth() - character.getCurrentPower());
+            if (mob.getCurrentHealth() == 0) {
                 gameModel.removeAliveObject(point);
                 view.showChanges(point);
             }

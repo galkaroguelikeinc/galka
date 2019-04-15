@@ -14,12 +14,20 @@ public abstract class AliveObject {
         this.power = power;
     }
 
+    public int getCurrentHealth() {
+        return health.getCurrentValue();
+    }
+
     public void setCurrentHealth(int x) {
         health.setCurrentValue(x);
     }
 
     public void setMaxHealth(int x) {
         health.setMaxValue(x);
+    }
+
+    public int getCurrentPower() {
+        return power.getCurrentValue();
     }
 
     public void setCurrentPower(int x) {

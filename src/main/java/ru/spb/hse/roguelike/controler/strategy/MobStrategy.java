@@ -2,6 +2,7 @@ package ru.spb.hse.roguelike.controler.strategy;
 
 import ru.spb.hse.roguelike.model.GameModel;
 import ru.spb.hse.roguelike.Point;
+import ru.spb.hse.roguelike.model.UnknownObjectException;
 import ru.spb.hse.roguelike.model.object.alive.AliveObject;
 import ru.spb.hse.roguelike.model.object.alive.GameCharacter;
 import ru.spb.hse.roguelike.model.object.alive.Mob;
@@ -10,10 +11,10 @@ import javax.annotation.Nonnull;
 
 abstract class MobStrategy {
     abstract Point move(@Nonnull GameModel gameModel,
-               @Nonnull Point mobPoint) throws StrategyException;
+                        @Nonnull Point mobPoint) throws StrategyException, UnknownObjectException;
 
     boolean isInvalid(@Nonnull GameModel gameModel,
-                          @Nonnull Point mobPoint) {
+                      @Nonnull Point mobPoint) throws UnknownObjectException {
         Point gameCharacterPoint = gameModel.getAliveObjectPoint(gameModel.getCharacter());
         if (!checkPoint(gameCharacterPoint, gameModel)) {
             System.out.println(1);
