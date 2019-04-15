@@ -34,6 +34,10 @@ public class ControllerTest {
                 public Command readCommand() {
                     return Command.LEFT;
                 }
+
+                @Override
+                public void end() {
+                }
             }, gameModel);
 
             controller.executeCommand();

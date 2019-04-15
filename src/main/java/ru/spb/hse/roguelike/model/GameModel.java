@@ -20,7 +20,6 @@ public class GameModel {
     private final List<Item> inventory;
     private final GameCharacter gameCharacter;
     private static final int MAX_INVENTORY_SIZE = 10;
-    private boolean isEnd = false;
 
     private Map<AliveObject, Point> aliveObjectToPoint = new HashMap<>();
 
@@ -81,14 +80,6 @@ public class GameModel {
 
     public Item getItemFromInventory(int index) {
         return inventory.get(index);
-    }
-
-    public void end() {
-        isEnd = true;
-    }
-
-    public boolean isEnd() {
-        return isEnd;
     }
 
     public static int getMaxInventorySize() {

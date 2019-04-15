@@ -6,19 +6,20 @@ import ru.spb.hse.roguelike.model.GameModel;
 import ru.spb.hse.roguelike.model.Generator;
 import ru.spb.hse.roguelike.view.TerminalView;
 import ru.spb.hse.roguelike.view.View;
-import ru.spb.hse.roguelike.view.ViewException;
+
+import java.io.IOException;
 
 public class Main {
     public static void main(String[] args) {
         try {
             Generator generator = new Generator();
-            GameModel model = generator.generateModel(3, 20, 20);
+            GameModel model = generator.generateModel(8, 50, 25);
             View view = new TerminalView(model);
             Controller controller = new Controller(view, model);
             controller.runGame();
         } catch (MapGeneratorException e) {
             System.out.println("Map creation problems: " + e.getMessage());
-        } catch (ViewException e) {
+        } catch (IOException | InterruptedException e) {
             System.out.println("Game graphics (view) problems. Please, restart the game.");
         }
     }

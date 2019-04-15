@@ -2,6 +2,8 @@ package ru.spb.hse.roguelike.view;
 
 import ru.spb.hse.roguelike.Point;
 
+import java.io.IOException;
+
 /**
  * A View, as in Model-View-Controller, which displays the game state to the user.
  * <p>
@@ -20,4 +22,6 @@ public abstract class View {
      * @return command which was read
      */
     public abstract Command readCommand();
+
+    public abstract void end() throws IOException, InterruptedException;
 }

@@ -1,11 +1,9 @@
 package ru.spb.hse.roguelike.controler;
 
-import com.sun.org.apache.regexp.internal.RE;
 import ru.spb.hse.roguelike.controler.strategy.AggressiveStrategy;
 import ru.spb.hse.roguelike.controler.strategy.CowardlyStrategy;
 import ru.spb.hse.roguelike.controler.strategy.PassiveStrategy;
 import ru.spb.hse.roguelike.Point;
-import ru.spb.hse.roguelike.controler.strategy.StrategyException;
 import ru.spb.hse.roguelike.model.GameModel;
 import ru.spb.hse.roguelike.model.object.alive.AliveObject;
 import ru.spb.hse.roguelike.model.object.alive.GameCharacter;
@@ -14,6 +12,7 @@ import ru.spb.hse.roguelike.view.Command;
 import ru.spb.hse.roguelike.view.View;
 import ru.spb.hse.roguelike.view.ViewException;
 
+import java.io.IOException;
 import java.util.Random;
 
 /**
@@ -41,37 +40,36 @@ public class Controller {
     /**
      * Runs the read commands until game ends.
      */
-    public void runGame() throws ViewException {
-        while (executeCommand()){
-            moveMobs();
-        }
-        gameModel.end();
+    public void runGame() throws IOException, InterruptedException {
+        while (executeCommand() && moveMobs());
+        view.end();
     }
 
-    private void moveMobs() throws ViewException {
+    private boolean moveMobs() throws ViewException {
         for (AliveObject mob : gameModel.getMobs()) {
+            Point oldPoint = gameModel.getAliveObjectPoint(mob);
             Point point = null;
             switch (((Mob) mob).getMobStrategyType()) {
                 case PASSIVE:
-                    point = new PassiveStrategy().move(gameModel, gameModel.getAliveObjectPoint(mob));
+                    point = new PassiveStrategy().move(gameModel, oldPoint);
                     break;
                 case AGGRESSIVE:
-                    point = new AggressiveStrategy().move(gameModel,
-                            gameModel.getAliveObjectPoint(mob));
+                    point = new AggressiveStrategy().move(gameModel, oldPoint);
                     break;
                 case COWARDLY:
-                    point = new CowardlyStrategy().move(gameModel, gameModel.getAliveObjectPoint(mob));
+                    point = new CowardlyStrategy().move(gameModel, oldPoint);
                     break;
             }
-            if (gameModel.getCell(point).hasAliveObject()) {
-
+            if (gameModel.getAliveObjectPoint(character).equals(point)) {
+                if (!fightMob(oldPoint)) {
+                    return false;
+                }
             }
-            Point oldPoint = gameModel.getAliveObjectPoint(mob);
             gameModel.moveAliveObject(mob, point);
             view.showChanges(oldPoint);
             view.showChanges(point);
         }
-
+        return true;
     }
 
     boolean executeCommand() throws ViewException {
@@ -118,25 +116,20 @@ public class Controller {
     }
 
     private boolean fightMob(Point point) throws ViewException {
-        System.out.println("fight");
         int gameCharacterHit = RANDOM.nextInt(2);
         int mobHit = RANDOM.nextInt(2);
+        Mob mob = (Mob) gameModel.getCell(point).getAliveObject();
         if (mobHit == 1) {
-            gameModel.getCharacter().changeHealth(gameModel.getCharacter().getHealth() - gameModel.getCell(point).getAliveObject().getPower());
-            if (gameModel.getCharacter().getHealth() == 0) {
+            character.changeHealth(character.getHealth() - mob.getPower());
+            if (character.getHealth() == 0) {
                 return false;
             }
         }
         if (gameCharacterHit == 1) {
-            System.out.println(gameModel.getCell(point).getAliveObject().getHealth());
-            System.out.println(gameModel.getCell(point).getAliveObject().getHealth() - character.getPower());
-            gameModel.getCell(point).getAliveObject().changeHealth(gameModel.getCell(point).getAliveObject().getHealth() - character.getPower());
-            if (gameModel.getCell(point).getAliveObject().getHealth() == 0) {
+            mob.changeHealth(mob.getHealth() - character.getPower());
+            if (mob.getHealth() == 0) {
                 gameModel.removeAliveObject(point);
-                Point oldPoint = gameModel.getAliveObjectPoint(gameModel.getCharacter());
-                gameModel.moveAliveObject(gameModel.getCharacter(), point);
                 view.showChanges(point);
-                view.showChanges(oldPoint);
             }
         }
         return true;

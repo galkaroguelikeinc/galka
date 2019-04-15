@@ -5,7 +5,7 @@ import ru.spb.hse.roguelike.Point;
 
 import javax.annotation.Nonnull;
 
-public class PassiveStrategy implements MobStrategy {
+public class PassiveStrategy extends MobStrategy {
     @Override
     public Point move(@Nonnull GameModel gameModel,
                       @Nonnull Point mobPoint) {

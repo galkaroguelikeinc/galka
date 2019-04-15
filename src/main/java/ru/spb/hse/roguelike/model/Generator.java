@@ -21,8 +21,8 @@ import java.util.function.Function;
 public class Generator {
     private final int MIN_ROOM_HEIGHT = 3;
     private final int MIN_ROOM_WIDTH = 3;
-    private final int MAX_ROOM_HEIGHT = 7;
-    private final int MAX_ROOM_WIDTH = 7;
+    private final int MAX_ROOM_HEIGHT = 10;
+    private final int MAX_ROOM_WIDTH = 10;
     private final int INDENT = 1;
     private final int MAX_FAILED_CREATING_ROOM_ATTEMPT_COUNT = 10;
     private final int MAX_REGENERATION_COUNT = 1000;

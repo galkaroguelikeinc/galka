@@ -5,9 +5,6 @@ import com.googlecode.lanterna.TextCharacter;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.screen.TerminalScreen;
 import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
-import ru.spb.hse.roguelike.controler.strategy.AggressiveStrategy;
-import ru.spb.hse.roguelike.controler.strategy.CowardlyStrategy;
-import ru.spb.hse.roguelike.controler.strategy.PassiveStrategy;
 import ru.spb.hse.roguelike.Point;
 import ru.spb.hse.roguelike.model.GameModel;
 import ru.spb.hse.roguelike.model.map.GameCell;
@@ -18,6 +15,7 @@ import ru.spb.hse.roguelike.model.object.alive.Mob;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * TerminalView displays the game to the user via terminal pseudo graphics.
@@ -119,5 +117,17 @@ public class TerminalView extends View {
             System.out.println("Problems with parsing command");
         }
         return null;
+    }
+
+    @Override
+    public void end() throws IOException, InterruptedException {
+        System.out.println("end");
+        terminalScreen.clear();
+        terminalScreen.setCharacter(0, 0, new TextCharacter('e'));
+        terminalScreen.setCharacter(1, 0, new TextCharacter('n'));
+        terminalScreen.setCharacter(2, 0, new TextCharacter('d'));
+        terminalScreen.refresh();
+        TimeUnit.SECONDS.sleep(3);
+        terminalScreen.close();
     }
 }
