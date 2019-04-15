@@ -15,14 +15,14 @@ import java.util.function.Function;
  * Class to generate game model pieces: rooms, inventory, character and mobs.
  */
 public class Generator {
-    private final int MIN_ROOM_HEIGHT = 3;
-    private final int MIN_ROOM_WIDTH = 3;
-    private final int MAX_ROOM_HEIGHT = 7;
-    private final int MAX_ROOM_WIDTH = 7;
-    private final int INDENT = 1;
-    private final int MAX_FAILED_CREATING_ROOM_ATTEMPT_COUNT = 10;
-    private final int MAX_REGENERATION_COUNT = 1000;
     private static final Random RANDOM = new Random();
+    private final int minRoomHeight = 3;
+    private final int minRoomWidth = 3;
+    private final int maxRoomHeight = 7;
+    private final int maxRoomWidth = 7;
+    private final int indent = 1;
+    private final int maxFailedCreatingRoomAttemptCount = 10;
+    private final int maxRegenerationCount = 1000;
 
     public GameModel generateModel(int roomCount,
                                    int width,
@@ -34,11 +34,11 @@ public class Generator {
                 characterRoom.row + RANDOM.nextInt(characterRoom.height),
                 characterRoom.col + RANDOM.nextInt(characterRoom.width));
         List<Item> inventories = generateInventories();
-        return new GameModel(map, inventories, gameCharacter);
+        return new GameModel(map, inventories, gameCharacter, 10);
     }
 
-    GameModel generateModel(String fileName,
-                            Function<Character, GameMapCellType> decoder) throws FileNotFoundException, MapGeneratorException {
+    GameModel generateModel(String fileName, Function<Character, GameMapCellType> decoder)
+            throws FileNotFoundException, MapGeneratorException {
         Scanner scanner = new Scanner(new FileInputStream(fileName));
         List<String> lines = new ArrayList<>();
         while (scanner.hasNextLine()) {
@@ -64,7 +64,7 @@ public class Generator {
                 pointForGameCharacter.row,
                 pointForGameCharacter.col);
         List<Item> inventories = generateInventories();
-        return new GameModel(map, inventories, gameCharacter);
+        return new GameModel(map, inventories, gameCharacter, 10);
 
     }
 
@@ -90,10 +90,10 @@ public class Generator {
         int failedCreatingRoomAttemptCount = 0;
         int regenerationCount = 0;
         while (rooms.size() < roomCount) {
-            int roomWidth = MIN_ROOM_WIDTH + RANDOM.nextInt(MAX_ROOM_WIDTH - MIN_ROOM_WIDTH + 1);
-            int roomHeight = MIN_ROOM_HEIGHT + RANDOM.nextInt(MAX_ROOM_HEIGHT - MIN_ROOM_HEIGHT + 1);
-            int roomCol = INDENT + RANDOM.nextInt(width - roomWidth - 2 * INDENT + 1);
-            int roomRow = INDENT + RANDOM.nextInt(height - roomHeight - 2 * INDENT + 1);
+            int roomWidth = minRoomWidth + RANDOM.nextInt(maxRoomWidth - minRoomWidth + 1);
+            int roomHeight = minRoomHeight + RANDOM.nextInt(maxRoomHeight - minRoomHeight + 1);
+            int roomCol = indent + RANDOM.nextInt(width - roomWidth - 2 * indent + 1);
+            int roomRow = indent + RANDOM.nextInt(height - roomHeight - 2 * indent + 1);
             Room curRoom = new Room(roomRow, roomCol, roomWidth, roomHeight);
             boolean ok = rooms.parallelStream().noneMatch(room -> room.intersect(curRoom, 2));
             if (ok) {
@@ -102,12 +102,12 @@ public class Generator {
             } else {
                 failedCreatingRoomAttemptCount++;
             }
-            if (failedCreatingRoomAttemptCount > MAX_FAILED_CREATING_ROOM_ATTEMPT_COUNT) {
+            if (failedCreatingRoomAttemptCount > maxFailedCreatingRoomAttemptCount) {
                 failedCreatingRoomAttemptCount = 0;
                 regenerationCount++;
                 rooms.clear();
             }
-            if (regenerationCount >= MAX_REGENERATION_COUNT) {
+            if (regenerationCount >= maxRegenerationCount) {
                 throw new MapGeneratorException("Failed to generate map");
             }
         }
@@ -140,10 +140,6 @@ public class Generator {
 
     private GameCharacter generateCharacter() {
         return new GameCharacter();
-    }
-
-    public void generateMobsIfNeeded() {
-
     }
 
     private List<Item> generateInventories() {

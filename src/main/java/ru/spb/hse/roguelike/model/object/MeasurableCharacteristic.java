@@ -3,35 +3,29 @@ package ru.spb.hse.roguelike.model.object;
 /**
  * A characteristic of an alive object expressed as an integer.
  * <p>
- * A characteristic has the max capacity (the upper bound of the integer) expressing the most amount of the
- * characteristic an alive object can have and the current amount.
+ * A characteristic has the maxValue capacity (the upper bound of the integer) expressing the most amount of the
+ * characteristic an alive object can have and the currentValue amount.
  * <p>
  * E.g. health, power, food-fullness.
  */
 public class MeasurableCharacteristic {
-    private int max;
-    private int current;
+    private int maxValue;
+    private int currentValue;
 
-    public MeasurableCharacteristic(int capacity) {
-        max = capacity;
-        current = max;
+    public MeasurableCharacteristic(int maxValue) {
+        this.maxValue = maxValue;
+        currentValue = this.maxValue;
     }
 
-    public void change(int x) {
-        current = x;
-        if (current > max) {
-            current = max;
-        }
-        if (current < 0) {
-            current = 0;
-        }
+    public void setMaxValue(int newMaxValue) {
+        maxValue = newMaxValue;
     }
 
-    public void changeMax(int x) {
-        max = x;
+    public int getCurrentValue() {
+        return currentValue;
     }
 
-    public int getCurentValue() {
-        return current;
+    public void setCurrentValue(int newValue) {
+        currentValue = Math.max(0, Math.min(maxValue, newValue));
     }
 }
