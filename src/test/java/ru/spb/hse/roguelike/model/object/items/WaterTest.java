@@ -14,9 +14,11 @@ public class WaterTest {
     public void useTest() {
         GameCharacter gameCharacter = new GameCharacter();
         gameCharacter.setFoodFullness(0);
-        Water water = new Water(gameCharacter);
+        Water water = new Water();
         water.increaseNumber();
-        water.use();
+        water.apply(gameCharacter);
+        assertEquals(1, gameCharacter.getFoodFullness());
+        water.apply(gameCharacter);
         assertEquals(2, gameCharacter.getFoodFullness());
     }
 }
