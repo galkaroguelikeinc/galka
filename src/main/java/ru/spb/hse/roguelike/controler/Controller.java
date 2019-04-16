@@ -2,6 +2,7 @@ package ru.spb.hse.roguelike.controler;
 
 import ru.spb.hse.roguelike.Point;
 import ru.spb.hse.roguelike.model.GameModel;
+import ru.spb.hse.roguelike.model.UnknownObjectException;
 import ru.spb.hse.roguelike.model.object.alive.GameCharacter;
 import ru.spb.hse.roguelike.view.Command;
 import ru.spb.hse.roguelike.view.View;
@@ -20,7 +21,7 @@ public class Controller {
      * Creates new controller.
      *
      * @param view      view to show changes
-     * @param gameModel model to change
+     * @param gameModel model to setCurrentValue
      */
     public Controller(View view, GameModel gameModel) {
         this.gameModel = gameModel;
@@ -39,6 +40,9 @@ public class Controller {
 
     void executeCommand() throws ViewException {
         Command command = view.readCommand();
+        if (command == null) {
+            return;
+        }
         switch (command) {
             case LEFT: {
                 handleMove(0, -1);
@@ -60,12 +64,15 @@ public class Controller {
     }
 
     private void handleMove(int rowDiff, int colDiff) throws ViewException {
-        Point oldPoint = gameModel.getAliveObjectPoint(character);
-        boolean moved = gameModel.moveAliveObjectDiff(character, new Point(rowDiff, colDiff));
-        if (moved) {
-            view.showChanges(oldPoint);
-            Point newPoint = gameModel.getAliveObjectPoint(character);
-            view.showChanges(newPoint);
+        try {
+            Point oldPoint = gameModel.getAliveObjectPoint(character);
+            boolean moved = gameModel.moveAliveObjectDiff(character, new Point(rowDiff, colDiff));
+            if (moved) {
+                view.showChanges(oldPoint);
+                Point newPoint = gameModel.getAliveObjectPoint(character);
+                view.showChanges(newPoint);
+            }
+        } catch (UnknownObjectException ignored) {
         }
     }
 }

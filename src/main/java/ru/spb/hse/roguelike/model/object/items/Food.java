@@ -14,6 +14,6 @@ public abstract class Food extends Item {
 
     @Override
     public void apply(GameCharacter gameCharacter) {
-        gameCharacter.changeFoodFullness(foodFullnessImprover * super.getItemNumber());
+        gameCharacter.setFoodFullness(foodFullnessImprover * super.getItemNumber());
     }
 }
