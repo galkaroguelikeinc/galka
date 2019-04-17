@@ -3,12 +3,12 @@ package ru.spb.hse.roguelike.model;
 import org.junit.Test;
 import ru.spb.hse.roguelike.Point;
 import ru.spb.hse.roguelike.model.map.GameMapCellType;
-import ru.spb.hse.roguelike.model.object.alive.Mob;
+import ru.spb.hse.roguelike.model.object.alive.NonPlayerCharacter;
 
 import java.io.FileNotFoundException;
 import java.util.function.Function;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 /**
  * Tests generating the map from file and randomly.
@@ -65,18 +65,18 @@ public class GeneratorTest {
     }
 
     @Test
-    public void testGenerateMob() throws MapGeneratorException {
+    public void testGenerateNPC() throws MapGeneratorException {
         GameModel gameModel = generator.generateModel(3, 20, 25);
-        int actualMobsCount = 0;
+        int actualNPCCount = 0;
         for (int i = 0; i < 25; i++) {
             for (int j = 0; j < 20; j++) {
                 if (gameModel.getCell(new Point(i, j)).hasAliveObject()
-                        && gameModel.getCell(new Point(i, j)).getAliveObject() instanceof Mob) {
-                    actualMobsCount++;
+                        && gameModel.getCell(new Point(i, j)).getAliveObject() instanceof NonPlayerCharacter) {
+                    actualNPCCount++;
                 }
             }
         }
-        assertEquals(3, actualMobsCount);
+        assertEquals(3, actualNPCCount);
     }
 
 

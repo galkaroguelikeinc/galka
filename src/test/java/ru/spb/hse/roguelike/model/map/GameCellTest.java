@@ -1,7 +1,8 @@
 package ru.spb.hse.roguelike.model.map;
 
 import org.junit.Test;
-import ru.spb.hse.roguelike.model.object.alive.Mob;
+import ru.spb.hse.roguelike.model.object.MeasurableCharacteristic;
+import ru.spb.hse.roguelike.model.object.alive.NonPlayerCharacter;
 import ru.spb.hse.roguelike.model.object.alive.NonPlayerCharacterStrategyType;
 import ru.spb.hse.roguelike.model.object.items.Water;
 
@@ -25,7 +26,11 @@ public class GameCellTest {
 
     @Test
     public void aliveObjectTest() {
-        GameCell gameCell = new GameCell(GameMapCellType.TUNNEL, new Mob(NonPlayerCharacterStrategyType.AGGRESSIVE), null);
+        GameCell gameCell = new GameCell(GameMapCellType.TUNNEL, new NonPlayerCharacter(
+                new MeasurableCharacteristic(1),
+                new MeasurableCharacteristic(1),
+                NonPlayerCharacterStrategyType.AGGRESSIVE),
+                null);
         assertTrue(gameCell.hasAliveObject());
         gameCell.removeAliveObject();
         assertFalse(gameCell.hasAliveObject());
