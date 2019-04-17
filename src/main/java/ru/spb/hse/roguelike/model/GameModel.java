@@ -81,7 +81,7 @@ public class GameModel {
 
     public boolean hasCell(Point point) {
         return (point.getRow() >= 0 && point.getRow() < gameMap.length &&
-                point.getCol() > 0 && point.getCol() < gameMap[0].length);
+                point.getCol() >= 0 && point.getCol() < gameMap[0].length);
     }
 
     public GameCell getCell(Point point) {

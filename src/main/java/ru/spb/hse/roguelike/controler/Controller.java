@@ -8,7 +8,6 @@ import ru.spb.hse.roguelike.controler.strategy.RandomStrategy;
 import ru.spb.hse.roguelike.model.GameModel;
 import ru.spb.hse.roguelike.model.UnknownObjectException;
 import ru.spb.hse.roguelike.model.object.alive.GameCharacter;
-import ru.spb.hse.roguelike.model.object.alive.Mob;
 import ru.spb.hse.roguelike.model.object.alive.NonPlayerCharacter;
 import ru.spb.hse.roguelike.view.Command;
 import ru.spb.hse.roguelike.view.View;
@@ -69,7 +68,7 @@ public class Controller {
                     break;
             }
             if (gameModel.getAliveObjectPoint(character).equals(point)) {
-                if (!fightMob(oldPoint)) {
+                if (!fightNPC(oldPoint)) {
                     return false;
                 }
             }
@@ -121,25 +120,25 @@ public class Controller {
         } else {
             if (gameModel.getCell(point) != null &&
                     gameModel.getCell(point).hasAliveObject()) {
-                return fightMob(point);
+                return fightNPC(point);
             }
         }
         return true;
     }
 
-    private boolean fightMob(Point point) throws ViewException {
+    private boolean fightNPC(Point point) throws ViewException {
         int gameCharacterHit = RANDOM.nextInt(2);
-        int mobHit = RANDOM.nextInt(2);
-        Mob mob = (Mob) gameModel.getCell(point).getAliveObject();
-        if (mobHit == 1) {
-            character.setCurrentHealth(character.getCurrentHealth() - mob.getCurrentPower());
+        int npcHit = RANDOM.nextInt(2);
+        NonPlayerCharacter npc = (NonPlayerCharacter) gameModel.getCell(point).getAliveObject();
+        if (npcHit == 1) {
+            character.setCurrentHealth(character.getCurrentHealth() - npc.getCurrentPower());
             if (character.getCurrentHealth() == 0) {
                 return false;
             }
         }
         if (gameCharacterHit == 1) {
-            mob.setCurrentHealth(mob.getCurrentHealth() - character.getCurrentPower());
-            if (mob.getCurrentHealth() == 0) {
+            npc.setCurrentHealth(npc.getCurrentHealth() - character.getCurrentPower());
+            if (npc.getCurrentHealth() == 0) {
                 gameModel.removeAliveObject(point);
                 view.showChanges(point);
             }
