@@ -1,12 +1,13 @@
 package ru.spb.hse.roguelike.model;
 
+import ru.spb.hse.roguelike.Point;
 import ru.spb.hse.roguelike.model.map.Direction;
 import ru.spb.hse.roguelike.model.map.GameCell;
 import ru.spb.hse.roguelike.model.map.GameMapCellType;
-import ru.spb.hse.roguelike.Point;
+import ru.spb.hse.roguelike.model.object.MeasurableCharacteristic;
 import ru.spb.hse.roguelike.model.object.alive.GameCharacter;
-import ru.spb.hse.roguelike.model.object.alive.Mob;
-import ru.spb.hse.roguelike.model.object.alive.MobStrategyType;
+import ru.spb.hse.roguelike.model.object.alive.NonPlayerCharacter;
+import ru.spb.hse.roguelike.model.object.alive.NonPlayerCharacterStrategyType;
 import ru.spb.hse.roguelike.model.object.items.Item;
 
 import javax.annotation.Nonnull;
@@ -141,12 +142,12 @@ public class Generator {
         int size = 1;
         int curRow = beginRow;
         int curCol = beginCol;
-        while (curRow + direction.dy < map.length
-                && curCol + direction.dx < map[curRow + direction.dy].length
-                && map[curRow + direction.dy][curCol + direction.dx].getGameMapCellType() == GameMapCellType.ROOM) {
+        while (curRow + direction.dCol < map.length
+                && curCol + direction.dRow < map[curRow + direction.dCol].length
+                && map[curRow + direction.dCol][curCol + direction.dRow].getGameMapCellType() == GameMapCellType.ROOM) {
             size++;
-            curRow += direction.dy;
-            curCol += direction.dx;
+            curRow += direction.dCol;
+            curCol += direction.dRow;
         }
         return size;
     }
@@ -187,14 +188,17 @@ public class Generator {
     private void generateMobsInRoom(@Nonnull Room room,
                                     @Nonnull GameCell[][] map) {
         int fullMobsCount = RANDOM.nextInt(maxCountMobsInRoom - 1) + 1;
-        MobStrategyType[] allTypes = MobStrategyType.values();
+        NonPlayerCharacterStrategyType[] allTypes = NonPlayerCharacterStrategyType.values();
         int curMobsCount = 0;
         while (curMobsCount < fullMobsCount) {
             int row = room.row + RANDOM.nextInt(room.height);
             int col = room.col + RANDOM.nextInt(room.width);
-            MobStrategyType strategyType = allTypes[RANDOM.nextInt(allTypes.length)];
+            NonPlayerCharacterStrategyType strategyType = allTypes[RANDOM.nextInt(allTypes.length)];
             if (!map[row][col].hasAliveObject()) {
-                map[row][col].addAliveObject(new Mob(strategyType));
+                map[row][col].addAliveObject(new NonPlayerCharacter(
+                        new MeasurableCharacteristic(1),
+                        new MeasurableCharacteristic(1),
+                        strategyType));
                 curMobsCount++;
             }
         }
@@ -237,7 +241,7 @@ public class Generator {
         while (!finishRoom.isPointInside(curPoint)) {
             visit.add(curPoint);
             for (Direction d : Direction.values()) {
-                Point p = new Point(curPoint.getRow() + d.dx, curPoint.getCol() + d.dy);
+                Point p = new Point(curPoint.getRow() + d.dRow, curPoint.getCol() + d.dCol);
                 if (!visit.contains(p)
                         && p.getRow() > 0
                         && p.getRow() < height

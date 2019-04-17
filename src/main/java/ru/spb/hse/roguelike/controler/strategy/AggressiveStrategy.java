@@ -5,25 +5,23 @@ import ru.spb.hse.roguelike.model.GameModel;
 import ru.spb.hse.roguelike.model.UnknownObjectException;
 import ru.spb.hse.roguelike.model.map.Direction;
 import ru.spb.hse.roguelike.model.map.GameMapCellType;
-import ru.spb.hse.roguelike.model.object.alive.AliveObject;
 import ru.spb.hse.roguelike.model.object.alive.GameCharacter;
-import ru.spb.hse.roguelike.model.object.alive.Mob;
 
 import javax.annotation.Nonnull;
 
-public class AggressiveStrategy extends MobStrategy {
+public class AggressiveStrategy extends NonPlayerCharacterStrategy {
     @Override
     public Point move(@Nonnull GameModel gameModel,
-                      @Nonnull Point mobPoint) throws UnknownObjectException {
+                      @Nonnull Point nonPlayerCharacterPoint) throws UnknownObjectException {
         GameCharacter gameCharacter = gameModel.getCharacter();
         Point gameCharacterPoint = gameModel.getAliveObjectPoint(gameCharacter);
-        if (isInvalid(gameModel, mobPoint)) {
-            throw new SecurityException("unable to get mob from cell " + mobPoint);
+        if (isInvalid(gameModel, nonPlayerCharacterPoint)) {
+            throw new SecurityException("Unable to get NPC from cell " + nonPlayerCharacterPoint);
         }
         try {
-            return getNewPosition(gameModel, mobPoint, gameCharacterPoint);
+            return getNewPosition(gameModel, nonPlayerCharacterPoint, gameCharacterPoint);
         } catch (StrategyException e) {
-            return mobPoint;
+            return nonPlayerCharacterPoint;
         }
     }
 
@@ -40,11 +38,11 @@ public class AggressiveStrategy extends MobStrategy {
             return mobPoint;
         }
         for (Direction d : Direction.values()) {
-            Point curPoint = new Point(mobPoint.getRow() + d.dx, mobPoint.getCol() + d.dy);
+            Point curPoint = new Point(mobPoint.getRow() + d.dRow, mobPoint.getCol() + d.dCol);
             int curDistance = 0;
             try {
                 curDistance = graph.bfs(curPoint, gameCharacter);
-                if (!existMob(curPoint, gameModel) && curDistance < minDistance) {
+                if (!existsNonPlayerCharacter(curPoint, gameModel) && curDistance < minDistance) {
                     minDistance = curDistance;
                     pointWithMinDistance = curPoint;
                 }
@@ -53,17 +51,10 @@ public class AggressiveStrategy extends MobStrategy {
             }
         }
         if (gameModel.getCell(pointWithMinDistance).getGameMapCellType() == GameMapCellType.EMPTY) {
-            throw new StrategyException("Failed  to move agressive mob");
+            throw new StrategyException("Failed to move an aggressive NPC");
         }
         return pointWithMinDistance;
     }
 
-    private boolean existMob(Point point,
-                             GameModel gameModel) {
-        if (!gameModel.getCell(point).hasAliveObject()) {
-            return false;
-        }
-        AliveObject aliveObject = gameModel.getCell(point).getAliveObject();
-        return aliveObject instanceof Mob;
-    }
+
 }

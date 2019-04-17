@@ -6,11 +6,11 @@ public enum Direction {
     RIGHT(1, 0),
     DOWN(0, -1);
 
-    public final int dx;
-    public final int dy;
+    public final int dRow;
+    public final int dCol;
 
-    Direction(int dx, int dy) {
-        this.dx = dx;
-        this.dy = dy;
+    Direction(int dRow, int dCol) {
+        this.dRow = dRow;
+        this.dCol = dCol;
     }
 }

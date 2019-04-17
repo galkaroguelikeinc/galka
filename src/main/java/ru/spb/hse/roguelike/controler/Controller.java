@@ -1,20 +1,22 @@
 package ru.spb.hse.roguelike.controler;
 
+import ru.spb.hse.roguelike.Point;
 import ru.spb.hse.roguelike.controler.strategy.AggressiveStrategy;
 import ru.spb.hse.roguelike.controler.strategy.CowardlyStrategy;
 import ru.spb.hse.roguelike.controler.strategy.PassiveStrategy;
-import ru.spb.hse.roguelike.Point;
+import ru.spb.hse.roguelike.controler.strategy.RandomStrategy;
 import ru.spb.hse.roguelike.model.GameModel;
-import ru.spb.hse.roguelike.model.object.alive.AliveObject;
 import ru.spb.hse.roguelike.model.UnknownObjectException;
 import ru.spb.hse.roguelike.model.object.alive.GameCharacter;
 import ru.spb.hse.roguelike.model.object.alive.Mob;
+import ru.spb.hse.roguelike.model.object.alive.NonPlayerCharacter;
 import ru.spb.hse.roguelike.view.Command;
 import ru.spb.hse.roguelike.view.View;
 import ru.spb.hse.roguelike.view.ViewException;
 
 import java.io.IOException;
 import java.util.Random;
+
 
 /**
  * Class to do the actions, which are supposed to be done according the game rules: moving character,
@@ -47,11 +49,13 @@ public class Controller {
     }
 
     private boolean moveMobs() throws ViewException, UnknownObjectException {
-        for (AliveObject mob : gameModel.getMobs()) {
-            Point oldPoint = gameModel.getAliveObjectPoint(mob);
+        for (NonPlayerCharacter npc : gameModel.getNonGameCharacters()) {
+            Point oldPoint = gameModel.getAliveObjectPoint(npc);
             Point point = null;
-            switch (((Mob) mob).getMobStrategyType()) {
+            switch (npc.getNonPlayerCharacterStrategyType()) {
+                // TODO: generalize the code
                 case PASSIVE:
+                    // TODO: make it static and lazy-init
                     point = new PassiveStrategy().move(gameModel, oldPoint);
                     break;
                 case AGGRESSIVE:
@@ -60,13 +64,16 @@ public class Controller {
                 case COWARDLY:
                     point = new CowardlyStrategy().move(gameModel, oldPoint);
                     break;
+                case RANDOM:
+                    point = new RandomStrategy().move(gameModel, oldPoint);
+                    break;
             }
             if (gameModel.getAliveObjectPoint(character).equals(point)) {
                 if (!fightMob(oldPoint)) {
                     return false;
                 }
             }
-            gameModel.moveAliveObject(mob, point);
+            gameModel.moveAliveObject(npc, point);
             view.showChanges(oldPoint);
             view.showChanges(point);
         }
@@ -90,6 +97,10 @@ public class Controller {
             }
             case DOWN: {
                 return handleMove(1, 0);
+            }
+            case CONFUSE_MOBS: {
+                gameModel.confuseMobs();
+                return true;
             }
         }
         return true;

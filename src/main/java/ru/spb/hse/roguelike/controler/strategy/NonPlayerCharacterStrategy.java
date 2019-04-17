@@ -1,17 +1,33 @@
 package ru.spb.hse.roguelike.controler.strategy;
 
-import ru.spb.hse.roguelike.model.GameModel;
 import ru.spb.hse.roguelike.Point;
+import ru.spb.hse.roguelike.model.GameModel;
 import ru.spb.hse.roguelike.model.UnknownObjectException;
 import ru.spb.hse.roguelike.model.object.alive.AliveObject;
 import ru.spb.hse.roguelike.model.object.alive.GameCharacter;
-import ru.spb.hse.roguelike.model.object.alive.Mob;
+import ru.spb.hse.roguelike.model.object.alive.NonPlayerCharacter;
 
 import javax.annotation.Nonnull;
 
-abstract class MobStrategy {
+abstract class NonPlayerCharacterStrategy {
     abstract Point move(@Nonnull GameModel gameModel,
                         @Nonnull Point mobPoint) throws StrategyException, UnknownObjectException;
+
+    static boolean existsNonPlayerCharacter(Point point, GameModel gameModel) {
+        if (!gameModel.getCell(point).hasAliveObject()) {
+            return false;
+        }
+        AliveObject aliveObject = gameModel.getCell(point).getAliveObject();
+        return aliveObject instanceof NonPlayerCharacter;
+    }
+
+    private boolean checkPoint(Point point, GameModel gameModel) {
+        if (point.getRow() < 0 || point.getRow() >= gameModel.getRows()
+                || point.getCol() < 0 || point.getCol() >= gameModel.getCols()) {
+            return false;
+        }
+        return gameModel.getCell(point).hasAliveObject();
+    }
 
     boolean isInvalid(@Nonnull GameModel gameModel,
                       @Nonnull Point mobPoint) throws UnknownObjectException {
@@ -30,18 +46,10 @@ abstract class MobStrategy {
             return true;
         }
         AliveObject aliveObject = gameModel.getCell(mobPoint).getAliveObject();
-        if (!(aliveObject instanceof Mob)) {
+        if (!(aliveObject instanceof NonPlayerCharacter)) {
             System.out.println(4);
             return true;
         }
         return false;
-    }
-
-    private boolean checkPoint(Point point, GameModel gameModel) {
-        if (point.getRow() < 0 || point.getRow() >= gameModel.getRows()
-                || point.getCol() < 0 || point.getCol() >= gameModel.getCols()) {
-            return false;
-        }
-        return gameModel.getCell(point).hasAliveObject();
     }
 }

@@ -9,7 +9,7 @@ public abstract class AliveObject {
     private MeasurableCharacteristic health;
     private MeasurableCharacteristic power;
 
-    AliveObject(MeasurableCharacteristic health, MeasurableCharacteristic power) {
+    public AliveObject(MeasurableCharacteristic health, MeasurableCharacteristic power) {
         this.health = health;
         this.power = power;
     }
@@ -22,6 +22,10 @@ public abstract class AliveObject {
         health.setCurrentValue(x);
     }
 
+    public int getMaxHealth() {
+        return health.getMaxValue();
+    }
+
     public void setMaxHealth(int x) {
         health.setMaxValue(x);
     }
@@ -32,6 +36,10 @@ public abstract class AliveObject {
 
     public void setCurrentPower(int x) {
         power.setCurrentValue(x);
+    }
+
+    public int getMaxPower() {
+        return power.getMaxValue();
     }
 
     public void setMaxPower(int x) {

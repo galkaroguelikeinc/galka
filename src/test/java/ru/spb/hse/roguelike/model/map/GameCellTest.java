@@ -2,10 +2,11 @@ package ru.spb.hse.roguelike.model.map;
 
 import org.junit.Test;
 import ru.spb.hse.roguelike.model.object.alive.Mob;
-import ru.spb.hse.roguelike.model.object.alive.MobStrategyType;
+import ru.spb.hse.roguelike.model.object.alive.NonPlayerCharacterStrategyType;
 import ru.spb.hse.roguelike.model.object.items.Water;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Tests adding and removing objects in cells.
@@ -24,7 +25,7 @@ public class GameCellTest {
 
     @Test
     public void aliveObjectTest() {
-        GameCell gameCell = new GameCell(GameMapCellType.TUNNEL, new Mob(MobStrategyType.AGGRESSIVE), null);
+        GameCell gameCell = new GameCell(GameMapCellType.TUNNEL, new Mob(NonPlayerCharacterStrategyType.AGGRESSIVE), null);
         assertTrue(gameCell.hasAliveObject());
         gameCell.removeAliveObject();
         assertFalse(gameCell.hasAliveObject());

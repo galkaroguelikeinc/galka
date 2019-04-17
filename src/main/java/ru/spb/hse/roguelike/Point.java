@@ -1,5 +1,7 @@
 package ru.spb.hse.roguelike;
 
+import ru.spb.hse.roguelike.model.map.Direction;
+
 import java.util.Objects;
 
 public class Point {
@@ -23,6 +25,10 @@ public class Point {
         return new Point(this.row + point.row, this.col + point.col);
     }
 
+    public Point add(Direction d) {
+        return add(new Point(d.dRow, d.dCol));
+    }
+
     @Override
     public int hashCode() {
         return Objects.hash(row, col);
@@ -39,8 +45,8 @@ public class Point {
     @Override
     public String toString() {
         return "Point{" + "\n" +
-                "row=" + row + "\n" +
-                ",col=" + col + "\n" +
+                "row=" + row + ",\n" +
+                "col=" + col + "\n" +
                 "}";
     }
 }

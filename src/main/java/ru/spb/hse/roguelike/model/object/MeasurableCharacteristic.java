@@ -11,10 +11,13 @@ package ru.spb.hse.roguelike.model.object;
 public class MeasurableCharacteristic {
     private int maxValue;
     private int currentValue;
-
     public MeasurableCharacteristic(int maxValue) {
         this.maxValue = maxValue;
         currentValue = this.maxValue;
+    }
+
+    public int getMaxValue() {
+        return maxValue;
     }
 
     public void setMaxValue(int newMaxValue) {
@@ -28,4 +31,5 @@ public class MeasurableCharacteristic {
     public void setCurrentValue(int newValue) {
         currentValue = Math.max(0, Math.min(maxValue, newValue));
     }
+
 }
