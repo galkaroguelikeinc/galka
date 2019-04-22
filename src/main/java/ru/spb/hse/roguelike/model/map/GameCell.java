@@ -68,4 +68,8 @@ public class GameCell {
     public void setGameMapCellType(@Nonnull GameMapCellType gameMapCellType) {
         this.gameMapCellType = gameMapCellType;
     }
+
+    public boolean isNonEmptyTypeAndHasNoObjects() {
+        return gameMapCellType != GameMapCellType.EMPTY && !hasAliveObject() && !hasItem();
+    }
 }

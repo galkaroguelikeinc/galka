@@ -9,7 +9,9 @@ import ru.spb.hse.roguelike.model.object.MeasurableCharacteristic;
 import ru.spb.hse.roguelike.model.object.alive.GameCharacter;
 import ru.spb.hse.roguelike.model.object.alive.NonPlayerCharacter;
 import ru.spb.hse.roguelike.model.object.alive.NonPlayerCharacterStrategyType;
+import ru.spb.hse.roguelike.model.object.items.DressWearable;
 import ru.spb.hse.roguelike.model.object.items.Item;
+import ru.spb.hse.roguelike.model.object.items.WaterFood;
 
 import javax.annotation.Nonnull;
 import java.io.FileInputStream;
@@ -30,6 +32,7 @@ public class Generator {
     private final int maxFailedCreatingRoomAttemptCount = 10;
     private final int maxRegenerationCount = 1000;
     private final int maxCountMobsInRoom = 2;
+    private final int numItems = 3;
 
     // TODO: generate items on the map
     public GameModel generateModel(int roomCount,
@@ -43,6 +46,7 @@ public class Generator {
                 characterRoom.col + RANDOM.nextInt(characterRoom.width));
         List<Item> inventories = generateInventories();
         generateMobs(rooms, map);
+        generateItemsOntoMap(map, numItems);
         return new GameModel(map, inventories, gameCharacter, 10);
     }
 
@@ -76,6 +80,57 @@ public class Generator {
         generateMobs(findRooms(map), map);
         return new GameModel(map, inventories, gameCharacter, 10);
 
+    }
+
+    private List<Item> generateItemList(int numItems) throws MapGeneratorException {
+        if (numItems < 0) {
+            throw new MapGeneratorException("Cannot generate item list with numItems < 0");
+        }
+        List<Item> list = new ArrayList<>();
+        // TODO: generate by taking a random Item's subclass
+        while (true) {
+            if (list.size() == numItems) {
+                return list;
+            }
+            list.add(new DressWearable());
+            if (list.size() == numItems) {
+                return list;
+            }
+            list.add(new WaterFood());
+        }
+    }
+
+    private void generateItemsOntoMap(GameCell[][] map, int numItems) throws MapGeneratorException {
+        List<Item> items = generateItemList(numItems);
+        for (Item item : items) {
+            putItemOntoMap(map, item);
+        }
+    }
+
+    private Point generateRandomPointOnMap(GameCell[][] map) {
+        Random random = new Random();
+        int row = random.nextInt(map.length);
+        int col = random.nextInt(map[row].length);
+        return new Point(row, col);
+    }
+
+    // TODO: add handling when no empty cells left (max retry cnt and then throw cannot generate error)
+    private GameCell getFirstEmptyRandomCell(GameCell[][] map) {
+        while (true) {
+            Point point = generateRandomPointOnMap(map);
+            GameCell cell = map[point.getRow()][point.getCol()];
+            if (cell.isNonEmptyTypeAndHasNoObjects()) {
+                return cell;
+            }
+        }
+    }
+
+    private void putItemOntoMap(GameCell[][] map, Item item) {
+        GameCell cell = getFirstEmptyRandomCell(map);
+        try {
+            cell.addItem(item);
+        } catch (GameCellException ignored) {
+        }
     }
 
     private boolean isValidModel(List<String> lines) {
