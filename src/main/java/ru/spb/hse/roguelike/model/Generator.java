@@ -3,6 +3,7 @@ package ru.spb.hse.roguelike.model;
 import ru.spb.hse.roguelike.Point;
 import ru.spb.hse.roguelike.model.map.Direction;
 import ru.spb.hse.roguelike.model.map.GameCell;
+import ru.spb.hse.roguelike.model.map.GameCellException;
 import ru.spb.hse.roguelike.model.map.GameMapCellType;
 import ru.spb.hse.roguelike.model.object.MeasurableCharacteristic;
 import ru.spb.hse.roguelike.model.object.alive.GameCharacter;
@@ -29,9 +30,11 @@ public class Generator {
     private final int maxFailedCreatingRoomAttemptCount = 10;
     private final int maxRegenerationCount = 1000;
     private final int maxCountMobsInRoom = 2;
+
+    // TODO: generate items on the map
     public GameModel generateModel(int roomCount,
                                    int width,
-                                   int height) throws MapGeneratorException {
+                                   int height) throws MapGeneratorException, GameCellException {
         List<Room> rooms = generateRooms(roomCount, width, height);
         GameCell[][] map = generateMap(rooms, width, height);
         Room characterRoom = rooms.get(RANDOM.nextInt(roomCount));
@@ -44,7 +47,7 @@ public class Generator {
     }
 
     public GameModel generateModel(String fileName, Function<Character, GameMapCellType> decoder)
-            throws FileNotFoundException, MapGeneratorException {
+            throws FileNotFoundException, MapGeneratorException, GameCellException {
         Scanner scanner = new Scanner(new FileInputStream(fileName));
         List<String> lines = new ArrayList<>();
         while (scanner.hasNextLine()) {
@@ -154,7 +157,7 @@ public class Generator {
 
     private GameCharacter generateCharacter(GameCell[][] map,
                                             int row,
-                                            int col) {
+                                            int col) throws GameCellException {
         GameCharacter character = generateCharacter();
         map[row][col].addAliveObject(character);
         return character;
@@ -182,11 +185,16 @@ public class Generator {
 
     private void generateMobs(@Nonnull List<Room> rooms,
                               @Nonnull GameCell[][] map) {
-        rooms.forEach(room -> generateMobsInRoom(room, map));
+        rooms.forEach(room -> {
+            try {
+                generateMobsInRoom(room, map);
+            } catch (GameCellException ignored) {
+            }
+        });
     }
 
     private void generateMobsInRoom(@Nonnull Room room,
-                                    @Nonnull GameCell[][] map) {
+                                    @Nonnull GameCell[][] map) throws GameCellException {
         int fullMobsCount = RANDOM.nextInt(maxCountMobsInRoom - 1) + 1;
         NonPlayerCharacterStrategyType[] allTypes = NonPlayerCharacterStrategyType.values();
         int curMobsCount = 0;

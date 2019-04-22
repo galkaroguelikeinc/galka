@@ -2,11 +2,13 @@ package ru.spb.hse.roguelike.model;
 
 import ru.spb.hse.roguelike.Point;
 import ru.spb.hse.roguelike.model.map.GameCell;
+import ru.spb.hse.roguelike.model.map.GameCellException;
 import ru.spb.hse.roguelike.model.object.alive.AliveObject;
 import ru.spb.hse.roguelike.model.object.alive.ConfusedNonPlayerCharacter;
 import ru.spb.hse.roguelike.model.object.alive.GameCharacter;
 import ru.spb.hse.roguelike.model.object.alive.NonPlayerCharacter;
 import ru.spb.hse.roguelike.model.object.items.Item;
+import ru.spb.hse.roguelike.model.object.items.Wearable;
 
 import javax.annotation.Nonnull;
 import java.util.HashMap;
@@ -18,11 +20,11 @@ import java.util.stream.Collectors;
 import static ru.spb.hse.roguelike.model.map.GameMapCellType.EMPTY;
 
 /**
- * Model: class to remember the game map and inventory. Can be modified by Controller and used by View.
+ * Model: class to remember the game map and characterInventory. Can be modified by Controller and used by View.
  */
 public class GameModel {
     private final GameCell[][] gameMap;
-    private final List<Item> inventory;
+    private final List<Item> characterInventory;  // TODO: remove either this or GameCharacter's internal wearableStack
     private final GameCharacter gameCharacter;
     private final int maxInventorySize;
     // TODO: separate all alive objects into the game character and non-player characters
@@ -30,9 +32,9 @@ public class GameModel {
     private boolean isEnd = false;
 
     public GameModel(@Nonnull final GameCell[][] gameMap,
-                     @Nonnull final List<Item> inventory, GameCharacter character, int maxInventorySize) {
+                     @Nonnull final List<Item> characterInventory, GameCharacter character, int maxInventorySize) {
         this.gameMap = gameMap;
-        this.inventory = inventory;
+        this.characterInventory = characterInventory;
         this.gameCharacter = character;
         this.maxInventorySize = maxInventorySize;
         saveAliveObjectCoordinates();
@@ -97,12 +99,12 @@ public class GameModel {
         return getRows() == 0 ? 0 : gameMap[0].length;
     }
 
-    public List<Item> getInventory() {
-        return inventory;
+    public List<Item> getCharacterInventory() {
+        return characterInventory;
     }
 
     public void addItem(Item item) {
-        inventory.add(item);
+        characterInventory.add(item);
     }
 
     public Item takeCellItem(Point point) {
@@ -110,7 +112,7 @@ public class GameModel {
     }
 
     public Item getItemFromInventory(int index) {
-        return inventory.get(index);
+        return characterInventory.get(index);
     }
 
     public void end() {
@@ -132,12 +134,12 @@ public class GameModel {
         return aliveObjectToPoint.get(aliveObject);
     }
 
-    public boolean moveAliveObjectDiff(AliveObject aliveObject, Point diff) {
+    public boolean moveAliveObjectDiff(AliveObject aliveObject, Point diff) throws GameCellException {
         Point point = aliveObjectToPoint.get(aliveObject);
         return moveAliveObject(aliveObject, point.add(diff));
     }
 
-    public boolean moveAliveObject(AliveObject aliveObject, Point newPoint) {
+    public boolean moveAliveObject(AliveObject aliveObject, Point newPoint) throws GameCellException {
         if (!aliveObjectToPoint.containsKey(aliveObject) ||
                 getCell(newPoint) == null ||
                 getCell(newPoint).getGameMapCellType() == EMPTY ||
@@ -149,7 +151,7 @@ public class GameModel {
         removeAliveObject(point);
         addAliveObject(newPoint, aliveObject);
         if (hasItem(newPoint) &&
-                getInventory().size() != getMaxInventorySize()) {
+                getCharacterInventory().size() != getMaxInventorySize()) {
             addItem(takeCellItem(point));
         }
         return true;
@@ -160,12 +162,31 @@ public class GameModel {
         gameMap[point.getRow()][point.getCol()].removeAliveObject();
     }
 
-    private void addAliveObject(Point point, AliveObject aliveObject) {
+    private void addAliveObject(Point point, AliveObject aliveObject) throws GameCellException {
         gameMap[point.getRow()][point.getCol()].addAliveObject(aliveObject);
         aliveObjectToPoint.put(aliveObject, point);
     }
 
     private boolean hasItem(Point point) {
         return gameMap[point.getRow()][point.getCol()].hasItem();
+    }
+
+    public void makeCharacterApplyItem() throws CannotPickItemException {
+        GameCell cell = getCell(aliveObjectToPoint.get(gameCharacter));
+        if (!cell.hasItem()) {
+            throw new CannotPickItemException();
+        }
+        Item item = cell.takeCellItem();
+        item.apply(gameCharacter);
+    }
+
+    public void makeCharacterDropTopWearable() throws CannotDropWearableException, GameCellException {
+        if (!gameCharacter.hasWearable()) {
+            throw new CannotDropWearableException();
+        }
+        Wearable wearable = gameCharacter.peekWearable();
+        wearable.unapply(gameCharacter);
+        GameCell cell = getCell(aliveObjectToPoint.get(gameCharacter));
+        cell.addItem(wearable);
     }
 }

@@ -35,6 +35,7 @@ public class TerminalView extends View {
     private static final char PASSIVE_MOB_SYMBOL = 'P';
     private static final char COWARD_MOB_SYMBOL = 'C';
     private static final char RANDOM_MOB_SYMBOL = 'R';
+    private static final char ITEM_SYMBOL = '*';
     private static Map<GameMapCellType, Character> CELL_TYPE_TO_SYMBOL = new HashMap<GameMapCellType, Character>() {{
         put(GameMapCellType.ROOM, ROOM_SYMBOL);
         put(GameMapCellType.EMPTY, EMPTY_SYMBOL);
@@ -88,6 +89,8 @@ public class TerminalView extends View {
                 }
                 return ' ';
             }
+        } else if (gameCell.hasItem()) {
+            return ITEM_SYMBOL;
         }
         return CELL_TYPE_TO_SYMBOL.get(gameCell.getGameMapCellType());
     }
@@ -118,6 +121,10 @@ public class TerminalView extends View {
                     return Command.RIGHT;
                 case Tab:
                     return Command.CONFUSE_MOBS;
+                case Enter:
+                    return Command.APPLY_ITEM;
+                case Escape:
+                    return Command.DROP_WEARABLE;
             }
         } catch (IOException e) {
             System.out.println("Problems with parsing command");

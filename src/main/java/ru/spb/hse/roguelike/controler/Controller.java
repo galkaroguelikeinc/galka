@@ -5,8 +5,11 @@ import ru.spb.hse.roguelike.controler.strategy.AggressiveStrategy;
 import ru.spb.hse.roguelike.controler.strategy.CowardlyStrategy;
 import ru.spb.hse.roguelike.controler.strategy.PassiveStrategy;
 import ru.spb.hse.roguelike.controler.strategy.RandomStrategy;
+import ru.spb.hse.roguelike.model.CannotDropWearableException;
+import ru.spb.hse.roguelike.model.CannotPickItemException;
 import ru.spb.hse.roguelike.model.GameModel;
 import ru.spb.hse.roguelike.model.UnknownObjectException;
+import ru.spb.hse.roguelike.model.map.GameCellException;
 import ru.spb.hse.roguelike.model.object.alive.GameCharacter;
 import ru.spb.hse.roguelike.model.object.alive.NonPlayerCharacter;
 import ru.spb.hse.roguelike.view.Command;
@@ -42,19 +45,19 @@ public class Controller {
     /**
      * Runs the read commands until game ends.
      */
-    public void runGame() throws IOException, InterruptedException, UnknownObjectException {
+    public void runGame() throws IOException, InterruptedException, UnknownObjectException, GameCellException {
         while (executeCommand() && moveMobs()) ;
         view.end();
     }
 
-    private boolean moveMobs() throws ViewException, UnknownObjectException {
+    private boolean moveMobs() throws ViewException, UnknownObjectException, GameCellException {
         for (NonPlayerCharacter npc : gameModel.getNonGameCharacters()) {
             Point oldPoint = gameModel.getAliveObjectPoint(npc);
             Point point = null;
             switch (npc.getNonPlayerCharacterStrategyType()) {
                 // TODO: generalize the code
                 case PASSIVE:
-                    // TODO: make it static and lazy-init
+                    // TODO: make strategies static and lazy-init
                     point = new PassiveStrategy().move(gameModel, oldPoint);
                     break;
                 case AGGRESSIVE:
@@ -79,7 +82,7 @@ public class Controller {
         return true;
     }
 
-    boolean executeCommand() throws ViewException, UnknownObjectException {
+    boolean executeCommand() throws ViewException, UnknownObjectException, GameCellException {
         Command command = view.readCommand();
         if (command == null) {
             return true;
@@ -101,11 +104,26 @@ public class Controller {
                 gameModel.confuseMobs();
                 return true;
             }
+            case APPLY_ITEM: {
+                try {
+                    gameModel.makeCharacterApplyItem();
+                } catch (CannotPickItemException ignored) {
+                    // TODO: APPLY_ITEM or DROP_WEARABLE should not count as a move if it didn't succeed
+                }
+                return true;
+            }
+            case DROP_WEARABLE: {
+                try {
+                    gameModel.makeCharacterDropTopWearable();
+                } catch (CannotDropWearableException ignored) {
+                }
+                return true;
+            }
         }
         return true;
     }
 
-    private boolean handleMove(int rowDiff, int colDiff) throws ViewException, UnknownObjectException {
+    private boolean handleMove(int rowDiff, int colDiff) throws ViewException, UnknownObjectException, GameCellException {
         Point diff = new Point(rowDiff, colDiff);
         Point oldPoint = gameModel.getAliveObjectPoint(character);
         boolean moved = gameModel.moveAliveObjectDiff(character, diff);
@@ -113,7 +131,7 @@ public class Controller {
         if (moved) {
             view.showChanges(oldPoint);
             if (gameModel.getCell(point).hasItem() &&
-                    gameModel.getInventory().size() != gameModel.getMaxInventorySize()) {
+                    gameModel.getCharacterInventory().size() != gameModel.getMaxInventorySize()) {
                 gameModel.addItem(gameModel.takeCellItem(point));
             }
             view.showChanges(point);

@@ -4,7 +4,7 @@ import org.junit.Test;
 import ru.spb.hse.roguelike.model.object.MeasurableCharacteristic;
 import ru.spb.hse.roguelike.model.object.alive.NonPlayerCharacter;
 import ru.spb.hse.roguelike.model.object.alive.NonPlayerCharacterStrategyType;
-import ru.spb.hse.roguelike.model.object.items.Water;
+import ru.spb.hse.roguelike.model.object.items.WaterFood;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -15,10 +15,10 @@ import static org.junit.Assert.assertTrue;
 public class GameCellTest {
 
     @Test
-    public void itemTest() {
+    public void itemTest() throws GameCellException {
         GameCell gameCell = new GameCell(GameMapCellType.ROOM, null, null);
         assertFalse(gameCell.hasItem());
-        gameCell.addItem(new Water());
+        gameCell.addItem(new WaterFood());
         assertTrue(gameCell.hasItem());
         gameCell.takeCellItem();
         assertFalse(gameCell.hasItem());

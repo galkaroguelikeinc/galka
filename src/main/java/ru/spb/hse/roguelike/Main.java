@@ -5,6 +5,7 @@ import ru.spb.hse.roguelike.model.MapGeneratorException;
 import ru.spb.hse.roguelike.model.GameModel;
 import ru.spb.hse.roguelike.model.Generator;
 import ru.spb.hse.roguelike.model.UnknownObjectException;
+import ru.spb.hse.roguelike.model.map.GameCellException;
 import ru.spb.hse.roguelike.model.map.GameMapCellType;
 import ru.spb.hse.roguelike.view.TerminalView;
 import ru.spb.hse.roguelike.view.View;
@@ -14,7 +15,7 @@ import java.io.IOException;
 import java.io.FileNotFoundException;
 
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws GameCellException {
         try {
             Generator generator = new Generator();
             GameModel model;

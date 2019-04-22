@@ -24,20 +24,18 @@ public class GameCell {
         this.cellItem = cellItem;
     }
 
-    public boolean addItem(Item item) {
+    public void addItem(Item item) throws GameCellException {
         if (hasItem()) {
-            return false;
+            throw new GameCellException("This cell already has an item");
         }
         cellItem = item;
-        return true;
     }
 
-    public boolean addAliveObject(AliveObject object) {
+    public void addAliveObject(AliveObject object) throws GameCellException {
         if (hasAliveObject()) {
-            return false;
+            throw new GameCellException("This cell already has an alive object");
         }
         aliveObject = object;
-        return true;
     }
 
     public void removeAliveObject() {

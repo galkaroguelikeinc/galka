@@ -6,7 +6,7 @@ import ru.spb.hse.roguelike.model.object.alive.GameCharacter;
 import static org.junit.Assert.assertEquals;
 
 /**
- * Tests if Water item changes game character characteristic.
+ * Tests if WaterFood item changes game character characteristic.
  */
 public class WaterTest {
 
@@ -14,7 +14,7 @@ public class WaterTest {
     public void useTest() {
         GameCharacter gameCharacter = new GameCharacter();
         gameCharacter.setFoodFullness(0);
-        Water water = new Water();
+        WaterFood water = new WaterFood();
         water.increaseNumber();
         water.apply(gameCharacter);
         assertEquals(1, gameCharacter.getFoodFullness());

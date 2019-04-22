@@ -1,12 +1,17 @@
 package ru.spb.hse.roguelike.model.object.alive;
 
 import ru.spb.hse.roguelike.model.object.MeasurableCharacteristic;
+import ru.spb.hse.roguelike.model.object.items.Item;
+import ru.spb.hse.roguelike.model.object.items.Wearable;
+
+import java.util.Stack;
 
 /**
  * Represents the game character (a character, that can be moved by player and use items)
  */
 public class GameCharacter extends AliveObject {
     private MeasurableCharacteristic foodFullness;
+    private Stack<Wearable> wearableStack = new Stack<>();
 
     public GameCharacter() {
         super(new MeasurableCharacteristic(10), new MeasurableCharacteristic(1));
@@ -23,5 +28,21 @@ public class GameCharacter extends AliveObject {
 
     public int getFoodFullness() {
         return foodFullness.getCurrentValue();
+    }
+
+    public void pushWearable(Wearable wearable) {
+        wearableStack.push(wearable);
+    }
+
+    public boolean hasWearable() {
+        return !wearableStack.empty();
+    }
+
+    public Wearable peekWearable() {
+        return wearableStack.peek();
+    }
+
+    public void popWearable() {
+        wearableStack.pop();
     }
 }
