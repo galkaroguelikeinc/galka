@@ -9,7 +9,7 @@ import ru.spb.hse.roguelike.model.GameModel;
 import ru.spb.hse.roguelike.model.UnknownObjectException;
 import ru.spb.hse.roguelike.model.object.alive.GameCharacter;
 import ru.spb.hse.roguelike.model.object.alive.NonPlayerCharacter;
-import ru.spb.hse.roguelike.view.Command;
+import ru.spb.hse.roguelike.view.CommandName;
 import ru.spb.hse.roguelike.view.View;
 import ru.spb.hse.roguelike.view.ViewException;
 
@@ -26,6 +26,7 @@ public class Controller {
     private GameModel gameModel;
     private GameCharacter character;
     private static final Random RANDOM = new Random();
+    private Invoker invoker = new Invoker();
 
     /**
      * Creates new controller.
@@ -37,6 +38,11 @@ public class Controller {
         this.gameModel = gameModel;
         this.view = view;
         character = gameModel.getCharacter();
+        invoker.setCommand(CommandName.UP, new UpMoveCommand(this));
+        invoker.setCommand(CommandName.DOWN, new DownMoveCommand(this));
+        invoker.setCommand(CommandName.LEFT, new LeftMoveCommand(this));
+        invoker.setCommand(CommandName.RIGHT, new RightMoveCommand(this));
+        invoker.setCommand(CommandName.CONFUSE_MOBS, new ConfuseMobsCommand(this));
     }
 
     /**
@@ -80,32 +86,18 @@ public class Controller {
     }
 
     boolean executeCommand() throws ViewException, UnknownObjectException {
-        Command command = view.readCommand();
-        if (command == null) {
+        CommandName commandName = view.readCommand();
+        if (commandName == null) {
             return true;
         }
-        switch (command) {
-            case LEFT: {
-                return handleMove(0, -1);
-            }
-            case RIGHT: {
-                return handleMove(0, 1);
-            }
-            case UP: {
-                return handleMove(-1, 0);
-            }
-            case DOWN: {
-                return handleMove(1, 0);
-            }
-            case CONFUSE_MOBS: {
-                gameModel.confuseMobs();
-                return true;
-            }
-        }
-        return true;
+        return invoker.executeCommand(commandName);
     }
 
-    private boolean handleMove(int rowDiff, int colDiff) throws ViewException, UnknownObjectException {
+    void confuseMobs() {
+        gameModel.confuseMobs();
+    }
+
+    boolean handleMove(int rowDiff, int colDiff) throws ViewException, UnknownObjectException {
         Point diff = new Point(rowDiff, colDiff);
         Point oldPoint = gameModel.getAliveObjectPoint(character);
         boolean moved = gameModel.moveAliveObjectDiff(character, diff);
