@@ -6,6 +6,7 @@ import ru.spb.hse.roguelike.model.GameModel;
 import ru.spb.hse.roguelike.model.Generator;
 import ru.spb.hse.roguelike.model.MapGeneratorException;
 import ru.spb.hse.roguelike.model.UnknownObjectException;
+import ru.spb.hse.roguelike.model.map.GameCellException;
 import ru.spb.hse.roguelike.model.map.GameMapCellType;
 import ru.spb.hse.roguelike.view.Command;
 import ru.spb.hse.roguelike.view.View;
@@ -21,7 +22,7 @@ import static org.mockito.Mockito.when;
 public class ControllerTest {
 
     @Test
-    public void moveLeftTest() throws MapGeneratorException, ViewException, UnknownObjectException {
+    public void moveLeftTest() throws MapGeneratorException, ViewException, UnknownObjectException, GameCellException {
         for (int k = 0; k < 1000; k++) {
             GameModel gameModel = new Generator().generateModel(3, 20, 25);
             gameModel.getCell(new Point(0, 3)).setGameMapCellType(GameMapCellType.ROOM);

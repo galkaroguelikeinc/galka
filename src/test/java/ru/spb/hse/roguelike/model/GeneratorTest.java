@@ -2,6 +2,7 @@ package ru.spb.hse.roguelike.model;
 
 import org.junit.Test;
 import ru.spb.hse.roguelike.Point;
+import ru.spb.hse.roguelike.model.map.GameCellException;
 import ru.spb.hse.roguelike.model.map.GameMapCellType;
 import ru.spb.hse.roguelike.model.object.alive.NonPlayerCharacter;
 
@@ -17,7 +18,7 @@ public class GeneratorTest {
     private final Generator generator = new Generator();
 
     @Test
-    public void testGenerateModelFromFile() throws FileNotFoundException, MapGeneratorException {
+    public void testGenerateModelFromFile() throws FileNotFoundException, MapGeneratorException, GameCellException {
         Function<Character, GameMapCellType> decoder = character -> {
             if (character == '.') {
                 return GameMapCellType.ROOM;
@@ -46,7 +47,7 @@ public class GeneratorTest {
     }
 
     @Test
-    public void testCountRooms() throws MapGeneratorException {
+    public void testCountRooms() throws MapGeneratorException, GameCellException {
         for (int x = 0; x < 1000; x++) {
             GameModel gameModel = generator.generateModel(3, 20, 25);
             int actualRoomCount = 0;
@@ -65,7 +66,7 @@ public class GeneratorTest {
     }
 
     @Test
-    public void testGenerateNPC() throws MapGeneratorException {
+    public void testGenerateNPC() throws MapGeneratorException, GameCellException {
         GameModel gameModel = generator.generateModel(3, 20, 25);
         int actualNPCCount = 0;
         for (int i = 0; i < 25; i++) {
