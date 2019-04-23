@@ -76,7 +76,7 @@ public class GeneratorTest {
                 }
             }
         }
-        assertEquals(3, actualNPCCount);
+        assertEquals(4, actualNPCCount);
     }
 
 
