@@ -130,10 +130,6 @@ public class Controller {
         Point point = oldPoint.add(diff);
         if (moved) {
             view.showChanges(oldPoint);
-            if (gameModel.getCell(point).hasItem() &&
-                    gameModel.getCharacterInventory().size() != gameModel.getMaxInventorySize()) {
-                gameModel.addItem(gameModel.takeCellItem(point));
-            }
             view.showChanges(point);
         } else {
             if (gameModel.getCell(point) != null &&
