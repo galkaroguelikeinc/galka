@@ -188,7 +188,7 @@ public class Generator {
 
     private void generateMobsInRoom(@Nonnull Room room,
                                     @Nonnull GameCell[][] map) {
-        int fullMobsCount = RANDOM.nextInt(maxCountMobsInRoom) + 1;
+        int fullMobsCount = RANDOM.nextInt(maxCountMobsInRoom - 1) + 1;
         NonPlayerCharacterStrategyType[] allTypes = NonPlayerCharacterStrategyType.values();
         int curMobsCount = 0;
         while (curMobsCount < fullMobsCount) {
