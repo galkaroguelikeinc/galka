@@ -12,6 +12,7 @@ import ru.spb.hse.roguelike.model.UnknownObjectException;
 import ru.spb.hse.roguelike.model.map.GameCellException;
 import ru.spb.hse.roguelike.model.object.alive.GameCharacter;
 import ru.spb.hse.roguelike.model.object.alive.NonPlayerCharacter;
+import ru.spb.hse.roguelike.model.object.items.CannotApplyFoodMultipleTimesException;
 import ru.spb.hse.roguelike.view.Command;
 import ru.spb.hse.roguelike.view.View;
 import ru.spb.hse.roguelike.view.ViewException;
@@ -45,7 +46,7 @@ public class Controller {
     /**
      * Runs the read commands until game ends.
      */
-    public void runGame() throws IOException, InterruptedException, UnknownObjectException, GameCellException {
+    public void runGame() throws IOException, InterruptedException, UnknownObjectException, GameCellException, CannotApplyFoodMultipleTimesException {
         while (executeCommand() && moveMobs()) ;
         view.end();
     }
@@ -82,7 +83,7 @@ public class Controller {
         return true;
     }
 
-    boolean executeCommand() throws ViewException, UnknownObjectException {
+    boolean executeCommand() throws ViewException, UnknownObjectException, CannotApplyFoodMultipleTimesException {
         Command command = view.readCommand();
         if (command == null) {
             return true;

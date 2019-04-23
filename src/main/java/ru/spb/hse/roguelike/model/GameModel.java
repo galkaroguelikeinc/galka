@@ -7,6 +7,7 @@ import ru.spb.hse.roguelike.model.object.alive.AliveObject;
 import ru.spb.hse.roguelike.model.object.alive.ConfusedNonPlayerCharacter;
 import ru.spb.hse.roguelike.model.object.alive.GameCharacter;
 import ru.spb.hse.roguelike.model.object.alive.NonPlayerCharacter;
+import ru.spb.hse.roguelike.model.object.items.CannotApplyFoodMultipleTimesException;
 import ru.spb.hse.roguelike.model.object.items.Item;
 import ru.spb.hse.roguelike.model.object.items.Wearable;
 
@@ -171,7 +172,7 @@ public class GameModel {
         return gameMap[point.getRow()][point.getCol()].hasItem();
     }
 
-    public void makeCharacterApplyItem() throws CannotPickItemException {
+    public void makeCharacterApplyItem() throws CannotPickItemException, CannotApplyFoodMultipleTimesException {
         GameCell cell = getCell(aliveObjectToPoint.get(gameCharacter));
         if (!cell.hasItem()) {
             throw new CannotPickItemException();
