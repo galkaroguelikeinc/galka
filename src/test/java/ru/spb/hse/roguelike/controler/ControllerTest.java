@@ -8,14 +8,12 @@ import ru.spb.hse.roguelike.model.MapGeneratorException;
 import ru.spb.hse.roguelike.model.UnknownObjectException;
 import ru.spb.hse.roguelike.model.map.GameCellException;
 import ru.spb.hse.roguelike.model.map.GameMapCellType;
+import ru.spb.hse.roguelike.view.CommandName;
 import ru.spb.hse.roguelike.model.object.items.CannotApplyFoodMultipleTimesException;
-import ru.spb.hse.roguelike.view.Command;
 import ru.spb.hse.roguelike.view.View;
 import ru.spb.hse.roguelike.view.ViewException;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 /**
  * Tests changing game character positions when command from view received.
@@ -36,8 +34,8 @@ public class ControllerTest {
                 }
 
                 @Override
-                public Command readCommand() {
-                    return Command.LEFT;
+                public CommandName readCommand() {
+                    return CommandName.LEFT;
                 }
 
                 @Override

@@ -107,24 +107,24 @@ public class TerminalView extends View {
     }
 
     @Override
-    public Command readCommand() {
+    public CommandName readCommand() {
         try {
             KeyStroke key = terminalScreen.readInput();
             switch (key.getKeyType()) {
                 case ArrowDown:
-                    return Command.DOWN;
+                    return CommandName.DOWN;
                 case ArrowUp:
-                    return Command.UP;
+                    return CommandName.UP;
                 case ArrowLeft:
-                    return Command.LEFT;
+                    return CommandName.LEFT;
                 case ArrowRight:
-                    return Command.RIGHT;
+                    return CommandName.RIGHT;
                 case Tab:
-                    return Command.CONFUSE_MOBS;
+                    return CommandName.CONFUSE_MOBS;
                 case Enter:
-                    return Command.APPLY_ITEM;
+                    return CommandName.APPLY_ITEM;
                 case Escape:
-                    return Command.DROP_WEARABLE;
+                    return CommandName.DROP_WEARABLE;
             }
         } catch (IOException e) {
             System.out.println("Problems with parsing command");
@@ -134,7 +134,6 @@ public class TerminalView extends View {
 
     @Override
     public void end() throws IOException, InterruptedException {
-        System.out.println("end");
         terminalScreen.clear();
         terminalScreen.setCharacter(0, 0, new TextCharacter('e'));
         terminalScreen.setCharacter(1, 0, new TextCharacter('n'));

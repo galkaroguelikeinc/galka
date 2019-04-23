@@ -12,8 +12,8 @@ import ru.spb.hse.roguelike.model.UnknownObjectException;
 import ru.spb.hse.roguelike.model.map.GameCellException;
 import ru.spb.hse.roguelike.model.object.alive.GameCharacter;
 import ru.spb.hse.roguelike.model.object.alive.NonPlayerCharacter;
+import ru.spb.hse.roguelike.view.CommandName;
 import ru.spb.hse.roguelike.model.object.items.CannotApplyFoodMultipleTimesException;
-import ru.spb.hse.roguelike.view.Command;
 import ru.spb.hse.roguelike.view.View;
 import ru.spb.hse.roguelike.view.ViewException;
 
@@ -30,6 +30,7 @@ public class Controller {
     private GameModel gameModel;
     private GameCharacter character;
     private static final Random RANDOM = new Random();
+    private Invoker invoker = new Invoker();
 
     /**
      * Creates new controller.
@@ -41,6 +42,13 @@ public class Controller {
         this.gameModel = gameModel;
         this.view = view;
         character = gameModel.getCharacter();
+        invoker.setCommand(CommandName.UP, new UpMoveCommand(this));
+        invoker.setCommand(CommandName.DOWN, new DownMoveCommand(this));
+        invoker.setCommand(CommandName.LEFT, new LeftMoveCommand(this));
+        invoker.setCommand(CommandName.RIGHT, new RightMoveCommand(this));
+        invoker.setCommand(CommandName.CONFUSE_MOBS, new ConfuseMobsCommand(this));
+        invoker.setCommand(CommandName.APPLY_ITEM, new ApplyItemCommand(this));
+        invoker.setCommand(CommandName.DROP_WEARABLE, new DropWearableCommand(this));
     }
 
     /**
@@ -83,54 +91,44 @@ public class Controller {
         return true;
     }
 
-    boolean executeCommand() throws ViewException, UnknownObjectException, CannotApplyFoodMultipleTimesException {
-        Command command = view.readCommand();
-        if (command == null) {
+    boolean executeCommand() throws ViewException, UnknownObjectException {
+        CommandName commandName = view.readCommand();
+        if (commandName == null) {
             return true;
         }
+        return invoker.executeCommand(commandName);
+    }
+
+    boolean applyItem() {
         try {
-            switch (command) {
-                case LEFT: {
-                    return handleMove(0, -1);
-                }
-                case RIGHT: {
-                    return handleMove(0, 1);
-                }
-                case UP: {
-                    return handleMove(-1, 0);
-                }
-                case DOWN: {
-                    return handleMove(1, 0);
-                }
-                case CONFUSE_MOBS: {
-                    gameModel.confuseMobs();
-                    return true;
-                }
-                case APPLY_ITEM: {
-                    try {
-                        gameModel.makeCharacterApplyItem();
-                    } catch (CannotPickItemException ignored) {
-                        // TODO: APPLY_ITEM or DROP_WEARABLE should not count as a move if it didn't succeed
-                    }
-                    return true;
-                }
-                case DROP_WEARABLE: {
-                    try {
-                        gameModel.makeCharacterDropTopWearable();
-                    } catch (CannotDropWearableException ignored) {
-                    }
-                    return true;
-                }
-            }
-        } catch (GameCellException ignored) {
+            gameModel.makeCharacterApplyItem();
+        } catch (CannotPickItemException | CannotApplyFoodMultipleTimesException ignored) {
+            // TODO: APPLY_ITEM or DROP_WEARABLE should not count as a move if it didn't succeed
         }
         return true;
     }
 
-    private boolean handleMove(int rowDiff, int colDiff) throws ViewException, UnknownObjectException, GameCellException {
+    boolean dropWearable() {
+        try {
+            gameModel.makeCharacterDropTopWearable();
+        } catch (CannotDropWearableException ignored) {
+        }
+        return true;
+    }
+
+    boolean confuseMobs() {
+        gameModel.confuseMobs();
+        return true;
+    }
+
+    boolean handleMove(int rowDiff, int colDiff) throws ViewException, UnknownObjectException {
         Point diff = new Point(rowDiff, colDiff);
         Point oldPoint = gameModel.getAliveObjectPoint(character);
-        boolean moved = gameModel.moveAliveObjectDiff(character, diff);
+        boolean moved = false;
+        try {
+            moved = gameModel.moveAliveObjectDiff(character, diff);
+        } catch (GameCellException ignored) {
+        }
         Point point = oldPoint.add(diff);
         if (moved) {
             view.showChanges(oldPoint);
