@@ -32,12 +32,20 @@ public abstract class AliveObject implements Serializable {
         health.setMaxValue(x);
     }
 
+    public void increaseMaxHealth(int diff) {
+        health.increaseCurrentValue(diff);
+    }
+
     public int getCurrentPower() {
         return power.getCurrentValue();
     }
 
     public void setCurrentPower(int x) {
         power.setCurrentValue(x);
+    }
+
+    public void increaseCurrentPower(int diff) {
+        power.increaseCurrentValue(diff);
     }
 
     public int getMaxPower() {

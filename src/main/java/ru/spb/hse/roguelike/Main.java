@@ -6,7 +6,9 @@ import ru.spb.hse.roguelike.model.MapGeneratorException;
 import ru.spb.hse.roguelike.model.GameModel;
 import ru.spb.hse.roguelike.model.Generator;
 import ru.spb.hse.roguelike.model.UnknownObjectException;
+import ru.spb.hse.roguelike.model.map.GameCellException;
 import ru.spb.hse.roguelike.model.map.GameMapCellType;
+import ru.spb.hse.roguelike.model.object.items.CannotApplyFoodMultipleTimesException;
 import ru.spb.hse.roguelike.view.TerminalView;
 import ru.spb.hse.roguelike.view.View;
 
@@ -16,8 +18,7 @@ import java.io.FileNotFoundException;
 import java.util.Optional;
 
 public class Main {
-
-    public static void main(String[] args) {
+    public static void main(String[] args) throws GameCellException, CannotApplyFoodMultipleTimesException {
         try {
             GameModel model = getGameModel(args);
             View view = new TerminalView(model);
@@ -35,7 +36,7 @@ public class Main {
     }
 
 
-    private static GameModel getGameModel(String[] args) throws IOException, MapGeneratorException {
+    private static GameModel getGameModel(String[] args) throws IOException, MapGeneratorException, GameCellException {
         Saveilka saveilka = new Saveilka();
         Optional<GameModel> prevGameModel = saveilka.getSavedState();
         if (!prevGameModel.isPresent()) {
@@ -51,7 +52,7 @@ public class Main {
         return prevGameModel.get();
     }
 
-    private static GameModel getNewGameModel(String[] args) throws FileNotFoundException, MapGeneratorException {
+    private static GameModel getNewGameModel(String[] args) throws FileNotFoundException, MapGeneratorException, GameCellException {
         Generator generator = new Generator();
         if (args.length > 0) {
             return generator.generateModel(args[0], character -> {

@@ -34,4 +34,7 @@ public class MeasurableCharacteristic implements Serializable {
         currentValue = Math.max(0, Math.min(maxValue, newValue));
     }
 
+    public void increaseCurrentValue(int diff) {
+        setCurrentValue(getCurrentValue() + diff);
+    }
 }
