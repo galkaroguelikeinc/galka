@@ -5,12 +5,13 @@ import ru.spb.hse.roguelike.model.object.items.Item;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.io.Serializable;
 
 /**
  * Game cell: wall, place inside the room, place inside the tunnel and place outside of the room or tunnel.
  * Also collects Item or/and AliveObject, which is currently placed in it.
  */
-public class GameCell {
+public class GameCell implements Serializable {
     @Nonnull
     private GameMapCellType gameMapCellType;
     private AliveObject aliveObject;

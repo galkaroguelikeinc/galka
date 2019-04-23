@@ -1,5 +1,7 @@
 package ru.spb.hse.roguelike.model.object;
 
+import java.io.Serializable;
+
 /**
  * A characteristic of an alive object expressed as an integer.
  * <p>
@@ -8,7 +10,7 @@ package ru.spb.hse.roguelike.model.object;
  * <p>
  * E.g. health, power, food-fullness.
  */
-public class MeasurableCharacteristic {
+public class MeasurableCharacteristic implements Serializable {
     private int maxValue;
     private int currentValue;
     public MeasurableCharacteristic(int maxValue) {

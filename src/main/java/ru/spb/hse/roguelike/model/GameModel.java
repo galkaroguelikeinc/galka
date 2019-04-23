@@ -9,6 +9,7 @@ import ru.spb.hse.roguelike.model.object.alive.NonPlayerCharacter;
 import ru.spb.hse.roguelike.model.object.items.Item;
 
 import javax.annotation.Nonnull;
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,7 +21,7 @@ import static ru.spb.hse.roguelike.model.map.GameMapCellType.EMPTY;
 /**
  * Model: class to remember the game map and inventory. Can be modified by Controller and used by View.
  */
-public class GameModel {
+public class GameModel implements Serializable {
     private final GameCell[][] gameMap;
     private final List<Item> inventory;
     private final GameCharacter gameCharacter;
