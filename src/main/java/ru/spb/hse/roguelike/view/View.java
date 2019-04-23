@@ -21,7 +21,7 @@ public abstract class View {
      * Reads the command from user input
      * @return command which was read
      */
-    public abstract Command readCommand();
+    public abstract CommandName readCommand();
 
     public abstract void end() throws IOException, InterruptedException;
 }
