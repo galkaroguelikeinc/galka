@@ -2,7 +2,10 @@ package ru.spb.hse.roguelike.model.object.items;
 
 import ru.spb.hse.roguelike.model.object.alive.GameCharacter;
 
-public class Wearable extends Item {
+/**
+ * Increases power.
+ */
+public abstract class Wearable extends Item {
     // TODO: extend from an Item's superclass bc there can't be e.g. 2 dresses
 
     private final int powerDiff;
