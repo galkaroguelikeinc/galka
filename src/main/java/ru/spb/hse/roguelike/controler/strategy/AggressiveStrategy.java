@@ -12,11 +12,11 @@ import javax.annotation.Nonnull;
 public class AggressiveStrategy extends NonPlayerCharacterStrategy {
     @Override
     public Point move(@Nonnull GameModel gameModel,
-                      @Nonnull Point nonPlayerCharacterPoint) throws UnknownObjectException {
+                      @Nonnull Point nonPlayerCharacterPoint) throws UnknownObjectException, StrategyException {
         GameCharacter gameCharacter = gameModel.getCharacter();
         Point gameCharacterPoint = gameModel.getAliveObjectPoint(gameCharacter);
         if (isInvalid(gameModel, nonPlayerCharacterPoint)) {
-            throw new SecurityException("Unable to get NPC from cell " + nonPlayerCharacterPoint);
+            throw new StrategyException("Unable to get NPC from cell " + nonPlayerCharacterPoint);
         }
         try {
             return getNewPosition(gameModel, nonPlayerCharacterPoint, gameCharacterPoint);
