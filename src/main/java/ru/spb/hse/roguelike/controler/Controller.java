@@ -82,43 +82,46 @@ public class Controller {
         return true;
     }
 
-    boolean executeCommand() throws ViewException, UnknownObjectException, GameCellException {
+    boolean executeCommand() throws ViewException, UnknownObjectException {
         Command command = view.readCommand();
         if (command == null) {
             return true;
         }
-        switch (command) {
-            case LEFT: {
-                return handleMove(0, -1);
-            }
-            case RIGHT: {
-                return handleMove(0, 1);
-            }
-            case UP: {
-                return handleMove(-1, 0);
-            }
-            case DOWN: {
-                return handleMove(1, 0);
-            }
-            case CONFUSE_MOBS: {
-                gameModel.confuseMobs();
-                return true;
-            }
-            case APPLY_ITEM: {
-                try {
-                    gameModel.makeCharacterApplyItem();
-                } catch (CannotPickItemException ignored) {
-                    // TODO: APPLY_ITEM or DROP_WEARABLE should not count as a move if it didn't succeed
+        try {
+            switch (command) {
+                case LEFT: {
+                    return handleMove(0, -1);
                 }
-                return true;
-            }
-            case DROP_WEARABLE: {
-                try {
-                    gameModel.makeCharacterDropTopWearable();
-                } catch (CannotDropWearableException ignored) {
+                case RIGHT: {
+                    return handleMove(0, 1);
                 }
-                return true;
+                case UP: {
+                    return handleMove(-1, 0);
+                }
+                case DOWN: {
+                    return handleMove(1, 0);
+                }
+                case CONFUSE_MOBS: {
+                    gameModel.confuseMobs();
+                    return true;
+                }
+                case APPLY_ITEM: {
+                    try {
+                        gameModel.makeCharacterApplyItem();
+                    } catch (CannotPickItemException ignored) {
+                        // TODO: APPLY_ITEM or DROP_WEARABLE should not count as a move if it didn't succeed
+                    }
+                    return true;
+                }
+                case DROP_WEARABLE: {
+                    try {
+                        gameModel.makeCharacterDropTopWearable();
+                    } catch (CannotDropWearableException ignored) {
+                    }
+                    return true;
+                }
             }
+        } catch (GameCellException ignored) {
         }
         return true;
     }

@@ -180,13 +180,17 @@ public class GameModel {
         item.apply(gameCharacter);
     }
 
-    public void makeCharacterDropTopWearable() throws CannotDropWearableException, GameCellException {
+    public void makeCharacterDropTopWearable() throws CannotDropWearableException {
         if (!gameCharacter.hasWearable()) {
-            throw new CannotDropWearableException();
+            throw new CannotDropWearableException("The character doesn't have any items to drop");
         }
         Wearable wearable = gameCharacter.peekWearable();
-        wearable.unapply(gameCharacter);
         GameCell cell = getCell(aliveObjectToPoint.get(gameCharacter));
-        cell.addItem(wearable);
+        try {
+            cell.addItem(wearable);
+        } catch (GameCellException e) {
+            throw new CannotDropWearableException("This cell already has an item.");
+        }
+        wearable.unapply(gameCharacter);
     }
 }
