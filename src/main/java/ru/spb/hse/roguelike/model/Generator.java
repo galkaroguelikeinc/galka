@@ -29,7 +29,7 @@ public class Generator {
     private final int maxRoomHeight = 7;
     private final int maxRoomWidth = 7;
     private final int indent = 1;
-    private final int maxFailedCreatingRoomAttemptCount = 10;
+    private final int maxFailedCreatingRoomAttemptCount = 30;
     private final int maxRegenerationCount = 1000;
     private final int maxCountMobsInRoom = 2;
     private final int numItems = 3;
