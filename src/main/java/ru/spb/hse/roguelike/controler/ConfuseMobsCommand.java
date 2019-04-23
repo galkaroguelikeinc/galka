@@ -1,15 +1,15 @@
 package ru.spb.hse.roguelike.controler;
 
-import ru.spb.hse.roguelike.model.UnknownObjectException;
-import ru.spb.hse.roguelike.view.ViewException;
-
-public class ConfuseMobsCommand extends Command {
+/**
+ * Command to confuse mobs.
+ */
+class ConfuseMobsCommand extends Command {
     ConfuseMobsCommand(Controller controller) {
         super(controller);
     }
 
     @Override
-    boolean execute() throws UnknownObjectException, ViewException {
+    boolean execute() {
         controller.confuseMobs();
         return true;
     }
