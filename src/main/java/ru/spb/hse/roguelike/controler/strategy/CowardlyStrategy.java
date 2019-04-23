@@ -12,9 +12,9 @@ import javax.annotation.Nonnull;
 public class CowardlyStrategy extends NonPlayerCharacterStrategy {
     @Override
     public Point move(@Nonnull GameModel gameModel,
-                      @Nonnull Point nonPlayerCharacterPoint) throws UnknownObjectException {
+                      @Nonnull Point nonPlayerCharacterPoint) throws UnknownObjectException, StrategyException {
         if (isInvalid(gameModel, nonPlayerCharacterPoint)) {
-            throw new SecurityException("unable to get mob from cell " + nonPlayerCharacterPoint);
+            throw new StrategyException("unable to get mob from cell " + nonPlayerCharacterPoint);
         }
         GameCharacter gameCharacter = gameModel.getCharacter();
         Point gameCharacterPoint = gameModel.getAliveObjectPoint(gameCharacter);
