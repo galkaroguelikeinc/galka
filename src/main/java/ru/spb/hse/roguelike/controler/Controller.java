@@ -44,7 +44,10 @@ public class Controller {
      * Runs the read commands until game ends.
      */
     public void runGame() throws IOException, InterruptedException, UnknownObjectException {
-        while (executeCommand() && moveMobs()) ;
+        Saveilka.setSavedState(gameModel);
+        while (executeCommand() && moveMobs()) {
+            Saveilka.setSavedState(gameModel);
+        }
         view.end();
     }
 
@@ -139,6 +142,7 @@ public class Controller {
         if (npcHit == 1) {
             character.setCurrentHealth(character.getCurrentHealth() - npc.getCurrentPower());
             if (character.getCurrentHealth() == 0) {
+                Saveilka.deleteState();
                 return false;
             }
         }

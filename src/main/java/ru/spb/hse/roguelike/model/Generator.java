@@ -29,6 +29,7 @@ public class Generator {
     private final int maxFailedCreatingRoomAttemptCount = 10;
     private final int maxRegenerationCount = 1000;
     private final int maxCountMobsInRoom = 2;
+
     public GameModel generateModel(int roomCount,
                                    int width,
                                    int height) throws MapGeneratorException {
@@ -187,7 +188,7 @@ public class Generator {
 
     private void generateMobsInRoom(@Nonnull Room room,
                                     @Nonnull GameCell[][] map) {
-        int fullMobsCount = RANDOM.nextInt(maxCountMobsInRoom - 1) + 1;
+        int fullMobsCount = RANDOM.nextInt(maxCountMobsInRoom) + 1;
         NonPlayerCharacterStrategyType[] allTypes = NonPlayerCharacterStrategyType.values();
         int curMobsCount = 0;
         while (curMobsCount < fullMobsCount) {
