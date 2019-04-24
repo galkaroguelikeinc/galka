@@ -31,7 +31,7 @@ public class Main {
                     return GameMapCellType.EMPTY;
                 });
             } else {
-                model = generator.generateModel(6, 20, 20);
+                model = generator.generateModel(3, 20, 20);
             }
 
             View view = new TerminalView(model);

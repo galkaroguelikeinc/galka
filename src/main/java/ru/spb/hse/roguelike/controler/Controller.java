@@ -7,6 +7,7 @@ import ru.spb.hse.roguelike.controler.strategy.PassiveStrategy;
 import ru.spb.hse.roguelike.controler.strategy.RandomStrategy;
 import ru.spb.hse.roguelike.model.CannotDropWearableException;
 import ru.spb.hse.roguelike.model.CannotPickItemException;
+import ru.spb.hse.roguelike.controler.strategy.StrategyException;
 import ru.spb.hse.roguelike.model.GameModel;
 import ru.spb.hse.roguelike.model.UnknownObjectException;
 import ru.spb.hse.roguelike.model.map.GameCellException;
@@ -63,21 +64,26 @@ public class Controller {
         for (NonPlayerCharacter npc : gameModel.getNonGameCharacters()) {
             Point oldPoint = gameModel.getAliveObjectPoint(npc);
             Point point = null;
-            switch (npc.getNonPlayerCharacterStrategyType()) {
-                // TODO: generalize the code
-                case PASSIVE:
-                    // TODO: make strategies static and lazy-init
-                    point = new PassiveStrategy().move(gameModel, oldPoint);
-                    break;
-                case AGGRESSIVE:
-                    point = new AggressiveStrategy().move(gameModel, oldPoint);
-                    break;
-                case COWARDLY:
-                    point = new CowardlyStrategy().move(gameModel, oldPoint);
-                    break;
-                case RANDOM:
-                    point = new RandomStrategy().move(gameModel, oldPoint);
-                    break;
+            try {
+                switch (npc.getNonPlayerCharacterStrategyType()) {
+                    // TODO: generalize the code
+
+                    case PASSIVE:
+                        // TODO: make it static and lazy-init
+                        point = new PassiveStrategy().move(gameModel, oldPoint);
+                        break;
+                    case AGGRESSIVE:
+                        point = new AggressiveStrategy().move(gameModel, oldPoint);
+                        break;
+                    case COWARDLY:
+                        point = new CowardlyStrategy().move(gameModel, oldPoint);
+                        break;
+                    case RANDOM:
+                        point = new RandomStrategy().move(gameModel, oldPoint);
+                        break;
+                }
+            } catch (StrategyException e) {
+                point = oldPoint;
             }
             if (gameModel.getAliveObjectPoint(character).equals(point)) {
                 if (!fightNPC(oldPoint)) {
