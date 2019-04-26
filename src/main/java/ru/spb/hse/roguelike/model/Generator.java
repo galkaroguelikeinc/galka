@@ -35,6 +35,7 @@ public class Generator {
     private final int numItems = 3;
 
     // TODO: generate items on the map
+
     public GameModel generateModel(int roomCount,
                                    int width,
                                    int height) throws MapGeneratorException, GameCellException {

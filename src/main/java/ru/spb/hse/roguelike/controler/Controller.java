@@ -5,6 +5,7 @@ import ru.spb.hse.roguelike.controler.strategy.AggressiveStrategy;
 import ru.spb.hse.roguelike.controler.strategy.CowardlyStrategy;
 import ru.spb.hse.roguelike.controler.strategy.PassiveStrategy;
 import ru.spb.hse.roguelike.controler.strategy.RandomStrategy;
+import ru.spb.hse.roguelike.controler.strategy.StrategyException;
 import ru.spb.hse.roguelike.model.CannotDropWearableException;
 import ru.spb.hse.roguelike.model.CannotPickItemException;
 import ru.spb.hse.roguelike.controler.strategy.StrategyException;
@@ -55,8 +56,11 @@ public class Controller {
     /**
      * Runs the read commands until game ends.
      */
-    public void runGame() throws IOException, InterruptedException, UnknownObjectException, GameCellException, CannotApplyFoodMultipleTimesException {
-        while (executeCommand() && moveMobs()) ;
+    public void runGame() throws IOException, InterruptedException, UnknownObjectException, GameCellException {
+        Saveilka.setSavedState(gameModel);
+        while (executeCommand() && moveMobs()) {
+            Saveilka.setSavedState(gameModel);
+        }
         view.end();
     }
 
@@ -155,6 +159,7 @@ public class Controller {
         if (npcHit == 1) {
             character.setCurrentHealth(character.getCurrentHealth() - npc.getCurrentPower());
             if (character.getCurrentHealth() == 0) {
+                Saveilka.deleteState();
                 return false;
             }
         }

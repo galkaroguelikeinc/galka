@@ -2,10 +2,12 @@ package ru.spb.hse.roguelike.model.object.alive;
 
 import ru.spb.hse.roguelike.model.object.MeasurableCharacteristic;
 
+import java.io.Serializable;
+
 /**
  * An object that can move on its own. It can act and has measurable characteristics.
  */
-public abstract class AliveObject {
+public abstract class AliveObject implements Serializable {
     private MeasurableCharacteristic health;
     private MeasurableCharacteristic power;
 

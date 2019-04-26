@@ -3,6 +3,7 @@ package ru.spb.hse.roguelike.view;
 import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TextCharacter;
 import com.googlecode.lanterna.input.KeyStroke;
+import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.screen.TerminalScreen;
 import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
 import ru.spb.hse.roguelike.Point;
@@ -17,6 +18,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
 
 /**
  * TerminalView displays the game to the user via terminal pseudo graphics.
@@ -70,6 +72,27 @@ public class TerminalView extends View {
         } catch (IOException e) {
             throw new ViewException();
         }
+    }
+
+    public static boolean getAnswer(String question,
+                                    Function<Character, Boolean> converterCharacterToAnswer) throws IOException {
+        DefaultTerminalFactory defaultTerminalFactory = new DefaultTerminalFactory();
+        TerminalScreen terminalScreen = new TerminalScreen(defaultTerminalFactory.createTerminal());
+        terminalScreen.startScreen();
+        terminalScreen.setCursorPosition(null);
+        String[] questionLines = question.split(System.lineSeparator());
+        for (int j = 0; j < questionLines.length; j++)
+            for (int i = 0; i < questionLines[j].length(); i++) {
+                terminalScreen.setCharacter(new TerminalPosition(i, j),
+                        new TextCharacter(questionLines[j].charAt(i)));
+                terminalScreen.refresh();
+            }
+        KeyStroke keyStroke = terminalScreen.readInput();
+        boolean result = (keyStroke.getKeyType() == KeyType.Character
+                && converterCharacterToAnswer.apply(keyStroke.getCharacter()));
+        terminalScreen.clear();
+        terminalScreen.stopScreen();
+        return result;
     }
 
     private char cellToSymbol(@Nonnull GameCell gameCell) {
