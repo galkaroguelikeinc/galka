@@ -8,6 +8,7 @@ import ru.spb.hse.roguelike.controler.strategy.RandomStrategy;
 import ru.spb.hse.roguelike.controler.strategy.StrategyException;
 import ru.spb.hse.roguelike.model.CannotDropWearableException;
 import ru.spb.hse.roguelike.model.CannotPickItemException;
+import ru.spb.hse.roguelike.controler.strategy.StrategyException;
 import ru.spb.hse.roguelike.model.GameModel;
 import ru.spb.hse.roguelike.model.UnknownObjectException;
 import ru.spb.hse.roguelike.model.map.GameCellException;
