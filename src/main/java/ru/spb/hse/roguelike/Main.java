@@ -1,7 +1,7 @@
 package ru.spb.hse.roguelike;
 
 import ru.spb.hse.roguelike.controler.Controller;
-import ru.spb.hse.roguelike.controler.Saveilka;
+import ru.spb.hse.roguelike.controler.GameStateSaver;
 import ru.spb.hse.roguelike.model.MapGeneratorException;
 import ru.spb.hse.roguelike.model.GameModel;
 import ru.spb.hse.roguelike.model.Generator;
@@ -37,8 +37,7 @@ public class Main {
 
 
     private static GameModel getGameModel(String[] args) throws IOException, MapGeneratorException, GameCellException {
-        Saveilka saveilka = new Saveilka();
-        Optional<GameModel> prevGameModel = saveilka.getSavedState();
+        Optional<GameModel> prevGameModel = GameStateSaver.getSavedState();
         if (!prevGameModel.isPresent()) {
             return getNewGameModel(args);
         }

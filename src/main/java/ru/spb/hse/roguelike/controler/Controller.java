@@ -8,7 +8,6 @@ import ru.spb.hse.roguelike.controler.strategy.RandomStrategy;
 import ru.spb.hse.roguelike.controler.strategy.StrategyException;
 import ru.spb.hse.roguelike.model.CannotDropWearableException;
 import ru.spb.hse.roguelike.model.CannotPickItemException;
-import ru.spb.hse.roguelike.controler.strategy.StrategyException;
 import ru.spb.hse.roguelike.model.GameModel;
 import ru.spb.hse.roguelike.model.UnknownObjectException;
 import ru.spb.hse.roguelike.model.map.GameCellException;
@@ -57,9 +56,9 @@ public class Controller {
      * Runs the read commands until game ends.
      */
     public void runGame() throws IOException, InterruptedException, UnknownObjectException, GameCellException {
-        Saveilka.setSavedState(gameModel);
+        GameStateSaver.setSavedState(gameModel);
         while (executeCommand() && moveMobs()) {
-            Saveilka.setSavedState(gameModel);
+            GameStateSaver.setSavedState(gameModel);
         }
         view.end();
     }
@@ -159,7 +158,7 @@ public class Controller {
         if (npcHit == 1) {
             character.setCurrentHealth(character.getCurrentHealth() - npc.getCurrentPower());
             if (character.getCurrentHealth() == 0) {
-                Saveilka.deleteState();
+                GameStateSaver.deleteState();
                 return false;
             }
         }

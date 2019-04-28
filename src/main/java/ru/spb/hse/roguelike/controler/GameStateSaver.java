@@ -11,7 +11,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Optional;
 
-public class Saveilka {
+public class GameStateSaver {
     private static final String filenameForSaveGameState = "galka";
 
     public static Optional<GameModel> getSavedState() {
