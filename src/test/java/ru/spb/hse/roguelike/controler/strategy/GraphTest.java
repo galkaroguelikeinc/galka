@@ -1,15 +1,15 @@
 package ru.spb.hse.roguelike.controler.strategy;
 
 import org.junit.Test;
+import ru.spb.hse.roguelike.Point;
 import ru.spb.hse.roguelike.model.GameModel;
 import ru.spb.hse.roguelike.model.map.GameCell;
 import ru.spb.hse.roguelike.model.map.GameMapCellType;
-import ru.spb.hse.roguelike.Point;
 import ru.spb.hse.roguelike.model.object.alive.GameCharacter;
 
 import java.util.ArrayList;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 public class GraphTest {
     @Test

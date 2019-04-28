@@ -1,11 +1,7 @@
 package ru.spb.hse.roguelike.controler;
 
 import ru.spb.hse.roguelike.Point;
-import ru.spb.hse.roguelike.controler.strategy.AggressiveStrategy;
-import ru.spb.hse.roguelike.controler.strategy.CowardlyStrategy;
-import ru.spb.hse.roguelike.controler.strategy.PassiveStrategy;
-import ru.spb.hse.roguelike.controler.strategy.RandomStrategy;
-import ru.spb.hse.roguelike.controler.strategy.StrategyException;
+import ru.spb.hse.roguelike.controler.strategy.*;
 import ru.spb.hse.roguelike.model.CannotDropWearableException;
 import ru.spb.hse.roguelike.model.CannotPickItemException;
 import ru.spb.hse.roguelike.model.GameModel;
@@ -13,8 +9,8 @@ import ru.spb.hse.roguelike.model.UnknownObjectException;
 import ru.spb.hse.roguelike.model.map.GameCellException;
 import ru.spb.hse.roguelike.model.object.alive.GameCharacter;
 import ru.spb.hse.roguelike.model.object.alive.NonPlayerCharacter;
-import ru.spb.hse.roguelike.view.CommandName;
 import ru.spb.hse.roguelike.model.object.items.CannotApplyFoodMultipleTimesException;
+import ru.spb.hse.roguelike.view.CommandName;
 import ru.spb.hse.roguelike.view.View;
 import ru.spb.hse.roguelike.view.ViewException;
 
@@ -27,10 +23,10 @@ import java.util.Random;
  * do fights, deal with items etc. The class changes the model and also asks View class to show the changes.
  */
 public class Controller {
+    private static final Random RANDOM = new Random();
     private View view;
     private GameModel gameModel;
     private GameCharacter character;
-    private static final Random RANDOM = new Random();
     private Invoker invoker = new Invoker();
 
     /**

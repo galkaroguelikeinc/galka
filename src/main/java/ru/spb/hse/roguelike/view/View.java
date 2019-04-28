@@ -19,6 +19,7 @@ public abstract class View {
 
     /**
      * Reads the command from user input
+     *
      * @return command which was read
      */
     public abstract CommandName readCommand();

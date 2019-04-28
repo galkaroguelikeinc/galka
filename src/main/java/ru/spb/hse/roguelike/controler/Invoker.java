@@ -15,6 +15,7 @@ class Invoker {
 
     /**
      * Execute a command with a given name
+     *
      * @param name name of a command
      * @return true is the game is not ended
      */
@@ -24,8 +25,9 @@ class Invoker {
 
     /**
      * Sets up a command for the given name.
+     *
      * @param commandName name of a command
-     * @param command command to execute when needed
+     * @param command     command to execute when needed
      */
     void setCommand(CommandName commandName, Command command) {
         commands.put(commandName, command);

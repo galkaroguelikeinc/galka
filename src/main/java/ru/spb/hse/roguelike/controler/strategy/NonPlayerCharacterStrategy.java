@@ -10,9 +10,6 @@ import ru.spb.hse.roguelike.model.object.alive.NonPlayerCharacter;
 import javax.annotation.Nonnull;
 
 abstract class NonPlayerCharacterStrategy {
-    abstract Point move(@Nonnull GameModel gameModel,
-                        @Nonnull Point mobPoint) throws StrategyException, UnknownObjectException;
-
     static boolean existsNonPlayerCharacter(Point point, GameModel gameModel) {
         if (!gameModel.getCell(point).hasAliveObject()) {
             return false;
@@ -20,6 +17,9 @@ abstract class NonPlayerCharacterStrategy {
         AliveObject aliveObject = gameModel.getCell(point).getAliveObject();
         return aliveObject instanceof NonPlayerCharacter;
     }
+
+    abstract Point move(@Nonnull GameModel gameModel,
+                        @Nonnull Point mobPoint) throws StrategyException, UnknownObjectException;
 
     private boolean checkPoint(Point point, GameModel gameModel) {
         if (point.getRow() < 0 || point.getRow() >= gameModel.getRows()

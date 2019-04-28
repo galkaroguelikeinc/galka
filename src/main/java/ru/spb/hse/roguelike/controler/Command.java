@@ -1,7 +1,6 @@
 package ru.spb.hse.roguelike.controler;
 
 import ru.spb.hse.roguelike.model.UnknownObjectException;
-import ru.spb.hse.roguelike.model.map.GameCellException;
 import ru.spb.hse.roguelike.view.ViewException;
 
 /**
@@ -10,13 +9,14 @@ import ru.spb.hse.roguelike.view.ViewException;
 abstract class Command {
     Controller controller;
 
-    /**
-     * Executes the command
-     * @return true is the game continues
-     */
-    abstract boolean execute() throws UnknownObjectException, ViewException;
-
     Command(Controller controller) {
         this.controller = controller;
     }
+
+    /**
+     * Executes the command
+     *
+     * @return true is the game continues
+     */
+    abstract boolean execute() throws UnknownObjectException, ViewException;
 }

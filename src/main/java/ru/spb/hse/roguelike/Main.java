@@ -2,9 +2,9 @@ package ru.spb.hse.roguelike;
 
 import ru.spb.hse.roguelike.controler.Controller;
 import ru.spb.hse.roguelike.controler.GameStateSaver;
-import ru.spb.hse.roguelike.model.MapGeneratorException;
 import ru.spb.hse.roguelike.model.GameModel;
 import ru.spb.hse.roguelike.model.Generator;
+import ru.spb.hse.roguelike.model.MapGeneratorException;
 import ru.spb.hse.roguelike.model.UnknownObjectException;
 import ru.spb.hse.roguelike.model.map.GameCellException;
 import ru.spb.hse.roguelike.model.map.GameMapCellType;
@@ -12,9 +12,8 @@ import ru.spb.hse.roguelike.model.object.items.CannotApplyFoodMultipleTimesExcep
 import ru.spb.hse.roguelike.view.TerminalView;
 import ru.spb.hse.roguelike.view.View;
 
-import java.io.IOException;
-
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Optional;
 
 public class Main {

@@ -1,7 +1,6 @@
 package ru.spb.hse.roguelike.controler;
 
 import ru.spb.hse.roguelike.model.UnknownObjectException;
-import ru.spb.hse.roguelike.model.map.GameCellException;
 import ru.spb.hse.roguelike.view.ViewException;
 
 /**

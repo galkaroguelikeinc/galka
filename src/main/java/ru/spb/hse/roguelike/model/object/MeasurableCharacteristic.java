@@ -13,6 +13,7 @@ import java.io.Serializable;
 public class MeasurableCharacteristic implements Serializable {
     private int maxValue;
     private int currentValue;
+
     public MeasurableCharacteristic(int maxValue) {
         this.maxValue = maxValue;
         currentValue = this.maxValue;

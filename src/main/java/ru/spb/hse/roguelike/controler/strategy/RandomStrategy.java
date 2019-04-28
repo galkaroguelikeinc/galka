@@ -24,7 +24,7 @@ public class RandomStrategy extends NonPlayerCharacterStrategy {
     @Override
     public Point move(@Nonnull GameModel gameModel, @Nonnull Point nonPlayerCharacterPoint) throws UnknownObjectException, StrategyException {
         if (isInvalid(gameModel, nonPlayerCharacterPoint)) {
-            throw new StrategyException ("Unable to get NPC from cell " + nonPlayerCharacterPoint);
+            throw new StrategyException("Unable to get NPC from cell " + nonPlayerCharacterPoint);
         }
 
         List<Direction> directionList = Arrays.asList(Direction.values());
