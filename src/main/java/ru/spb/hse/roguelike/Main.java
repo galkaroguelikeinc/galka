@@ -17,7 +17,7 @@ import java.io.IOException;
 import java.util.Optional;
 
 public class Main {
-    public static void main(String[] args) throws GameCellException, CannotApplyFoodMultipleTimesException {
+    public static void main(String[] args) throws GameCellException {
         try {
             GameModel model = getGameModel(args);
             View view = new TerminalView(model);

@@ -38,7 +38,7 @@ public class CowardlyStrategy extends NonPlayerCharacterStrategy {
             int curDistance = 0;
             try {
                 curDistance = graph.bfs(curPoint, gameCharacter);
-                if (!existsNonPlayerCharacter(curPoint, gameModel) && curDistance >= maxDistance) {
+                if (hasNoNonPlayerCharacter(curPoint, gameModel) && curDistance >= maxDistance) {
                     maxDistance = curDistance;
                     pointWithMaxDistance = curPoint;
                 }

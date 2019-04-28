@@ -10,33 +10,33 @@ import ru.spb.hse.roguelike.model.object.alive.NonPlayerCharacter;
 import javax.annotation.Nonnull;
 
 abstract class NonPlayerCharacterStrategy {
-    static boolean existsNonPlayerCharacter(Point point, GameModel gameModel) {
+    static boolean hasNoNonPlayerCharacter(Point point, GameModel gameModel) {
         if (!gameModel.getCell(point).hasAliveObject()) {
-            return false;
+            return true;
         }
         AliveObject aliveObject = gameModel.getCell(point).getAliveObject();
-        return aliveObject instanceof NonPlayerCharacter;
+        return !(aliveObject instanceof NonPlayerCharacter);
     }
 
     abstract Point move(@Nonnull GameModel gameModel,
                         @Nonnull Point mobPoint) throws StrategyException, UnknownObjectException;
 
-    private boolean checkPoint(Point point, GameModel gameModel) {
+    private boolean isOutsideOfMap(Point point, GameModel gameModel) {
         if (point.getRow() < 0 || point.getRow() >= gameModel.getRows()
                 || point.getCol() < 0 || point.getCol() >= gameModel.getCols()) {
-            return false;
+            return true;
         }
-        return gameModel.getCell(point).hasAliveObject();
+        return !gameModel.getCell(point).hasAliveObject();
     }
 
     boolean isInvalid(@Nonnull GameModel gameModel,
                       @Nonnull Point mobPoint) throws UnknownObjectException {
         Point gameCharacterPoint = gameModel.getAliveObjectPoint(gameModel.getCharacter());
-        if (!checkPoint(gameCharacterPoint, gameModel)) {
+        if (isOutsideOfMap(gameCharacterPoint, gameModel)) {
             System.out.println(1);
             return true;
         }
-        if (!checkPoint(mobPoint, gameModel)) {
+        if (isOutsideOfMap(mobPoint, gameModel)) {
             System.out.println(2);
             return true;
         }

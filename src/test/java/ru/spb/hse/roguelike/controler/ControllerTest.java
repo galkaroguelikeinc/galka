@@ -21,7 +21,7 @@ import static org.junit.Assert.assertEquals;
 public class ControllerTest {
 
     @Test
-    public void moveLeftTest() throws MapGeneratorException, ViewException, UnknownObjectException, GameCellException, CannotApplyFoodMultipleTimesException {
+    public void moveLeftTest() throws MapGeneratorException, ViewException, UnknownObjectException, GameCellException {
         for (int k = 0; k < 1000; k++) {
             GameModel gameModel = new Generator().generateModel(3, 20, 25);
             gameModel.getCell(new Point(0, 3)).setGameMapCellType(GameMapCellType.ROOM);

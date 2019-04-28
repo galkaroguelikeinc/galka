@@ -42,7 +42,7 @@ public class AggressiveStrategy extends NonPlayerCharacterStrategy {
             int curDistance = 0;
             try {
                 curDistance = graph.bfs(curPoint, gameCharacter);
-                if (!existsNonPlayerCharacter(curPoint, gameModel) && curDistance < minDistance) {
+                if (hasNoNonPlayerCharacter(curPoint, gameModel) && curDistance < minDistance) {
                     minDistance = curDistance;
                     pointWithMinDistance = curPoint;
                 }
