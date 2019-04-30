@@ -45,6 +45,8 @@ public class TerminalView extends View {
     }};
     private TerminalScreen terminalScreen;
     private GameModel gameModel;
+    private int numInfoRows = 0;
+    private int numCols = 0;
 
     /**
      * Create a terminal view.
@@ -62,16 +64,65 @@ public class TerminalView extends View {
             throw new ViewException();
         }
         try {
-            for (int row = 0; row < gameModel.getRows(); row++) {
-                for (int col = 0; col < gameModel.getCols(); col++) {
-                    terminalScreen.setCharacter(new TerminalPosition(col, row),
-                            new TextCharacter(cellToSymbol(gameModel.getCell(new Point(row, col)))));
-                    terminalScreen.refresh();
-                }
-            }
+            drawGameMap();
+            drawCharacterInfo();
+            terminalScreen.refresh();
         } catch (IOException e) {
             throw new ViewException();
         }
+    }
+
+    private void drawGameMap() {
+        for (int row = 0; row < gameModel.getRows(); row++) {
+            for (int col = 0; col < gameModel.getCols(); col++) {
+                terminalScreen.setCharacter(new TerminalPosition(col, row),
+                        new TextCharacter(cellToSymbol(gameModel.getCell(new Point(row, col)))));
+            }
+        }
+        numCols += gameModel.getCols();
+    }
+
+    private void drawText(char[][] text, int rowOffset, int colOffset) {
+        for (int row = 0; row < text.length; row++) {
+            for (int col = 0; col < text[row].length; col++) {
+                terminalScreen.setCharacter(new TerminalPosition(col + colOffset, row + rowOffset),
+                        new TextCharacter(text[row][col]));
+            }
+        }
+    }
+
+    private void drawNextLine(String text) {
+        drawText(new char[][]{text.toCharArray()}, numInfoRows, numCols);
+        numInfoRows++;
+    }
+
+    private void drawExperienceAndLevelInfo() {
+        Map<String, Integer> stats = new HashMap<>();
+        GameCharacter gameCharacter = gameModel.getCharacter();
+        stats.put("XP", gameCharacter.getExperiencePoints());
+        stats.put("Level", gameCharacter.getLevel());
+        for (Map.Entry<String, Integer> labelAndValue : stats.entrySet()) {
+            String label = labelAndValue.getKey();
+            String value = Integer.toString(labelAndValue.getValue());
+            String line = label + ": " + value;
+            drawNextLine(line);
+        }
+    }
+
+    private void drawMeasurableCharacteristicInfo(String label, int currentValue, int maxValue) {
+        String line = label + ": " + currentValue + " / " + maxValue;
+        drawNextLine(line);
+    }
+
+    private void drawCharacterInfo() {
+        drawExperienceAndLevelInfo();
+        GameCharacter gameCharacter = gameModel.getCharacter();
+        drawMeasurableCharacteristicInfo(
+                "Health", gameCharacter.getCurrentHealth(), gameCharacter.getMaxHealth());
+        drawMeasurableCharacteristicInfo(
+                "Power", gameCharacter.getCurrentPower(), gameCharacter.getMaxPower());
+        drawMeasurableCharacteristicInfo(
+                "Food", gameCharacter.getFoodFullness(), gameCharacter.getMaxFoodFullness());
     }
 
     public static boolean getAnswer(String question,
