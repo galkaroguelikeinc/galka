@@ -28,24 +28,32 @@ public class GameStateSaver {
     }
 
     public static boolean setSavedState(@Nonnull GameModel gameModel) {
-
-        File fileForSaveGameState = new File(filenameForSaveGameState);
-        if (!fileForSaveGameState.exists()) {
-            try {
-                return fileForSaveGameState.createNewFile();
-            } catch (IOException e) {
-                return false;
-            }
-        }
-        try (FileOutputStream fos = new FileOutputStream(fileForSaveGameState);
-             ObjectOutputStream out = new ObjectOutputStream(fos)) {
-            out.writeObject(gameModel);
-            fos.close();
-            out.close();
+        try {
+            Thread thread = new Thread(() -> {
+                File fileForSaveGameState = new File(filenameForSaveGameState);
+                if (!fileForSaveGameState.exists()) {
+                    try {
+                        fileForSaveGameState.createNewFile();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                try (FileOutputStream fos = new FileOutputStream(fileForSaveGameState);
+                     ObjectOutputStream out = new ObjectOutputStream(fos)) {
+                    out.writeObject(gameModel);
+                } catch (Exception e) {
+                    fileForSaveGameState.deleteOnExit();
+                    e.printStackTrace();
+                }
+            });
+            thread.start();
+            thread.join();
             return true;
-        } catch (Exception e) {
+        } catch (InterruptedException e) {
+            e.printStackTrace();
             return false;
         }
+
     }
 
     public static void deleteState() {
