@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package ru.spb.hse.roguelike;
+
+message Connect {
+    string name = 1;
+}
+
+message Message {
+    string name = 1;
+    string message = 2;
+}
+
+message Empty { }
+
+service ProtoRoguelike {
+    rpc SendMessage(Message) returns (Empty) { }
+    rpc ReceiveMessage(Empty) returns (stream Message) { }
+}
