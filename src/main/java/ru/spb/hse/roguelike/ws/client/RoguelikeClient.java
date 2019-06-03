@@ -18,7 +18,7 @@ public class RoguelikeClient {
     private final ManagedChannel channel;
     private final RoguelikeServiceGrpc.RoguelikeServiceBlockingStub blockingStub;
 
-    
+
     public RoguelikeClient(String host, int port) {
         this(ManagedChannelBuilder.forAddress(host, port)
                 .usePlaintext()
@@ -37,14 +37,20 @@ public class RoguelikeClient {
 
 
     public void ping() {
-        Galka.PingRequest request = Galka.PingRequest.newBuilder().setPing("ping").build();
         Galka.PingResponse response;
         try {
-            response = blockingStub.ping(request);
+            response = blockingStub.ping(Galka.Empty.newBuilder().build());
         } catch (StatusRuntimeException e) {
             logger.log(Level.WARNING, "RPC failed: {0}", e.getStatus());
             return;
         }
         logger.info(response.getPong());
+    }
+
+    public long getUserId() {
+        Galka.GetUserIdRequest request = Galka.GetUserIdRequest.newBuilder().build();
+        Galka.GetUserIdResponse response;
+        response = blockingStub.getUserId(request);
+        return response.getUserId();
     }
 }

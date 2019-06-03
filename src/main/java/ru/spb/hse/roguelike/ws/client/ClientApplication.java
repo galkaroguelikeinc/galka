@@ -4,7 +4,7 @@ public class ClientApplication {
     public static void main(String[] args) throws Exception {
         RoguelikeClient client = new RoguelikeClient("localhost", 50051);
         try {
-            client.ping();
+            System.out.println(client.getUserId());
         } finally {
             client.shutdown();
         }

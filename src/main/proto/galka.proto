@@ -19,8 +19,49 @@ message GetUserIdResponse {
     int64 userId = 1;
 }
 
+message StartNewGameRequest {
+    int64 userId = 1;
+}
+
+message StartNewGameResponse {
+    int64 gameId = 1;
+}
+
+message ConnectToExistingGameRequest {
+    int64 userId = 1;
+    int64 gameId = 2;
+}
+
+message ConnectToExistingGameResponse {
+    bool result = 1;
+}
+
+message AddMoveRequest {
+    int64 userId = 1;
+    int64 gameId = 2;
+    string commandName = 3; //строка как енам
+}
+
+message AddMoveResponse {
+    bool result = 1;
+}
+
+message GetMapResponse {
+    string mapString = 1; // сериализованная карта TODO поговорить с Наташей о формате
+}
+
+message GetMapRequest {
+    string gameId = 1; // сериализованная карта TODO поговорить с Наташей о формате
+}
+
+message Empty {
+}
+
 service RoguelikeService {
     rpc getUserId (GetUserIdRequest) returns (GetUserIdResponse);
-    rpc ping (PingRequest) returns (PingResponse) {
-    }
+    rpc startNewGame (StartNewGameRequest) returns (StartNewGameResponse);
+    rpc connectToExistGame (ConnectToExistingGameRequest) returns (ConnectToExistingGameResponse);
+    rpc addMove (AddMoveRequest) returns (AddMoveResponse);
+    rpc getMap (GetMapRequest) returns (GetMapResponse);
+    rpc ping (Empty) returns (PingResponse);
 }
