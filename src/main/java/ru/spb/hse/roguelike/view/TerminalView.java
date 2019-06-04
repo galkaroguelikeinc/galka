@@ -7,16 +7,24 @@ import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.screen.TerminalScreen;
 import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
 import ru.spb.hse.roguelike.Point;
+import ru.spb.hse.roguelike.controler.GameStateSaver;
 import ru.spb.hse.roguelike.model.GameModel;
+import ru.spb.hse.roguelike.model.Generator;
+import ru.spb.hse.roguelike.model.MapGeneratorException;
 import ru.spb.hse.roguelike.model.map.GameCell;
+import ru.spb.hse.roguelike.model.map.GameCellException;
 import ru.spb.hse.roguelike.model.map.GameMapCellType;
 import ru.spb.hse.roguelike.model.object.alive.GameCharacter;
 import ru.spb.hse.roguelike.model.object.alive.NonPlayerCharacter;
+import ru.spb.hse.roguelike.ws.client.RoguelikeClient;
 
 import javax.annotation.Nonnull;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
@@ -28,7 +36,7 @@ import java.util.function.Function;
  * <p>
  * It uses Lanterna, the terminal type guess is also done by Lanterna.
  */
-/*public class TerminalView extends View {
+public class TerminalView extends View {
     private static final char ROOM_SYMBOL = '.';
     private static final char EMPTY_SYMBOL = ' ';
     private static final char TUNNEL_SYMBOL = '#';
@@ -38,6 +46,9 @@ import java.util.function.Function;
     private static final char COWARD_MOB_SYMBOL = 'C';
     private static final char RANDOM_MOB_SYMBOL = 'R';
     private static final char ITEM_SYMBOL = '*';
+    private static final int SINGLE_MODE = 0;
+    private static final int MULTI_MODE = 0;
+
     private static Map<GameMapCellType, Character> CELL_TYPE_TO_SYMBOL = new HashMap<GameMapCellType, Character>() {{
         put(GameMapCellType.ROOM, ROOM_SYMBOL);
         put(GameMapCellType.EMPTY, EMPTY_SYMBOL);
@@ -46,15 +57,14 @@ import java.util.function.Function;
     private TerminalScreen terminalScreen;
     private GameModel gameModel;
     private int numInfoRows = 0;
-    private int numCols = 0;*/
+    private int numCols = 0;
+    private int id;
+    private int mode;
 
     /**
      * Create a terminal view.
-     *
-     * @param gameModel stores game data which needs to be shown to user
      */
-    /*public TerminalView(GameModel gameModel) throws ViewException {
-        this.gameModel = gameModel;
+    public TerminalView(GameModel gameModel) throws IOException {
         DefaultTerminalFactory defaultTerminalFactory = new DefaultTerminalFactory();
         try {
             terminalScreen = new TerminalScreen(defaultTerminalFactory.createTerminal());
@@ -63,9 +73,10 @@ import java.util.function.Function;
         } catch (IOException e) {
             throw new ViewException();
         }
+        this.gameModel = gameModel;
         try {
             drawGameMap();
-            drawCharacterInfo();
+            drawCharacterInfo(id);
             terminalScreen.refresh();
         } catch (IOException e) {
             throw new ViewException();
@@ -96,9 +107,9 @@ import java.util.function.Function;
         numInfoRows++;
     }
 
-    private void drawExperienceAndLevelInfo() {
+    private void drawExperienceAndLevelInfo(int id) {
         Map<String, Integer> stats = new HashMap<>();
-        GameCharacter gameCharacter = gameModel.getCharacter();
+        GameCharacter gameCharacter = gameModel.getCharacters().get(id);
         stats.put("XP", gameCharacter.getExperiencePoints());
         stats.put("Level", gameCharacter.getLevel());
         for (Map.Entry<String, Integer> labelAndValue : stats.entrySet()) {
@@ -114,9 +125,9 @@ import java.util.function.Function;
         drawNextLine(line);
     }
 
-    private void drawCharacterInfo() {
-        drawExperienceAndLevelInfo();
-        GameCharacter gameCharacter = gameModel.getCharacter();
+    private void drawCharacterInfo(int id) {
+        drawExperienceAndLevelInfo(id);
+        GameCharacter gameCharacter = gameModel.getCharacters().get(id);
         drawMeasurableCharacteristicInfo(
                 "Health", gameCharacter.getCurrentHealth(), gameCharacter.getMaxHealth());
         drawMeasurableCharacteristicInfo(
@@ -209,11 +220,16 @@ import java.util.function.Function;
     @Override
     public void end() throws IOException, InterruptedException {
         terminalScreen.clear();
-        terminalScreen.setCharacter(0, 0, new TextCharacter('e'));
-        terminalScreen.setCharacter(1, 0, new TextCharacter('n'));
-        terminalScreen.setCharacter(2, 0, new TextCharacter('d'));
+        printString("end");
         terminalScreen.refresh();
         TimeUnit.SECONDS.sleep(3);
         terminalScreen.close();
     }
-}*/
+
+    private void printString(String string) {
+        char[] array = string.toCharArray();
+        for (int i = 0; i < array.length; i++) {
+            terminalScreen.setCharacter(i, 0, new TextCharacter(array[i]));
+        }
+    }
+}
