@@ -7,6 +7,7 @@ import ru.spb.hse.roguelike.controler.Controller;
 import ru.spb.hse.roguelike.model.GameModel;
 import ru.spb.hse.roguelike.model.Generator;
 import ru.spb.hse.roguelike.model.MapGeneratorException;
+import ru.spb.hse.roguelike.model.UnknownObjectException;
 import ru.spb.hse.roguelike.model.map.GameCellException;
 import ru.spb.hse.roguelike.view.CommandName;
 import ru.spb.hse.roguelike.view.ServerView;
@@ -69,7 +70,7 @@ public class RoguelikeServer {
         return gameId;
     }
 
-    int createNewGame(int userId) throws MapGeneratorException, GameCellException {
+    int createNewGame(int userId) throws MapGeneratorException, GameCellException, InterruptedException, UnknownObjectException, IOException {
         Generator generator = new Generator();
         GameModel model = generator.generateModel(3, 20, 20, userId);
         ServerView serverView = new ServerView();
@@ -79,6 +80,14 @@ public class RoguelikeServer {
         GameInfo gameInfo = new GameInfo(model, users, controller, serverView);
         int gameId = getGameId();
         games.put(gameId, gameInfo);
+        Thread thread = new Thread(() -> {
+            try {
+                controller.runGame();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+        thread.start();
         return gameId;
     }
 

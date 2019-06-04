@@ -19,6 +19,8 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Random;
 
+import static ru.spb.hse.roguelike.view.CommandName.SKIP;
+
 
 /**
  * Class to do the actions, which are supposed to be done according the game rules: moving character,
@@ -102,7 +104,7 @@ public class Controller {
 
     boolean executeCommand() throws ViewException, UnknownObjectException {
         CommandNameId commandNameId = view.readCommand();
-        if (commandNameId.getCommandName() == null) {
+        if (commandNameId == null || commandNameId.getCommandName() == null || commandNameId.getCommandName() == SKIP) {
             return true;
         }
         return invoker.executeCommand(commandNameId.getCommandName(), commandNameId.getId());
