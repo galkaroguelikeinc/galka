@@ -28,7 +28,7 @@ import java.util.function.Function;
  * <p>
  * It uses Lanterna, the terminal type guess is also done by Lanterna.
  */
-public class TerminalView extends View {
+/*public class TerminalView extends View {
     private static final char ROOM_SYMBOL = '.';
     private static final char EMPTY_SYMBOL = ' ';
     private static final char TUNNEL_SYMBOL = '#';
@@ -46,14 +46,14 @@ public class TerminalView extends View {
     private TerminalScreen terminalScreen;
     private GameModel gameModel;
     private int numInfoRows = 0;
-    private int numCols = 0;
+    private int numCols = 0;*/
 
     /**
      * Create a terminal view.
      *
      * @param gameModel stores game data which needs to be shown to user
      */
-    public TerminalView(GameModel gameModel) throws ViewException {
+    /*public TerminalView(GameModel gameModel) throws ViewException {
         this.gameModel = gameModel;
         DefaultTerminalFactory defaultTerminalFactory = new DefaultTerminalFactory();
         try {
@@ -216,4 +216,4 @@ public class TerminalView extends View {
         TimeUnit.SECONDS.sleep(3);
         terminalScreen.close();
     }
-}
+}*/
