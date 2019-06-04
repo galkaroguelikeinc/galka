@@ -55,7 +55,6 @@ public class OlyaClientApplication {
         }
 
 
-
         //передаю действия
         System.out.println(client.getCurUser(gameId));
         client.addMove(userId, gameId, CommandName.SKIP);
@@ -75,5 +74,21 @@ public class OlyaClientApplication {
         System.out.println(client.getCurUser(gameId));
         client.addMove(userId, gameId, CommandName.SKIP);
 
+
+        // делаю движение вверж
+        client.addMove(newUserId, gameId, CommandName.UP);
+
+
+
+
+        gameModel = client.getMap(gameId);
+        //проверяем что подвинулся
+
+        for (int i = 0; i < gameModel.getRows(); i++) {
+            for (int j = 0; j < gameModel.getCols(); j++) {
+                System.out.print(decoder.apply(gameModel.getCell(new Point(i, j))));
+            }
+            System.out.println();
+        }
     }
 }
