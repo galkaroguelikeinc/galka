@@ -126,6 +126,8 @@ public class RoguelikeServer {
         }
         ServerView serverView = games.get(gameId).serverView;
         serverView.addCommand(commandName, userId);
+        while (serverView.getcommandNameIdsSize() != 0) {
+        }
         games.get(gameId).incCurUser();
     }
 

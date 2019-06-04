@@ -74,11 +74,8 @@ public class OlyaClientApplication {
         client.addMove(userId, gameId, CommandName.SKIP);
 
 
-        // делаю движение вверж
+        // делаю движение вверх
         client.addMove(newUserId, gameId, CommandName.UP);
-
-
-        Thread.sleep(10000);
 
         gameModel = client.getMap(gameId);
         //проверяем что подвинулся

@@ -38,6 +38,10 @@ public class ServerView extends View {
         return answer;
     }
 
+    public int getcommandNameIdsSize() {
+        return commandNameIds.size();
+    }
+
     public boolean isEnd() {
         return isEnd;
     }
