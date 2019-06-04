@@ -205,11 +205,12 @@ public class GameModel implements Serializable {
     private static final Random RANDOM = new Random();
 
     private void addCharacter() throws GameCellException {
+        gameCharacters.add(new GameCharacter());
         while (true) {
             int row = RANDOM.nextInt(gameMap.length);
             int col = RANDOM.nextInt(gameMap[0].length);
             if (!gameMap[row][col].isNonEmptyTypeAndHasNoObjects()) {
-                gameMap[row][col].addAliveObject(new GameCharacter());
+                gameMap[row][col].addAliveObject(gameCharacters.get(gameCharacters.size() - 1));
                 return;
             }
         }

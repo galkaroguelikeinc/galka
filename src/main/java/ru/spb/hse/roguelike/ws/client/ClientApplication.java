@@ -47,12 +47,20 @@ public class ClientApplication {
                 int gameId = Integer.valueOf(readWord(terminalScreen));
                 //TODO: подключиться к серверу, получить от него карту, создать terminalView
                 // и запустить в бесконечном цикле запросы к серверу (как внутри контроллера)
-                //RoguelikeClient client = new RoguelikeClient(host, Integer.valueOf(port));
-                // try {
-                //     System.out.println(client.getUserId());
-                // } finally {
-                //     client.shutdown();
-                //}
+                RoguelikeClient client = new RoguelikeClient("localhost", 50051);
+                int userId = client.getUserId();
+                if (gameId == -1) {
+                    gameId = client.startNewGame(userId);
+                } else {
+                    client.connectToExistingGame(userId, gameId);
+                }
+                GameModel model = client.getMap(gameId);
+                View view = new TerminalView(model);
+
+                while (true) {
+
+                }
+
             }
             case ArrowUp: {
                 printString(terminalScreen,"print model args");
