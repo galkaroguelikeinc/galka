@@ -8,8 +8,8 @@ import ru.spb.hse.roguelike.model.MapGeneratorException;
 import ru.spb.hse.roguelike.model.UnknownObjectException;
 import ru.spb.hse.roguelike.model.map.GameCellException;
 import ru.spb.hse.roguelike.model.map.GameMapCellType;
-import ru.spb.hse.roguelike.model.object.items.CannotApplyFoodMultipleTimesException;
 import ru.spb.hse.roguelike.view.CommandName;
+import ru.spb.hse.roguelike.view.CommandNameId;
 import ru.spb.hse.roguelike.view.View;
 import ru.spb.hse.roguelike.view.ViewException;
 
@@ -26,7 +26,7 @@ public class ControllerTest {
             GameModel gameModel = new Generator().generateModel(3, 20, 25);
             gameModel.getCell(new Point(0, 3)).setGameMapCellType(GameMapCellType.ROOM);
             gameModel.getCell(new Point(0, 2)).setGameMapCellType(GameMapCellType.ROOM);
-            gameModel.moveAliveObject(gameModel.getCharacter(), new Point(0, 3));
+            gameModel.moveAliveObject(gameModel.getCharacters().get(0), new Point(0, 3));
 
             Controller controller = new Controller(new View() {
                 @Override
@@ -34,8 +34,8 @@ public class ControllerTest {
                 }
 
                 @Override
-                public CommandName readCommand() {
-                    return CommandName.LEFT;
+                public CommandNameId readCommand() {
+                    return new CommandNameId(CommandName.LEFT, 0);
                 }
 
                 @Override
@@ -44,8 +44,8 @@ public class ControllerTest {
             }, gameModel);
 
             controller.executeCommand();
-            assertEquals(0, gameModel.getAliveObjectPoint(gameModel.getCharacter()).getRow());
-            assertEquals(2, gameModel.getAliveObjectPoint(gameModel.getCharacter()).getCol());
+            assertEquals(0, gameModel.getAliveObjectPoint(gameModel.getCharacters().get(0)).getRow());
+            assertEquals(2, gameModel.getAliveObjectPoint(gameModel.getCharacters().get(0)).getCol());
         }
     }
 }

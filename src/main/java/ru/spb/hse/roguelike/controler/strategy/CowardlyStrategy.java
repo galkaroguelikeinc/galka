@@ -48,7 +48,7 @@ public class CowardlyStrategy extends NonPlayerCharacterStrategy {
                     maxDistance = curDistance;
                     pointWithMaxDistance = curPoint;
                 }
-            } catch (StrategyException ignored) {
+            } catch (Exception ignored) {
                 //path not exist
             }
         }
