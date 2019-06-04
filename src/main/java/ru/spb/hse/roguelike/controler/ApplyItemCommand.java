@@ -12,7 +12,7 @@ public class ApplyItemCommand extends Command {
     }
 
     @Override
-    boolean execute() throws UnknownObjectException, ViewException {
-        return controller.applyItem();
+    boolean execute(int playerId) throws UnknownObjectException, ViewException {
+        return controller.applyItem(playerId);
     }
 }

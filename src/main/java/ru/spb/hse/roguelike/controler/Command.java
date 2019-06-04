@@ -18,5 +18,5 @@ abstract class Command {
      *
      * @return true is the game continues
      */
-    abstract boolean execute() throws UnknownObjectException, ViewException;
+    abstract boolean execute(int playerId) throws UnknownObjectException, ViewException;
 }

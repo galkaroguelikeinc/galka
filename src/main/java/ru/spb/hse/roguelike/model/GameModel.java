@@ -13,10 +13,7 @@ import ru.spb.hse.roguelike.model.object.items.Wearable;
 
 import javax.annotation.Nonnull;
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static ru.spb.hse.roguelike.model.map.GameMapCellType.EMPTY;
@@ -27,7 +24,7 @@ import static ru.spb.hse.roguelike.model.map.GameMapCellType.EMPTY;
 public class GameModel implements Serializable {
     private final GameCell[][] gameMap;
     private final List<Item> characterInventory;  // TODO: remove either this or GameCharacter's internal wearableStack
-    private final GameCharacter gameCharacter;
+    private final List<GameCharacter> gameCharacters;
     private final int maxInventorySize;
     // TODO: separate all alive objects into the game character and non-player characters
     private final Map<AliveObject, Point> aliveObjectToPoint = new HashMap<>();
@@ -37,7 +34,8 @@ public class GameModel implements Serializable {
                      @Nonnull final List<Item> characterInventory, GameCharacter character, int maxInventorySize) {
         this.gameMap = gameMap;
         this.characterInventory = characterInventory;
-        this.gameCharacter = character;
+        this.gameCharacters = new ArrayList<>();
+        gameCharacters.add(character);
         this.maxInventorySize = maxInventorySize;
         saveAliveObjectCoordinates();
     }
@@ -56,31 +54,34 @@ public class GameModel implements Serializable {
     public void confuseMobs() {
         Map<AliveObject, Point> newAliveObjectToPoint = new HashMap<>();
 
-        Point gameCharacterPoint = aliveObjectToPoint.get(gameCharacter);
+        List<Point> gameCharacterPoints = gameCharacters.stream().map(aliveObjectToPoint::get).collect(Collectors.toList());
 
         for (Map.Entry<AliveObject, Point> entry : aliveObjectToPoint.entrySet()) {
-            if (entry.getKey() == gameCharacter) {
+            if (gameCharacterPoints.contains(entry.getValue())) {
                 continue;
             }
             newAliveObjectToPoint.put(new ConfusedNonPlayerCharacter((NonPlayerCharacter) entry.getKey()), entry.getValue());
         }
 
         aliveObjectToPoint.clear();
-        aliveObjectToPoint.put(gameCharacter, gameCharacterPoint);
+        for (int i = 0; i < gameCharacters.size(); i++) {
+            aliveObjectToPoint.put(gameCharacters.get(i), gameCharacterPoints.get(i));
+        }
         aliveObjectToPoint.putAll(newAliveObjectToPoint);
     }
 
     public Set<NonPlayerCharacter> getNonGameCharacters() {
+        List<Point> gameCharacterPoints = gameCharacters.stream().map(aliveObjectToPoint::get).collect(Collectors.toList());
         return aliveObjectToPoint.
                 keySet().
                 stream().
-                filter(x -> !x.equals(gameCharacter)).
+                filter(x -> !gameCharacterPoints.contains(aliveObjectToPoint.get(x))).
                 map(x -> (NonPlayerCharacter) x).
                 collect(Collectors.toSet());
     }
 
-    public GameCharacter getCharacter() {
-        return gameCharacter;
+    public List<GameCharacter> getCharacters() {
+        return gameCharacters;
     }
 
     public boolean hasCell(Point point) {
@@ -173,26 +174,40 @@ public class GameModel implements Serializable {
         return gameMap[point.getRow()][point.getCol()].hasItem();
     }
 
-    public void makeCharacterApplyItem() throws CannotPickItemException, CannotApplyFoodMultipleTimesException {
-        GameCell cell = getCell(aliveObjectToPoint.get(gameCharacter));
+    public void makeCharacterApplyItem(int characterId) throws CannotPickItemException, CannotApplyFoodMultipleTimesException {
+        GameCell cell = getCell(aliveObjectToPoint.get(gameCharacters.get(characterId)));
         if (!cell.hasItem()) {
             throw new CannotPickItemException();
         }
         Item item = cell.takeCellItem();
-        item.apply(gameCharacter);
+        item.apply(gameCharacters.get(characterId));
     }
 
-    public void makeCharacterDropTopWearable() throws CannotDropWearableException {
-        if (!gameCharacter.hasWearable()) {
+    public void makeCharacterDropTopWearable(int characterId) throws CannotDropWearableException {
+        if (!gameCharacters.get(characterId).hasWearable()) {
             throw new CannotDropWearableException("The character doesn't have any items to drop");
         }
-        Wearable wearable = gameCharacter.peekWearable();
-        GameCell cell = getCell(aliveObjectToPoint.get(gameCharacter));
+        Wearable wearable = gameCharacters.get(characterId).peekWearable();
+        GameCell cell = getCell(aliveObjectToPoint.get(gameCharacters.get(characterId)));
         try {
             cell.addItem(wearable);
         } catch (GameCellException e) {
             throw new CannotDropWearableException("This cell already has an item.");
         }
-        wearable.unapply(gameCharacter);
+        wearable.unapply(gameCharacters.get(characterId));
     }
+
+    private static final Random RANDOM = new Random();
+
+    private void addCharacter() throws GameCellException {
+        while (true) {
+            int row = RANDOM.nextInt(gameMap.length);
+            int col = RANDOM.nextInt(gameMap[0].length);
+            if (!gameMap[row][col].isNonEmptyTypeAndHasNoObjects()) {
+                gameMap[row][col].addAliveObject(new GameCharacter());
+                return;
+            }
+        }
+    }
+
 }

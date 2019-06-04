@@ -8,7 +8,6 @@ import ru.spb.hse.roguelike.model.MapGeneratorException;
 import ru.spb.hse.roguelike.model.UnknownObjectException;
 import ru.spb.hse.roguelike.model.map.GameCellException;
 import ru.spb.hse.roguelike.model.map.GameMapCellType;
-import ru.spb.hse.roguelike.model.object.items.CannotApplyFoodMultipleTimesException;
 import ru.spb.hse.roguelike.view.TerminalView;
 import ru.spb.hse.roguelike.view.View;
 

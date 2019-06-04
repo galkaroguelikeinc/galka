@@ -12,7 +12,6 @@ repositories {
 }
 
 configurations {
-    // configuration that holds jars to include in the jar
     extraLibs
 }
 

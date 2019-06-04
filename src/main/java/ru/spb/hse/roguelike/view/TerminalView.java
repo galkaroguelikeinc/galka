@@ -181,24 +181,24 @@ public class TerminalView extends View {
     }
 
     @Override
-    public CommandName readCommand() {
+    public CommandNameId readCommand() {
         try {
             KeyStroke key = terminalScreen.readInput();
             switch (key.getKeyType()) {
                 case ArrowDown:
-                    return CommandName.DOWN;
+                    return new CommandNameId(CommandName.DOWN, 0);
                 case ArrowUp:
-                    return CommandName.UP;
+                    return new CommandNameId(CommandName.UP, 0);
                 case ArrowLeft:
-                    return CommandName.LEFT;
+                    return new CommandNameId(CommandName.LEFT, 0);
                 case ArrowRight:
-                    return CommandName.RIGHT;
+                    return new CommandNameId(CommandName.RIGHT, 0);
                 case Tab:
-                    return CommandName.CONFUSE_MOBS;
+                    return new CommandNameId(CommandName.CONFUSE_MOBS, 0);
                 case Enter:
-                    return CommandName.APPLY_ITEM;
+                    return new CommandNameId(CommandName.APPLY_ITEM, 0);
                 case Escape:
-                    return CommandName.DROP_WEARABLE;
+                    return new CommandNameId(CommandName.DROP_WEARABLE, 0);
             }
         } catch (IOException e) {
             System.out.println("Problems with parsing command");

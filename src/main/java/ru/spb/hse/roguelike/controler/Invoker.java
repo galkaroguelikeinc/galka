@@ -19,8 +19,8 @@ class Invoker {
      * @param name name of a command
      * @return true is the game is not ended
      */
-    boolean executeCommand(CommandName name) throws UnknownObjectException, ViewException {
-        return commands.get(name).execute();
+    boolean executeCommand(CommandName name, int playerId) throws UnknownObjectException, ViewException {
+        return commands.get(name).execute(playerId);
     }
 
     /**

@@ -11,10 +11,12 @@ import ru.spb.hse.roguelike.model.object.alive.GameCharacter;
 import ru.spb.hse.roguelike.model.object.alive.NonPlayerCharacter;
 import ru.spb.hse.roguelike.model.object.items.CannotApplyFoodMultipleTimesException;
 import ru.spb.hse.roguelike.view.CommandName;
+import ru.spb.hse.roguelike.view.CommandNameId;
 import ru.spb.hse.roguelike.view.View;
 import ru.spb.hse.roguelike.view.ViewException;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Random;
 
 
@@ -26,7 +28,7 @@ public class Controller {
     private static final Random RANDOM = new Random();
     private View view;
     private GameModel gameModel;
-    private GameCharacter character;
+    private List<GameCharacter> characters;
     private Invoker invoker = new Invoker();
 
     /**
@@ -38,7 +40,7 @@ public class Controller {
     public Controller(View view, GameModel gameModel) {
         this.gameModel = gameModel;
         this.view = view;
-        character = gameModel.getCharacter();
+        characters = gameModel.getCharacters();
         invoker.setCommand(CommandName.UP, new UpMoveCommand(this));
         invoker.setCommand(CommandName.DOWN, new DownMoveCommand(this));
         invoker.setCommand(CommandName.LEFT, new LeftMoveCommand(this));
@@ -84,9 +86,11 @@ public class Controller {
             } catch (StrategyException e) {
                 point = oldPoint;
             }
-            if (gameModel.getAliveObjectPoint(character).equals(point)) {
-                if (!fightNPC(oldPoint)) {
-                    return false;
+            for (int i = 0; i < characters.size(); i++) {
+                if (gameModel.getAliveObjectPoint(characters.get(i)).equals(point)) {
+                    if (!fightNPC(i, oldPoint)) {
+                        return false;
+                    }
                 }
             }
             gameModel.moveAliveObject(npc, point);
@@ -97,25 +101,25 @@ public class Controller {
     }
 
     boolean executeCommand() throws ViewException, UnknownObjectException {
-        CommandName commandName = view.readCommand();
-        if (commandName == null) {
+        CommandNameId commandNameId = view.readCommand();
+        if (commandNameId.getCommandName() == null) {
             return true;
         }
-        return invoker.executeCommand(commandName);
+        return invoker.executeCommand(commandNameId.getCommandName(), commandNameId.getId());
     }
 
-    boolean applyItem() {
+    boolean applyItem(int playerId) {
         try {
-            gameModel.makeCharacterApplyItem();
+            gameModel.makeCharacterApplyItem(playerId);
         } catch (CannotPickItemException | CannotApplyFoodMultipleTimesException ignored) {
             // TODO: APPLY_ITEM or DROP_WEARABLE should not count as a move if it didn't succeed
         }
         return true;
     }
 
-    boolean dropWearable() {
+    boolean dropWearable(int playerId) {
         try {
-            gameModel.makeCharacterDropTopWearable();
+            gameModel.makeCharacterDropTopWearable(playerId);
         } catch (CannotDropWearableException ignored) {
         }
         return true;
@@ -126,12 +130,12 @@ public class Controller {
         return true;
     }
 
-    boolean handleMove(int rowDiff, int colDiff) throws ViewException, UnknownObjectException {
+    boolean handleMove(int playerId, int rowDiff, int colDiff) throws ViewException, UnknownObjectException {
         Point diff = new Point(rowDiff, colDiff);
-        Point oldPoint = gameModel.getAliveObjectPoint(character);
+        Point oldPoint = gameModel.getAliveObjectPoint(characters.get(playerId));
         boolean moved = false;
         try {
-            moved = gameModel.moveAliveObjectDiff(character, diff);
+            moved = gameModel.moveAliveObjectDiff(characters.get(playerId), diff);
         } catch (GameCellException ignored) {
         }
         Point point = oldPoint.add(diff);
@@ -141,25 +145,25 @@ public class Controller {
         } else {
             if (gameModel.getCell(point) != null &&
                     gameModel.getCell(point).hasAliveObject()) {
-                return fightNPC(point);
+                return fightNPC(playerId, point);
             }
         }
         return true;
     }
 
-    private boolean fightNPC(Point point) throws ViewException {
+    private boolean fightNPC(int playerId, Point point) throws ViewException {
         int gameCharacterHit = RANDOM.nextInt(2);
         int npcHit = RANDOM.nextInt(2);
         NonPlayerCharacter npc = (NonPlayerCharacter) gameModel.getCell(point).getAliveObject();
         if (npcHit == 1) {
-            character.setCurrentHealth(character.getCurrentHealth() - npc.getCurrentPower());
-            if (character.getCurrentHealth() == 0) {
+            characters.get(playerId).setCurrentHealth(characters.get(playerId).getCurrentHealth() - npc.getCurrentPower());
+            if (characters.get(playerId).getCurrentHealth() == 0) {
                 GameStateSaver.deleteState();
                 return false;
             }
         }
         if (gameCharacterHit == 1) {
-            npc.setCurrentHealth(npc.getCurrentHealth() - character.getCurrentPower());
+            npc.setCurrentHealth(npc.getCurrentHealth() - characters.get(playerId).getCurrentPower());
             if (npc.getCurrentHealth() == 0) {
                 gameModel.removeAliveObject(point);
                 view.showChanges(point);
