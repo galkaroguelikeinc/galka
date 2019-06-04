@@ -56,6 +56,10 @@ public class GameModel implements Serializable {
         }
     }
 
+    public Map<Integer, GameCharacter> getGameCharacters() {
+        return gameCharacters;
+    }
+
     public void confuseMobs() {
         Map<AliveObject, Point> newAliveObjectToPoint = new HashMap<>();
 

@@ -111,8 +111,7 @@ public class RoguelikeClient {
                 .setGameId(gameId)
                 .setCommandName(commandName.name())
                 .build();
-        Galka.AddMoveResponse response;
-        blockingStub.addMove(request);
+        Galka.AddMoveResponse response = blockingStub.addMove(request);
     }
 
 }
