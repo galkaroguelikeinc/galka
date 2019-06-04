@@ -2,7 +2,10 @@ package ru.spb.hse.roguelike.ws.client;
 
 import ru.spb.hse.roguelike.Point;
 import ru.spb.hse.roguelike.model.GameModel;
+import ru.spb.hse.roguelike.model.map.GameCell;
 import ru.spb.hse.roguelike.model.map.GameMapCellType;
+import ru.spb.hse.roguelike.model.object.alive.GameCharacter;
+import ru.spb.hse.roguelike.model.object.alive.Mob;
 import ru.spb.hse.roguelike.view.CommandName;
 
 import java.util.function.Function;
@@ -13,29 +16,44 @@ public class OlyaClientApplication {
         int userId = client.getUserId();
         int gameId = client.startNewGame(userId);
         GameModel gameModel = client.getMap(gameId);
-        Function< GameMapCellType, Character> decoder = type -> {
-            if (type == GameMapCellType.ROOM) {
+        Function<GameCell, Character> decoder = cell -> {
+            if (cell.hasAliveObject()) {
+                if (cell.getAliveObject() instanceof GameCharacter) {
+                    return 'A';
+                }
+                return 'M';
+
+            }
+            if (cell.getGameMapCellType() == GameMapCellType.ROOM) {
                 return '.';
             }
-            if (type == GameMapCellType.TUNNEL) {
+            if (cell.getGameMapCellType() == GameMapCellType.TUNNEL) {
                 return '#';
             }
             return ' ';
         };
         for (int i = 0; i < gameModel.getRows(); i++) {
             for (int j = 0; j < gameModel.getCols(); j++) {
-                System.out.print(decoder.apply(gameModel.getCell(new Point(i, j)).getGameMapCellType()));
+                System.out.print(decoder.apply(gameModel.getCell(new Point(i, j))));
             }
             System.out.println();
         }
 
 
-
-
-
         // создаю нового пользователя и подключаю к той же игре
         int newUserId = client.getUserId();
         client.connectToExistingGame(newUserId, gameId);
+
+
+        //проверяем что добавился новый игрок
+
+        for (int i = 0; i < gameModel.getRows(); i++) {
+            for (int j = 0; j < gameModel.getCols(); j++) {
+                System.out.print(decoder.apply(gameModel.getCell(new Point(i, j))));
+            }
+            System.out.println();
+        }
+
 
 
         //передаю действия
