@@ -71,6 +71,6 @@ public class GameCell implements Serializable {
     }
 
     public boolean isNonEmptyTypeAndHasNoObjects() {
-        return gameMapCellType != GameMapCellType.EMPTY && !hasAliveObject() && !hasItem();
+        return !gameMapCellType.equals(GameMapCellType.EMPTY) && !hasAliveObject() && !hasItem();
     }
 }

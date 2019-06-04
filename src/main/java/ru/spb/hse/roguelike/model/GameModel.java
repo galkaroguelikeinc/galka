@@ -207,11 +207,12 @@ public class GameModel implements Serializable {
     private static final Random RANDOM = new Random();
 
     public void addCharacter(int id) throws GameCellException {
+        System.out.println("add character");
         gameCharacters.put(id, new GameCharacter());
         while (true) {
             int row = RANDOM.nextInt(gameMap.length);
             int col = RANDOM.nextInt(gameMap[0].length);
-            if (!gameMap[row][col].isNonEmptyTypeAndHasNoObjects()) {
+            if (gameMap[row][col].isNonEmptyTypeAndHasNoObjects()) {
                 gameMap[row][col].addAliveObject(gameCharacters.get(id));
                 return;
             }

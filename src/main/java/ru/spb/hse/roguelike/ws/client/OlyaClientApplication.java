@@ -44,7 +44,7 @@ public class OlyaClientApplication {
         int newUserId = client.getUserId();
         client.connectToExistingGame(newUserId, gameId);
 
-
+        gameModel = client.getMap(gameId);
         //проверяем что добавился новый игрок
 
         for (int i = 0; i < gameModel.getRows(); i++) {
