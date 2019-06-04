@@ -108,10 +108,7 @@ public class Controller {
         if (commandNameId == null || commandNameId.getCommandName() == null || commandNameId.getCommandName() == SKIP) {
             return true;
         }
-        System.out.println("executeCommand");
-        boolean result = invoker.executeCommand(commandNameId.getCommandName(), commandNameId.getId());
-        moveMobs();
-        return result;
+        return invoker.executeCommand(commandNameId.getCommandName(), commandNameId.getId()) && moveMobs();
     }
 
     boolean applyItem(int playerId) {
