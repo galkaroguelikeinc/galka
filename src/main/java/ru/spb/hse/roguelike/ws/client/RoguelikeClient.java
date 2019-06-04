@@ -64,13 +64,19 @@ public class RoguelikeClient {
         Galka.GetMapResponse response;
         response = blockingStub.getMap(request);
         String mapString = response.getMapString();
-        byte[] data = Base64.getDecoder().decode(mapString);
-        ObjectInputStream ois = new ObjectInputStream(
-                new ByteArrayInputStream(data));
-        GameModel o = (GameModel) ois.readObject();
-        ois.close();
-        return o;
+        return GameModel.fromString(mapString);
     }
 
+
+    public long startNewGame(long userId) {
+        Galka.StartNewGameRequest request = Galka.StartNewGameRequest
+                .newBuilder()
+                .setUserId(userId)
+                .build();
+        Galka.StartNewGameResponse response;
+        response = blockingStub.startNewGame(request);
+        return response.getGameId();
+
+    }
 
 }

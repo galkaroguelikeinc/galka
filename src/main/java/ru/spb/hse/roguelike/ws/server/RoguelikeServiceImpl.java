@@ -3,10 +3,18 @@ package ru.spb.hse.roguelike.ws.server;
 import io.grpc.stub.StreamObserver;
 import ru.spb.hse.roguelike.Galka;
 import ru.spb.hse.roguelike.RoguelikeServiceGrpc;
+import ru.spb.hse.roguelike.model.MapGeneratorException;
+import ru.spb.hse.roguelike.model.map.GameCellException;
 
-import static io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall;
+import java.io.IOException;
 
 public class RoguelikeServiceImpl extends RoguelikeServiceGrpc.RoguelikeServiceImplBase {
+
+    private final RoguelikeServer server;
+
+    public RoguelikeServiceImpl(RoguelikeServer server) {
+        this.server = server;
+    }
 
     @Override
     public void ping(Galka.Empty request,
@@ -21,8 +29,7 @@ public class RoguelikeServiceImpl extends RoguelikeServiceGrpc.RoguelikeServiceI
     @Override
     public void getUserId(ru.spb.hse.roguelike.Galka.GetUserIdRequest request,
                           io.grpc.stub.StreamObserver<ru.spb.hse.roguelike.Galka.GetUserIdResponse> responseObserver) {
-        //TODO получить userId с контроллера
-        long userId = 123L;
+        long userId = server.getUserId();
         Galka.GetUserIdResponse response = Galka.GetUserIdResponse.newBuilder()
                 .setUserId(userId)
                 .build();
@@ -33,13 +40,17 @@ public class RoguelikeServiceImpl extends RoguelikeServiceGrpc.RoguelikeServiceI
     @Override
     public void startNewGame(ru.spb.hse.roguelike.Galka.StartNewGameRequest request,
                              io.grpc.stub.StreamObserver<ru.spb.hse.roguelike.Galka.StartNewGameResponse> responseObserver) {
-        //TODO начать новую игру в контроллере
-        long gameId = 123L;
-        Galka.StartNewGameResponse response = Galka.StartNewGameResponse.newBuilder()
-                .setGameId(gameId)
-                .build();
-        responseObserver.onNext(response);
-        responseObserver.onCompleted();
+        try {
+            long gameId = server.createNewGame(request.getUserId());
+            Galka.StartNewGameResponse response = Galka.StartNewGameResponse.newBuilder()
+                    .setGameId(gameId)
+                    .build();
+            responseObserver.onNext(response);
+            responseObserver.onCompleted();
+        } catch (Exception e) {
+            responseObserver.onError(e);
+        }
+
     }
 
     @Override
@@ -67,11 +78,15 @@ public class RoguelikeServiceImpl extends RoguelikeServiceGrpc.RoguelikeServiceI
     @Override
     public void getMap(ru.spb.hse.roguelike.Galka.GetMapRequest request,
                        io.grpc.stub.StreamObserver<ru.spb.hse.roguelike.Galka.GetMapResponse> responseObserver) {
-        //TODO запрос контроллеру на получение карты для игры
-        Galka.GetMapResponse response = Galka.GetMapResponse.newBuilder()
-                .setMapString("это будет серилизованная карта")
-                .build();
-        responseObserver.onNext(response);
-        responseObserver.onCompleted();
+        try {
+            String mapString = server.getMapString(request.getGameId());
+            Galka.GetMapResponse response = Galka.GetMapResponse.newBuilder()
+                    .setMapString(mapString)
+                    .build();
+            responseObserver.onNext(response);
+            responseObserver.onCompleted();
+        } catch (IOException e) {
+            responseObserver.onError(e);
+        }
     }
 }
