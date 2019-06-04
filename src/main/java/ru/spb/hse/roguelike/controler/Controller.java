@@ -17,6 +17,7 @@ import ru.spb.hse.roguelike.view.ViewException;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import static ru.spb.hse.roguelike.view.CommandName.SKIP;
@@ -30,7 +31,6 @@ public class Controller {
     private static final Random RANDOM = new Random();
     private View view;
     private GameModel gameModel;
-    private List<GameCharacter> characters;
     private Invoker invoker = new Invoker();
 
     /**
@@ -42,7 +42,7 @@ public class Controller {
     public Controller(View view, GameModel gameModel) {
         this.gameModel = gameModel;
         this.view = view;
-        characters = gameModel.getCharacters();
+        Map<Integer, GameCharacter>  characters = gameModel.getGameCharacters();
         invoker.setCommand(CommandName.UP, new UpMoveCommand(this));
         invoker.setCommand(CommandName.DOWN, new DownMoveCommand(this));
         invoker.setCommand(CommandName.LEFT, new LeftMoveCommand(this));
@@ -65,6 +65,7 @@ public class Controller {
 
     private boolean moveMobs() throws ViewException, UnknownObjectException, GameCellException {
         for (NonPlayerCharacter npc : gameModel.getNonGameCharacters()) {
+            Map<Integer, GameCharacter> characters = gameModel.getGameCharacters();
             Point oldPoint = gameModel.getAliveObjectPoint(npc);
             Point point = null;
             try {
@@ -134,7 +135,7 @@ public class Controller {
 
     boolean handleMove(int playerId, int rowDiff, int colDiff) throws ViewException, UnknownObjectException {
         //TODO МАША ПОСМОТРИ тут раньше не обновлялись
-        characters = gameModel.getCharacters();
+        Map<Integer, GameCharacter> characters = gameModel.getGameCharacters();
         Point diff = new Point(rowDiff, colDiff);
         Point oldPoint = gameModel.getAliveObjectPoint(characters.get(playerId));
         boolean moved = false;
@@ -158,6 +159,7 @@ public class Controller {
     private boolean fightNPC(int playerId, Point point) throws ViewException {
         int gameCharacterHit = RANDOM.nextInt(2);
         int npcHit = RANDOM.nextInt(2);
+        Map<Integer, GameCharacter> characters = gameModel.getGameCharacters();
         NonPlayerCharacter npc = (NonPlayerCharacter) gameModel.getCell(point).getAliveObject();
         if (npcHit == 1) {
             characters.get(playerId).setCurrentHealth(characters.get(playerId).getCurrentHealth() - npc.getCurrentPower());

@@ -157,7 +157,7 @@ public class RoguelikeServer {
             if (userIds.size() == 0) {
                 throw new IllegalArgumentException("Failed to get curUser. There are no players");
             }
-            return curUser;
+            return userIds.get(curUser);
         }
 
         public void incCurUser() {

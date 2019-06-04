@@ -56,6 +56,10 @@ public class GameModel implements Serializable {
         }
     }
 
+    public Map<Integer, GameCharacter> getGameCharacters() {
+        return gameCharacters;
+    }
+
     public void confuseMobs() {
         Map<AliveObject, Point> newAliveObjectToPoint = new HashMap<>();
 
@@ -214,7 +218,7 @@ public class GameModel implements Serializable {
             int col = RANDOM.nextInt(gameMap[0].length);
             if (gameMap[row][col].isNonEmptyTypeAndHasNoObjects()) {
                 //TODO МАША ПОСМОТРИ тут раньше не добавлялись объекты
-                addAliveObject(new Point(row, col),gameCharacters.get(id) );
+                addAliveObject(new Point(row, col), gameCharacters.get(id));
                 //gameMap[row][col].addAliveObject(gameCharacters.get(id));
                 return;
             }
