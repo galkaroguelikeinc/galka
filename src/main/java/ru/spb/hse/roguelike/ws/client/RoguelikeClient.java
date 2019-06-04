@@ -7,6 +7,7 @@ import io.grpc.StatusRuntimeException;
 import ru.spb.hse.roguelike.Galka;
 import ru.spb.hse.roguelike.RoguelikeServiceGrpc;
 import ru.spb.hse.roguelike.model.GameModel;
+import ru.spb.hse.roguelike.view.CommandName;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -52,14 +53,14 @@ public class RoguelikeClient {
         logger.info(response.getPong());
     }
 
-    public long getUserId() {
+    int getUserId() {
         Galka.GetUserIdRequest request = Galka.GetUserIdRequest.newBuilder().build();
         Galka.GetUserIdResponse response;
         response = blockingStub.getUserId(request);
         return response.getUserId();
     }
 
-    public GameModel getMap(long gameId) throws IOException, ClassNotFoundException {
+    GameModel getMap(int gameId) throws IOException, ClassNotFoundException {
         Galka.GetMapRequest request = Galka.GetMapRequest.newBuilder().setGameId(gameId).build();
         Galka.GetMapResponse response;
         response = blockingStub.getMap(request);
@@ -68,7 +69,7 @@ public class RoguelikeClient {
     }
 
 
-    public long startNewGame(long userId) {
+    int startNewGame(int userId) {
         Galka.StartNewGameRequest request = Galka.StartNewGameRequest
                 .newBuilder()
                 .setUserId(userId)
@@ -79,8 +80,8 @@ public class RoguelikeClient {
 
     }
 
-    public boolean connectToExistingGame(long userId,
-                                long gameId) {
+    boolean connectToExistingGame(int userId,
+                                  int gameId) {
         Galka.ConnectToExistingGameRequest request = Galka.ConnectToExistingGameRequest
                 .newBuilder()
                 .setUserId(userId)
@@ -91,7 +92,7 @@ public class RoguelikeClient {
         return response.getResult();
     }
 
-    public long getCurUser(long gameId) {
+    int getCurUser(int gameId) {
         Galka.GetCurUserRequest request = Galka.GetCurUserRequest
                 .newBuilder()
                 .setGameId(gameId)
@@ -99,6 +100,19 @@ public class RoguelikeClient {
         Galka.GetCurUserResponse response;
         response = blockingStub.getCurUser(request);
         return response.getUserId();
+    }
+
+    void addMove(int userId,
+                 int gameId,
+                 CommandName commandName) {
+        Galka.AddMoveRequest request = Galka.AddMoveRequest
+                .newBuilder()
+                .setUserId(userId)
+                .setGameId(gameId)
+                .setCommandName(commandName.name())
+                .build();
+        Galka.AddMoveResponse response;
+        blockingStub.addMove(request);
     }
 
 }

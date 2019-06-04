@@ -8,6 +8,7 @@ import ru.spb.hse.roguelike.model.GameModel;
 import ru.spb.hse.roguelike.model.Generator;
 import ru.spb.hse.roguelike.model.MapGeneratorException;
 import ru.spb.hse.roguelike.model.map.GameCellException;
+import ru.spb.hse.roguelike.view.CommandName;
 import ru.spb.hse.roguelike.view.ServerView;
 
 import java.io.IOException;
@@ -22,13 +23,13 @@ import java.util.logging.Logger;
  * Server that manages startup/shutdown of a {@code Greeter} server.
  */
 public class RoguelikeServer {
-    private final Map<Long, GameInfo> games = new HashMap<>();
+    private final Map<Integer, GameInfo> games = new HashMap<>();
     private static final Logger logger = Logger.getLogger(RoguelikeServer.class.getName());
     private final Server server;
-    private static long userCounter = 0;
-    private static long gameCounter = 0;
+    private static int userCounter = 0;
+    private static int gameCounter = 0;
 
-    public RoguelikeServer(int port) throws IOException {
+    RoguelikeServer(int port) throws IOException {
         server = ServerBuilder.forPort(port)
                 .addService(new RoguelikeServiceImpl(this))
                 .build()
@@ -50,38 +51,39 @@ public class RoguelikeServer {
         }
     }
 
-    public void blockUntilShutdown() throws InterruptedException {
+    void blockUntilShutdown() throws InterruptedException {
         if (server != null) {
             server.awaitTermination();
         }
     }
 
-    public long getUserId() {
-        long userId = userCounter;
+    int getUserId() {
+        int userId = userCounter;
         userCounter++;
         return userId;
     }
 
-    public long getGameId() {
-        long gameId = gameCounter;
+    private int getGameId() {
+        int gameId = gameCounter;
         gameCounter++;
         return gameId;
     }
 
-    public long createNewGame(long userId) throws MapGeneratorException, GameCellException {
+    int createNewGame(int userId) throws MapGeneratorException, GameCellException {
         Generator generator = new Generator();
         GameModel model = generator.generateModel(3, 20, 20);
-        Controller controller = new Controller(new ServerView(), model);
-        List<Long> users = new ArrayList<>();
+        ServerView serverView = new ServerView();
+        Controller controller = new Controller(serverView, model);
+        List<Integer> users = new ArrayList<>();
         users.add(userId);
-        GameInfo gameInfo = new GameInfo(model, users, controller);
-        long gameId = getGameId();
+        GameInfo gameInfo = new GameInfo(model, users, controller, serverView);
+        int gameId = getGameId();
         games.put(gameId, gameInfo);
         return gameId;
     }
 
-    public boolean connectToGame(long userId,
-                                 long gameId) {
+    boolean connectToGame(int userId,
+                          int gameId) {
         if (!games.containsKey(gameId)) {
             return false;
         }
@@ -90,44 +92,67 @@ public class RoguelikeServer {
         return true;
     }
 
-    public Long getCurUser(long gameId) {
+    Integer getCurUser(int gameId) {
         if (!games.containsKey(gameId)) {
             throw new IllegalArgumentException("Failed to get game with Id = " + gameId);
         }
         return games.get(gameId).getCurUser();
     }
 
-    public String getMapString(long gameId) throws IOException {
+    String getMapString(int gameId) throws IOException {
         return games.get(gameId) == null
                 ? ""
                 : GameModel.toString(games.get(gameId).gameModel);
     }
 
+    public void addMove(int userId,
+                        int gameId,
+                        CommandName commandName) {
+        if (!games.containsKey(gameId)) {
+            throw new IllegalArgumentException("Failed to get game with Id = " + gameId);
+        }
+        if (!games.get(gameId).userIds.contains(userId)) {
+            throw new IllegalArgumentException("Failed to get user for  game = " + gameId);
+        }
+        ServerView serverView = games.get(gameId).serverView;
+        serverView.addCommand(commandName, userId);
+        games.get(gameId).incCurUser();
+    }
+
     public class GameInfo {
         private final GameModel gameModel;
-        private final List<Long> userIds;
+        private final List<Integer> userIds;
         private final Controller controller;
+        private final ServerView serverView;
         private int curUser = 0;
 
-        public GameInfo(GameModel gameModel, List<Long> userIds, Controller controller) {
+        GameInfo(GameModel gameModel,
+                 List<Integer> userIds,
+                 Controller controller,
+                 ServerView serverView) {
             this.gameModel = gameModel;
             this.userIds = userIds;
             this.controller = controller;
+            this.serverView = serverView;
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(gameModel, userIds, controller);
+            return Objects.hash(gameModel, userIds, controller, serverView);
         }
 
-        public Long getCurUser() {
+        int getCurUser() {
             if (userIds.size() == 0) {
                 throw new IllegalArgumentException("Failed to get curUser. There are no players");
             }
-            int ind = curUser;
-            //TODO изменяем только когда получили ход или пропусk
+            return curUser;
+        }
+
+        public void incCurUser() {
+            if (userIds.size() == 0) {
+                throw new IllegalArgumentException("Failed to get curUser. There are no players");
+            }
             curUser = (curUser + 1) % userIds.size();
-            return userIds.get(ind);
         }
 
         @Override
@@ -137,7 +162,8 @@ public class RoguelikeServer {
             GameInfo that = (GameInfo) o;
             return Objects.equals(gameModel, that.gameModel)
                     && Objects.equals(userIds, that.userIds)
-                    && Objects.equals(controller, that.controller);
+                    && Objects.equals(controller, that.controller)
+                    && Objects.equals(serverView, that.serverView);
         }
 
         @Override
@@ -146,6 +172,7 @@ public class RoguelikeServer {
                     "gameModel=" + gameModel +
                     "userIds=" + userIds +
                     "controller" + controller +
+                    "serverView" + serverView +
                     "}";
         }
     }

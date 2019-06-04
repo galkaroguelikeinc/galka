@@ -16,20 +16,20 @@ message GetUserIdRequest {
 }
 
 message GetUserIdResponse {
-    int64 userId = 1;
+    int32 userId = 1;
 }
 
 message StartNewGameRequest {
-    int64 userId = 1;
+    int32 userId = 1;
 }
 
 message StartNewGameResponse {
-    int64 gameId = 1;
+    int32 gameId = 1;
 }
 
 message ConnectToExistingGameRequest {
-    int64 userId = 1;
-    int64 gameId = 2;
+    int32 userId = 1;
+    int32 gameId = 2;
 }
 
 message ConnectToExistingGameResponse {
@@ -37,8 +37,8 @@ message ConnectToExistingGameResponse {
 }
 
 message AddMoveRequest {
-    int64 userId = 1;
-    int64 gameId = 2;
+    int32 userId = 1;
+    int32 gameId = 2;
     string commandName = 3; //строка как енам
 }
 
@@ -51,18 +51,18 @@ message GetMapResponse {
 }
 
 message GetMapRequest {
-    int64 gameId = 1; // сериализованная карта TODO поговорить с Наташей о формате
+    int32 gameId = 1; // сериализованная карта TODO поговорить с Наташей о формате
 }
 
 message Empty {
 }
 
 message GetCurUserRequest {
-    int64 gameId = 1;
+    int32 gameId = 1;
 }
 
 message GetCurUserResponse {
-    int64 userId = 1;
+    int32 userId = 1;
 }
 
 

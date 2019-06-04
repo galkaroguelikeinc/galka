@@ -3,14 +3,15 @@ package ru.spb.hse.roguelike.ws.client;
 import ru.spb.hse.roguelike.Point;
 import ru.spb.hse.roguelike.model.GameModel;
 import ru.spb.hse.roguelike.model.map.GameMapCellType;
+import ru.spb.hse.roguelike.view.CommandName;
 
 import java.util.function.Function;
 
 public class OlyaClientApplication {
     public static void main(String[] args) throws Exception {
         RoguelikeClient client = new RoguelikeClient("localhost", 50051);
-        long userId = client.getUserId();
-        long gameId = client.startNewGame(userId);
+        int userId = client.getUserId();
+        int gameId = client.startNewGame(userId);
         GameModel gameModel = client.getMap(gameId);
         Function< GameMapCellType, Character> decoder = type -> {
             if (type == GameMapCellType.ROOM) {
@@ -33,14 +34,28 @@ public class OlyaClientApplication {
 
 
         // создаю нового пользователя и подключаю к той же игре
-        long newUserId = client.getUserId();
+        int newUserId = client.getUserId();
         client.connectToExistingGame(newUserId, gameId);
 
 
+        //передаю действия
         System.out.println(client.getCurUser(gameId));
+        client.addMove(userId, gameId, CommandName.SKIP);
+
+        // тут должна быть ошибка
+        try {
+            client.addMove(userId, gameId, CommandName.SKIP);
+        } catch (Exception e) {
+            System.out.println("тут ошибка потому что ходит не тот пользователь");
+        }
+
+
         System.out.println(client.getCurUser(gameId));
+        client.addMove(newUserId, gameId, CommandName.SKIP);
+
+
         System.out.println(client.getCurUser(gameId));
-        System.out.println(client.getCurUser(gameId));
-        System.out.println(client.getCurUser(gameId));
+        client.addMove(userId, gameId, CommandName.SKIP);
+
     }
 }

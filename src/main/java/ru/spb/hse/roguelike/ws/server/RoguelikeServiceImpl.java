@@ -3,8 +3,7 @@ package ru.spb.hse.roguelike.ws.server;
 import io.grpc.stub.StreamObserver;
 import ru.spb.hse.roguelike.Galka;
 import ru.spb.hse.roguelike.RoguelikeServiceGrpc;
-import ru.spb.hse.roguelike.model.MapGeneratorException;
-import ru.spb.hse.roguelike.model.map.GameCellException;
+import ru.spb.hse.roguelike.view.CommandName;
 
 import java.io.IOException;
 
@@ -29,7 +28,7 @@ public class RoguelikeServiceImpl extends RoguelikeServiceGrpc.RoguelikeServiceI
     @Override
     public void getUserId(ru.spb.hse.roguelike.Galka.GetUserIdRequest request,
                           io.grpc.stub.StreamObserver<ru.spb.hse.roguelike.Galka.GetUserIdResponse> responseObserver) {
-        long userId = server.getUserId();
+        int userId = server.getUserId();
         Galka.GetUserIdResponse response = Galka.GetUserIdResponse.newBuilder()
                 .setUserId(userId)
                 .build();
@@ -41,7 +40,7 @@ public class RoguelikeServiceImpl extends RoguelikeServiceGrpc.RoguelikeServiceI
     public void startNewGame(ru.spb.hse.roguelike.Galka.StartNewGameRequest request,
                              io.grpc.stub.StreamObserver<ru.spb.hse.roguelike.Galka.StartNewGameResponse> responseObserver) {
         try {
-            long gameId = server.createNewGame(request.getUserId());
+            int gameId = server.createNewGame(request.getUserId());
             Galka.StartNewGameResponse response = Galka.StartNewGameResponse.newBuilder()
                     .setGameId(gameId)
                     .build();
@@ -67,18 +66,29 @@ public class RoguelikeServiceImpl extends RoguelikeServiceGrpc.RoguelikeServiceI
     @Override
     public void addMove(ru.spb.hse.roguelike.Galka.AddMoveRequest request,
                         io.grpc.stub.StreamObserver<ru.spb.hse.roguelike.Galka.AddMoveResponse> responseObserver) {
-        //TODO запрос к контроллеру. ЧТо этот пользователь сделал такой то ход в такой то игре
-        Galka.AddMoveResponse response = Galka.AddMoveResponse.newBuilder()
-                .setResult(true)
-                .build();
-        responseObserver.onNext(response);
-        responseObserver.onCompleted();
+        try {
+            CommandName commandName = CommandName.valueOf(request.getCommandName());
+            if (server.getCurUser(request.getGameId()) != request.getUserId()) {
+                responseObserver.onCompleted();
+                return;
+            }
+            server.addMove(request.getUserId(),
+                    request.getGameId(),
+                    commandName);
+            Galka.AddMoveResponse response = Galka.AddMoveResponse.newBuilder()
+                    .setResult(true)
+                    .build();
+            responseObserver.onNext(response);
+            responseObserver.onCompleted();
+        } catch (Exception e) {
+            responseObserver.onError(e);
+        }
     }
 
     @Override
     public void getCurUser(ru.spb.hse.roguelike.Galka.GetCurUserRequest request,
                            io.grpc.stub.StreamObserver<ru.spb.hse.roguelike.Galka.GetCurUserResponse> responseObserver) {
-        long curUser = server.getCurUser(request.getGameId());
+        int curUser = server.getCurUser(request.getGameId());
         Galka.GetCurUserResponse response = Galka.GetCurUserResponse.newBuilder()
                 .setUserId(curUser)
                 .build();
