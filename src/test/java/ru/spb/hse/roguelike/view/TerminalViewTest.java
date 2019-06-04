@@ -23,7 +23,7 @@ public class TerminalViewTest {
         // ..#
         //  .&
         // And stats to the right of the map
-        TerminalView terminalView = new TerminalView(gameModel);
+        //TerminalView terminalView = new TerminalView(gameModel);
         Thread.sleep(1000);
     }
 }

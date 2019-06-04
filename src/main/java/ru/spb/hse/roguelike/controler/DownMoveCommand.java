@@ -12,7 +12,7 @@ class DownMoveCommand extends Command {
     }
 
     @Override
-    boolean execute() throws UnknownObjectException, ViewException {
-        return controller.handleMove(1, 0);
+    boolean execute(int playerId) throws UnknownObjectException, ViewException {
+        return controller.handleMove(playerId,1, 0);
     }
 }

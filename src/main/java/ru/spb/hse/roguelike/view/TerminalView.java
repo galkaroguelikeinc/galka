@@ -28,7 +28,7 @@ import java.util.function.Function;
  * <p>
  * It uses Lanterna, the terminal type guess is also done by Lanterna.
  */
-public class TerminalView extends View {
+/*public class TerminalView extends View {
     private static final char ROOM_SYMBOL = '.';
     private static final char EMPTY_SYMBOL = ' ';
     private static final char TUNNEL_SYMBOL = '#';
@@ -46,14 +46,14 @@ public class TerminalView extends View {
     private TerminalScreen terminalScreen;
     private GameModel gameModel;
     private int numInfoRows = 0;
-    private int numCols = 0;
+    private int numCols = 0;*/
 
     /**
      * Create a terminal view.
      *
      * @param gameModel stores game data which needs to be shown to user
      */
-    public TerminalView(GameModel gameModel) throws ViewException {
+    /*public TerminalView(GameModel gameModel) throws ViewException {
         this.gameModel = gameModel;
         DefaultTerminalFactory defaultTerminalFactory = new DefaultTerminalFactory();
         try {
@@ -181,24 +181,24 @@ public class TerminalView extends View {
     }
 
     @Override
-    public CommandName readCommand() {
+    public CommandNameId readCommand() {
         try {
             KeyStroke key = terminalScreen.readInput();
             switch (key.getKeyType()) {
                 case ArrowDown:
-                    return CommandName.DOWN;
+                    return new CommandNameId(CommandName.DOWN, 0);
                 case ArrowUp:
-                    return CommandName.UP;
+                    return new CommandNameId(CommandName.UP, 0);
                 case ArrowLeft:
-                    return CommandName.LEFT;
+                    return new CommandNameId(CommandName.LEFT, 0);
                 case ArrowRight:
-                    return CommandName.RIGHT;
+                    return new CommandNameId(CommandName.RIGHT, 0);
                 case Tab:
-                    return CommandName.CONFUSE_MOBS;
+                    return new CommandNameId(CommandName.CONFUSE_MOBS, 0);
                 case Enter:
-                    return CommandName.APPLY_ITEM;
+                    return new CommandNameId(CommandName.APPLY_ITEM, 0);
                 case Escape:
-                    return CommandName.DROP_WEARABLE;
+                    return new CommandNameId(CommandName.DROP_WEARABLE, 0);
             }
         } catch (IOException e) {
             System.out.println("Problems with parsing command");
@@ -216,4 +216,4 @@ public class TerminalView extends View {
         TimeUnit.SECONDS.sleep(3);
         terminalScreen.close();
     }
-}
+}*/

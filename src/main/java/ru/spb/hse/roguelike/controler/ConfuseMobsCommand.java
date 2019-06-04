@@ -9,7 +9,7 @@ class ConfuseMobsCommand extends Command {
     }
 
     @Override
-    boolean execute() {
+    boolean execute(int playerId) {
         return controller.confuseMobs();
     }
 }

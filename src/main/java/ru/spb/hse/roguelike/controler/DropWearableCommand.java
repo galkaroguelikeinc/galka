@@ -12,7 +12,7 @@ public class DropWearableCommand extends Command {
     }
 
     @Override
-    boolean execute() throws UnknownObjectException, ViewException {
-        return controller.dropWearable();
+    boolean execute(int playerId) throws UnknownObjectException, ViewException {
+        return controller.dropWearable(playerId);
     }
 }

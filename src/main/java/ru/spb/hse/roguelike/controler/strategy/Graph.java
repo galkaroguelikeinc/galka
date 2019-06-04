@@ -2,7 +2,9 @@ package ru.spb.hse.roguelike.controler.strategy;
 
 import ru.spb.hse.roguelike.Point;
 import ru.spb.hse.roguelike.model.GameModel;
+import ru.spb.hse.roguelike.model.UnknownObjectException;
 import ru.spb.hse.roguelike.model.map.Direction;
+import ru.spb.hse.roguelike.model.object.alive.GameCharacter;
 
 import javax.annotation.Nonnull;
 import java.util.*;
@@ -42,7 +44,13 @@ public class Graph {
     }
 
     public int bfs(@Nonnull Point start,
-                   @Nonnull Point finish) throws StrategyException {
+                   @Nonnull List<Point> characters) throws StrategyException, UnknownObjectException {
+        Point finish;
+        if (characters.size() == 1) {
+            finish = characters.get(0);
+        } else {
+            finish = getClosestCharacter(start, characters);
+        }
         Map<Point, Boolean> visit = new HashMap<>();
         LinkedList<Point> queue = new LinkedList<>();
         Map<Point, Point> prev = new HashMap<>();
@@ -64,6 +72,20 @@ public class Graph {
             queue.remove();
         }
         throw new StrategyException("failed to create bfs path");
+    }
+
+    private Point getClosestCharacter(@Nonnull Point mob, List<Point> gameCharacterPoints) throws UnknownObjectException, StrategyException {
+        int minDist = -1;
+        Point minPoint = null;
+
+        for (Point point: gameCharacterPoints) {
+            int dist = bfs(mob, Collections.singletonList(point));
+            if (minDist == -1 || dist < minDist) {
+                minDist = dist;
+                minPoint = point;
+            }
+        }
+        return minPoint;
     }
 
     private int getPath(@Nonnull Map<Point, Point> prev,

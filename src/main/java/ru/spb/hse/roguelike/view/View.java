@@ -22,7 +22,7 @@ public abstract class View {
      *
      * @return command which was read
      */
-    public abstract CommandName readCommand();
+    public abstract CommandNameId readCommand();
 
     public abstract void end() throws IOException, InterruptedException;
 }

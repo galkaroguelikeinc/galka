@@ -12,7 +12,7 @@ class RightMoveCommand extends Command {
     }
 
     @Override
-    boolean execute() throws UnknownObjectException, ViewException {
-        return controller.handleMove(0, 1);
+    boolean execute(int playerId) throws UnknownObjectException, ViewException {
+        return controller.handleMove(playerId,0, 1);
     }
 }
