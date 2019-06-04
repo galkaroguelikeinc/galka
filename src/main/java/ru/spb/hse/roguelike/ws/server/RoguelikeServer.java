@@ -11,7 +11,7 @@ import ru.spb.hse.roguelike.model.map.GameCellException;
 import ru.spb.hse.roguelike.view.ServerView;
 
 import java.io.IOException;
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -72,10 +72,29 @@ public class RoguelikeServer {
         Generator generator = new Generator();
         GameModel model = generator.generateModel(3, 20, 20);
         Controller controller = new Controller(new ServerView(), model);
-        GameInfo gameInfo = new GameInfo(model, Collections.singletonList(userId), controller);
+        List<Long> users = new ArrayList<>();
+        users.add(userId);
+        GameInfo gameInfo = new GameInfo(model, users, controller);
         long gameId = getGameId();
         games.put(gameId, gameInfo);
         return gameId;
+    }
+
+    public boolean connectToGame(long userId,
+                                 long gameId) {
+        if (!games.containsKey(gameId)) {
+            return false;
+        }
+        games.get(gameId).userIds.add(userId);
+        //TODO как то добавить в мапку нового игрока и сказать об этом контроллеру
+        return true;
+    }
+
+    public Long getCurUser(long gameId) {
+        if (!games.containsKey(gameId)) {
+            throw new IllegalArgumentException("Failed to get game with Id = " + gameId);
+        }
+        return games.get(gameId).getCurUser();
     }
 
     public String getMapString(long gameId) throws IOException {
@@ -88,6 +107,7 @@ public class RoguelikeServer {
         private final GameModel gameModel;
         private final List<Long> userIds;
         private final Controller controller;
+        private int curUser = 0;
 
         public GameInfo(GameModel gameModel, List<Long> userIds, Controller controller) {
             this.gameModel = gameModel;
@@ -98,6 +118,16 @@ public class RoguelikeServer {
         @Override
         public int hashCode() {
             return Objects.hash(gameModel, userIds, controller);
+        }
+
+        public Long getCurUser() {
+            if (userIds.size() == 0) {
+                throw new IllegalArgumentException("Failed to get curUser. There are no players");
+            }
+            int ind = curUser;
+            //TODO изменяем только когда получили ход или пропусk
+            curUser = (curUser + 1) % userIds.size();
+            return userIds.get(ind);
         }
 
         @Override

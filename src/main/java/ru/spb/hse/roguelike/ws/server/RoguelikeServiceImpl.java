@@ -56,9 +56,9 @@ public class RoguelikeServiceImpl extends RoguelikeServiceGrpc.RoguelikeServiceI
     @Override
     public void connectToExistGame(ru.spb.hse.roguelike.Galka.ConnectToExistingGameRequest request,
                                    io.grpc.stub.StreamObserver<ru.spb.hse.roguelike.Galka.ConnectToExistingGameResponse> responseObserver) {
-        //TODO запрос к контроллеру. ЧТо этот пользователь добавился к такой то игре
+        boolean result = server.connectToGame(request.getUserId(), request.getGameId());
         Galka.ConnectToExistingGameResponse response = Galka.ConnectToExistingGameResponse.newBuilder()
-                .setResult(true)
+                .setResult(result)
                 .build();
         responseObserver.onNext(response);
         responseObserver.onCompleted();
@@ -70,6 +70,17 @@ public class RoguelikeServiceImpl extends RoguelikeServiceGrpc.RoguelikeServiceI
         //TODO запрос к контроллеру. ЧТо этот пользователь сделал такой то ход в такой то игре
         Galka.AddMoveResponse response = Galka.AddMoveResponse.newBuilder()
                 .setResult(true)
+                .build();
+        responseObserver.onNext(response);
+        responseObserver.onCompleted();
+    }
+
+    @Override
+    public void getCurUser(ru.spb.hse.roguelike.Galka.GetCurUserRequest request,
+                           io.grpc.stub.StreamObserver<ru.spb.hse.roguelike.Galka.GetCurUserResponse> responseObserver) {
+        long curUser = server.getCurUser(request.getGameId());
+        Galka.GetCurUserResponse response = Galka.GetCurUserResponse.newBuilder()
+                .setUserId(curUser)
                 .build();
         responseObserver.onNext(response);
         responseObserver.onCompleted();

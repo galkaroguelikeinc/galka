@@ -79,4 +79,26 @@ public class RoguelikeClient {
 
     }
 
+    public boolean connectToExistingGame(long userId,
+                                long gameId) {
+        Galka.ConnectToExistingGameRequest request = Galka.ConnectToExistingGameRequest
+                .newBuilder()
+                .setUserId(userId)
+                .setGameId(gameId)
+                .build();
+        Galka.ConnectToExistingGameResponse response;
+        response = blockingStub.connectToExistGame(request);
+        return response.getResult();
+    }
+
+    public long getCurUser(long gameId) {
+        Galka.GetCurUserRequest request = Galka.GetCurUserRequest
+                .newBuilder()
+                .setGameId(gameId)
+                .build();
+        Galka.GetCurUserResponse response;
+        response = blockingStub.getCurUser(request);
+        return response.getUserId();
+    }
+
 }

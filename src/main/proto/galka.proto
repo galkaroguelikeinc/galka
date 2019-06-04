@@ -57,11 +57,21 @@ message GetMapRequest {
 message Empty {
 }
 
+message GetCurUserRequest {
+    int64 gameId = 1;
+}
+
+message GetCurUserResponse {
+    int64 userId = 1;
+}
+
+
 service RoguelikeService {
     rpc getUserId (GetUserIdRequest) returns (GetUserIdResponse);
     rpc startNewGame (StartNewGameRequest) returns (StartNewGameResponse);
     rpc connectToExistGame (ConnectToExistingGameRequest) returns (ConnectToExistingGameResponse);
     rpc addMove (AddMoveRequest) returns (AddMoveResponse);
     rpc getMap (GetMapRequest) returns (GetMapResponse);
+    rpc getCurUser(GetCurUserRequest) returns (GetCurUserResponse);
     rpc ping (Empty) returns (PingResponse);
 }

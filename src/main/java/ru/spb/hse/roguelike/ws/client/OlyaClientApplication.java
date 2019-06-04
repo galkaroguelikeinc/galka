@@ -27,5 +27,20 @@ public class OlyaClientApplication {
             }
             System.out.println();
         }
+
+
+
+
+
+        // создаю нового пользователя и подключаю к той же игре
+        long newUserId = client.getUserId();
+        client.connectToExistingGame(newUserId, gameId);
+
+
+        System.out.println(client.getCurUser(gameId));
+        System.out.println(client.getCurUser(gameId));
+        System.out.println(client.getCurUser(gameId));
+        System.out.println(client.getCurUser(gameId));
+        System.out.println(client.getCurUser(gameId));
     }
 }
