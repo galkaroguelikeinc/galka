@@ -213,7 +213,9 @@ public class GameModel implements Serializable {
             int row = RANDOM.nextInt(gameMap.length);
             int col = RANDOM.nextInt(gameMap[0].length);
             if (gameMap[row][col].isNonEmptyTypeAndHasNoObjects()) {
-                gameMap[row][col].addAliveObject(gameCharacters.get(id));
+                //TODO МАША ПОСМОТРИ тут раньше не добавлялись объекты
+                addAliveObject(new Point(row, col),gameCharacters.get(id) );
+                //gameMap[row][col].addAliveObject(gameCharacters.get(id));
                 return;
             }
         }

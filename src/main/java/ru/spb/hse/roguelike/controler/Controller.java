@@ -133,6 +133,8 @@ public class Controller {
     }
 
     boolean handleMove(int playerId, int rowDiff, int colDiff) throws ViewException, UnknownObjectException {
+        //TODO МАША ПОСМОТРИ тут раньше не обновлялись
+        characters = gameModel.getCharacters();
         Point diff = new Point(rowDiff, colDiff);
         Point oldPoint = gameModel.getAliveObjectPoint(characters.get(playerId));
         boolean moved = false;
