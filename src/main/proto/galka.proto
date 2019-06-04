@@ -51,7 +51,7 @@ message GetMapResponse {
 }
 
 message GetMapRequest {
-    string gameId = 1; // сериализованная карта TODO поговорить с Наташей о формате
+    int64 gameId = 1; // сериализованная карта TODO поговорить с Наташей о формате
 }
 
 message Empty {
