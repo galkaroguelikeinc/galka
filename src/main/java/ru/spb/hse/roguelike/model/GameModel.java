@@ -206,7 +206,7 @@ public class GameModel implements Serializable {
 
     private static final Random RANDOM = new Random();
 
-    private void addCharacter(int id) throws GameCellException {
+    public void addCharacter(int id) throws GameCellException {
         gameCharacters.put(id, new GameCharacter());
         while (true) {
             int row = RANDOM.nextInt(gameMap.length);

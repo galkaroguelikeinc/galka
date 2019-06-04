@@ -83,11 +83,12 @@ public class RoguelikeServer {
     }
 
     boolean connectToGame(int userId,
-                          int gameId) {
+                          int gameId) throws GameCellException {
         if (!games.containsKey(gameId)) {
             return false;
         }
         games.get(gameId).userIds.add(userId);
+        games.get(gameId).gameModel.addCharacter(userId);
         //TODO как то добавить в мапку нового игрока и сказать об этом контроллеру
         return true;
     }

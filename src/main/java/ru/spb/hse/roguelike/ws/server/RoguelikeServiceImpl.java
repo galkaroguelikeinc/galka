@@ -3,6 +3,7 @@ package ru.spb.hse.roguelike.ws.server;
 import io.grpc.stub.StreamObserver;
 import ru.spb.hse.roguelike.Galka;
 import ru.spb.hse.roguelike.RoguelikeServiceGrpc;
+import ru.spb.hse.roguelike.model.map.GameCellException;
 import ru.spb.hse.roguelike.view.CommandName;
 
 import java.io.IOException;
@@ -55,12 +56,18 @@ public class RoguelikeServiceImpl extends RoguelikeServiceGrpc.RoguelikeServiceI
     @Override
     public void connectToExistGame(ru.spb.hse.roguelike.Galka.ConnectToExistingGameRequest request,
                                    io.grpc.stub.StreamObserver<ru.spb.hse.roguelike.Galka.ConnectToExistingGameResponse> responseObserver) {
-        boolean result = server.connectToGame(request.getUserId(), request.getGameId());
-        Galka.ConnectToExistingGameResponse response = Galka.ConnectToExistingGameResponse.newBuilder()
-                .setResult(result)
-                .build();
-        responseObserver.onNext(response);
-        responseObserver.onCompleted();
+        boolean result = false;
+        try {
+            result = server.connectToGame(request.getUserId(), request.getGameId());
+            Galka.ConnectToExistingGameResponse response = Galka.ConnectToExistingGameResponse.newBuilder()
+                    .setResult(result)
+                    .build();
+            responseObserver.onNext(response);
+            responseObserver.onCompleted();
+        } catch (GameCellException e) {
+            responseObserver.onError(e);
+        }
+
     }
 
     @Override
