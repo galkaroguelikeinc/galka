@@ -56,7 +56,7 @@ public class GraphTest {
         GameModel gameModel = new GameModel(map,
                 new ArrayList<>(),
                 new GameCharacter(),
-                10);
+                10, 0);
         Graph graph = Graph.of(gameModel);
         assertEquals(5, graph.bfs(new Point(1, 1), Collections.singletonList(new Point(4, 3))));
         assertEquals(2, graph.bfs(new Point(0, 0), Collections.singletonList(new Point(1, 1))));

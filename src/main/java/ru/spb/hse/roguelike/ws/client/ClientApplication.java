@@ -64,7 +64,7 @@ public class ClientApplication {
             }
             case ArrowUp: {
                 printString(terminalScreen,"print model args");
-                GameModel model = getGameModel(new String[0]);
+                GameModel model = getGameModel(new String[0], -1);
                 View view = new TerminalView(model);
                 Controller controller = new Controller(view, model);
                 controller.runGame();
@@ -90,22 +90,22 @@ public class ClientApplication {
         }
     }
 
-    private static GameModel getGameModel(String[] args) throws IOException, MapGeneratorException, GameCellException {
+    private static GameModel getGameModel(String[] args, int playerId) throws IOException, MapGeneratorException, GameCellException {
         Optional<GameModel> prevGameModel = GameStateSaver.getSavedState();
         if (!prevGameModel.isPresent()) {
-            return getNewGameModel(args);
+            return getNewGameModel(args, playerId);
         }
         boolean startNewGame = TerminalView.getAnswer("Начать новую игру или продолжить?" +
                         "\n Нажмите 1, чтобы прождолжить" +
                         "\n Нажмите 2 чтобы начать новую игру",
                 character -> character == '2');
         if (startNewGame) {
-            return getNewGameModel(args);
+            return getNewGameModel(args, playerId);
         }
         return prevGameModel.get();
     }
 
-    private static GameModel getNewGameModel(String[] args) throws FileNotFoundException, MapGeneratorException, GameCellException {
+    private static GameModel getNewGameModel(String[] args, int playerId) throws FileNotFoundException, MapGeneratorException, GameCellException {
         Generator generator = new Generator();
         if (args.length > 0) {
             return generator.generateModel(args[0], character -> {
@@ -116,8 +116,8 @@ public class ClientApplication {
                     return GameMapCellType.ROOM;
                 }
                 return GameMapCellType.EMPTY;
-            });
+            }, playerId);
         }
-        return generator.generateModel(3, 20, 20);
+        return generator.generateModel(3, 20, 20, playerId);
     }
 }

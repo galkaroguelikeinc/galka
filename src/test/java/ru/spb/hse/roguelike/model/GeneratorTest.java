@@ -37,7 +37,7 @@ public class GeneratorTest {
                 "_..._..._" +
                 "_..._..._" +
                 "_____..._";
-        GameModel gameModel = generator.generateModel("src/test/resources/map.txt", decoder);
+        GameModel gameModel = generator.generateModel("src/test/resources/map.txt", decoder, 0);
         assertEquals(9, gameModel.getCols());
         assertEquals(8, gameModel.getRows());
         for (int i = 0; i < 8; i++) {
@@ -50,7 +50,7 @@ public class GeneratorTest {
     @Test
     public void testCountRooms() throws MapGeneratorException, GameCellException {
         for (int x = 0; x < 1000; x++) {
-            GameModel gameModel = generator.generateModel(3, 20, 25);
+            GameModel gameModel = generator.generateModel(3, 20, 25, 0);
             int actualRoomCount = 0;
             for (int i = 0; i < 25; i++) {
                 for (int j = 0; j < 20; j++) {
@@ -68,7 +68,7 @@ public class GeneratorTest {
 
     @Test
     public void testGenerateNPC() throws MapGeneratorException, GameCellException {
-        GameModel gameModel = generator.generateModel(3, 20, 25);
+        GameModel gameModel = generator.generateModel(3, 20, 25, 0);
         int actualNPCCount = 0;
         for (int i = 0; i < 25; i++) {
             for (int j = 0; j < 20; j++) {

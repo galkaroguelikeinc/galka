@@ -71,7 +71,7 @@ public class RoguelikeServer {
 
     int createNewGame(int userId) throws MapGeneratorException, GameCellException {
         Generator generator = new Generator();
-        GameModel model = generator.generateModel(3, 20, 20);
+        GameModel model = generator.generateModel(3, 20, 20, userId);
         ServerView serverView = new ServerView();
         Controller controller = new Controller(serverView, model);
         List<Integer> users = new ArrayList<>();

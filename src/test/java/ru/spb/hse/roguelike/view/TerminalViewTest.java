@@ -18,7 +18,7 @@ public class TerminalViewTest {
         gameMap[1][0] = new GameCell(GameMapCellType.EMPTY, null, null);
         gameMap[1][1] = new GameCell(GameMapCellType.ROOM, null, null);
         gameMap[1][2] = new GameCell(GameMapCellType.ROOM, new GameCharacter(), null);
-        GameModel gameModel = new GameModel(gameMap, new ArrayList<>(), new GameCharacter(), 10);
+        GameModel gameModel = new GameModel(gameMap, new ArrayList<>(), new GameCharacter(), 10, 0);
         // should print in the upper-left corner:
         // ..#
         //  .&

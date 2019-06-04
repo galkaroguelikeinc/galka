@@ -29,18 +29,18 @@ import static ru.spb.hse.roguelike.model.map.GameMapCellType.EMPTY;
 public class GameModel implements Serializable {
     private final GameCell[][] gameMap;
     private final List<Item> characterInventory;  // TODO: remove either this or GameCharacter's internal wearableStack
-    private final List<GameCharacter> gameCharacters;
+    private final Map<Integer, GameCharacter> gameCharacters;
     private final int maxInventorySize;
     // TODO: separate all alive objects into the game character and non-player characters
     private final Map<AliveObject, Point> aliveObjectToPoint = new HashMap<>();
     private boolean isEnd = false;
 
     public GameModel(@Nonnull final GameCell[][] gameMap,
-                     @Nonnull final List<Item> characterInventory, GameCharacter character, int maxInventorySize) {
+                     @Nonnull final List<Item> characterInventory, GameCharacter character, int maxInventorySize, int playerId) {
         this.gameMap = gameMap;
         this.characterInventory = characterInventory;
-        this.gameCharacters = new ArrayList<>();
-        gameCharacters.add(character);
+        this.gameCharacters = new HashMap<>();
+        gameCharacters.put(playerId, character);
         this.maxInventorySize = maxInventorySize;
         saveAliveObjectCoordinates();
     }
@@ -59,7 +59,7 @@ public class GameModel implements Serializable {
     public void confuseMobs() {
         Map<AliveObject, Point> newAliveObjectToPoint = new HashMap<>();
 
-        List<Point> gameCharacterPoints = gameCharacters.stream().map(aliveObjectToPoint::get).collect(Collectors.toList());
+        List<Point> gameCharacterPoints = gameCharacters.values().stream().map(aliveObjectToPoint::get).collect(Collectors.toList());
 
         for (Map.Entry<AliveObject, Point> entry : aliveObjectToPoint.entrySet()) {
             if (gameCharacterPoints.contains(entry.getValue())) {
@@ -76,7 +76,7 @@ public class GameModel implements Serializable {
     }
 
     public Set<NonPlayerCharacter> getNonGameCharacters() {
-        List<Point> gameCharacterPoints = gameCharacters.stream().map(aliveObjectToPoint::get).collect(Collectors.toList());
+        List<Point> gameCharacterPoints = gameCharacters.values().stream().map(aliveObjectToPoint::get).collect(Collectors.toList());
         return aliveObjectToPoint.
                 keySet().
                 stream().
@@ -86,7 +86,9 @@ public class GameModel implements Serializable {
     }
 
     public List<GameCharacter> getCharacters() {
-        return gameCharacters;
+        List<GameCharacter> answer = new ArrayList<>();
+        answer.addAll(gameCharacters.values());
+        return answer;
     }
 
     public boolean hasCell(Point point) {
@@ -204,13 +206,13 @@ public class GameModel implements Serializable {
 
     private static final Random RANDOM = new Random();
 
-    private void addCharacter() throws GameCellException {
-        gameCharacters.add(new GameCharacter());
+    private void addCharacter(int id) throws GameCellException {
+        gameCharacters.put(id, new GameCharacter());
         while (true) {
             int row = RANDOM.nextInt(gameMap.length);
             int col = RANDOM.nextInt(gameMap[0].length);
             if (!gameMap[row][col].isNonEmptyTypeAndHasNoObjects()) {
-                gameMap[row][col].addAliveObject(gameCharacters.get(gameCharacters.size() - 1));
+                gameMap[row][col].addAliveObject(gameCharacters.get(id));
                 return;
             }
         }

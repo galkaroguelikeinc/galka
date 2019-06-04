@@ -38,7 +38,7 @@ public class Generator {
 
     public GameModel generateModel(int roomCount,
                                    int width,
-                                   int height) throws MapGeneratorException, GameCellException {
+                                   int height, int playerId) throws MapGeneratorException, GameCellException {
         List<Room> rooms = generateRooms(roomCount, width, height);
         GameCell[][] map = generateMap(rooms, width, height);
         Room characterRoom = rooms.get(RANDOM.nextInt(roomCount));
@@ -48,10 +48,10 @@ public class Generator {
         List<Item> inventories = generateInventories();
         generateMobs(rooms, map);
         generateItemsOntoMap(map, numItems);
-        return new GameModel(map, inventories, gameCharacter, 10);
+        return new GameModel(map, inventories, gameCharacter, 10, playerId);
     }
 
-    public GameModel generateModel(String fileName, Function<Character, GameMapCellType> decoder)
+    public GameModel generateModel(String fileName, Function<Character, GameMapCellType> decoder, int playerId)
             throws FileNotFoundException, MapGeneratorException, GameCellException {
         Scanner scanner = new Scanner(new FileInputStream(fileName));
         List<String> lines = new ArrayList<>();
@@ -79,7 +79,7 @@ public class Generator {
                 pointForGameCharacter.getCol());
         List<Item> inventories = generateInventories();
         generateMobs(findRooms(map), map);
-        return new GameModel(map, inventories, gameCharacter, 10);
+        return new GameModel(map, inventories, gameCharacter, 10, playerId);
 
     }
 

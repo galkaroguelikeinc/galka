@@ -23,7 +23,7 @@ public class ControllerTest {
     @Test
     public void moveLeftTest() throws MapGeneratorException, ViewException, UnknownObjectException, GameCellException {
         for (int k = 0; k < 1000; k++) {
-            GameModel gameModel = new Generator().generateModel(3, 20, 25);
+            GameModel gameModel = new Generator().generateModel(3, 20, 25, 0);
             gameModel.getCell(new Point(0, 3)).setGameMapCellType(GameMapCellType.ROOM);
             gameModel.getCell(new Point(0, 2)).setGameMapCellType(GameMapCellType.ROOM);
             gameModel.moveAliveObject(gameModel.getCharacters().get(0), new Point(0, 3));
