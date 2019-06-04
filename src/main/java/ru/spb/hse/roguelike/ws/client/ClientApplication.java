@@ -2,8 +2,10 @@ package ru.spb.hse.roguelike.ws.client;
 
 import com.googlecode.lanterna.TextCharacter;
 import com.googlecode.lanterna.input.KeyStroke;
+import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.screen.TerminalScreen;
 import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
+import ru.spb.hse.roguelike.Point;
 import ru.spb.hse.roguelike.controler.Controller;
 import ru.spb.hse.roguelike.controler.GameStateSaver;
 import ru.spb.hse.roguelike.model.GameModel;
@@ -11,9 +13,7 @@ import ru.spb.hse.roguelike.model.Generator;
 import ru.spb.hse.roguelike.model.MapGeneratorException;
 import ru.spb.hse.roguelike.model.map.GameCellException;
 import ru.spb.hse.roguelike.model.map.GameMapCellType;
-import ru.spb.hse.roguelike.view.TerminalView;
-import ru.spb.hse.roguelike.view.View;
-import ru.spb.hse.roguelike.view.ViewException;
+import ru.spb.hse.roguelike.view.*;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -35,7 +35,6 @@ public class ClientApplication {
         printString(terminalScreen,"press up for local playing, press down for multi-players");
         terminalScreen.refresh();
         KeyStroke key = terminalScreen.readInput();
-        terminalScreen.close();
         switch (key.getKeyType()) {
             case ArrowDown: {
                 terminalScreen.clear();
@@ -43,11 +42,14 @@ public class ClientApplication {
                 terminalScreen.refresh();
                 String host = readWord(terminalScreen);
                 String port = readWord(terminalScreen);
-                printString(terminalScreen,"print game id or -1 fro new game");
+                readIndex = 0;
+                terminalScreen.clear();
+                terminalScreen.refresh();
+                printString(terminalScreen,"print game id or -1 for new game");
+                terminalScreen.refresh();
                 int gameId = Integer.valueOf(readWord(terminalScreen));
-                //TODO: подключиться к серверу, получить от него карту, создать terminalView
-                // и запустить в бесконечном цикле запросы к серверу (как внутри контроллера)
-                RoguelikeClient client = new RoguelikeClient("localhost", 50051);
+                terminalScreen.close();
+                RoguelikeClient client = new RoguelikeClient(host, Integer.valueOf(port));
                 int userId = client.getUserId();
                 if (gameId == -1) {
                     gameId = client.startNewGame(userId);
@@ -58,7 +60,14 @@ public class ClientApplication {
                 View view = new TerminalView(model);
 
                 while (true) {
-
+                    CommandNameId commandNameId = view.readCommand();
+                    client.addMove(userId, gameId, commandNameId.getCommandName());
+                    model = client.getMap(gameId);
+                    for (int i = 0; i < model.getRows(); i++) {
+                        for (int j = 0; j < model.getCols(); j++) {
+                            view.showChanges(new Point(i, j));
+                        }
+                    }
                 }
 
             }
@@ -79,11 +88,19 @@ public class ClientApplication {
         }
     }
 
+    private static int readIndex = 0;
     private static String readWord(TerminalScreen terminalScreen) throws IOException {
         StringBuilder ans = new StringBuilder();
         while (true) {
             KeyStroke key = terminalScreen.readInput();
-            if (key.getCharacter().equals(' ') || key.getCharacter().equals(System.lineSeparator())) {
+            if (key.getKeyType().equals(KeyType.Enter)) {
+                readIndex = 0;
+                return ans.toString();
+            }
+            terminalScreen.setCharacter(readIndex, 1, new TextCharacter(key.getCharacter()));
+            readIndex++;
+            terminalScreen.refresh();
+            if (key.getCharacter().equals(' ')) {
                 return ans.toString();
             }
             ans.append(key.getCharacter());

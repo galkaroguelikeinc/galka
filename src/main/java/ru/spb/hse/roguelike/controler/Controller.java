@@ -107,6 +107,7 @@ public class Controller {
         if (commandNameId == null || commandNameId.getCommandName() == null || commandNameId.getCommandName() == SKIP) {
             return true;
         }
+        System.out.println("executeCommand");
         return invoker.executeCommand(commandNameId.getCommandName(), commandNameId.getId());
     }
 
@@ -133,7 +134,7 @@ public class Controller {
     }
 
     boolean handleMove(int playerId, int rowDiff, int colDiff) throws ViewException, UnknownObjectException {
-        //TODO МАША ПОСМОТРИ тут раньше не обновлялись
+        System.out.println("handleMove");
         characters = gameModel.getCharacters();
         Point diff = new Point(rowDiff, colDiff);
         Point oldPoint = gameModel.getAliveObjectPoint(characters.get(playerId));
