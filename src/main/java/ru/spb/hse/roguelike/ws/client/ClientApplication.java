@@ -63,6 +63,7 @@ public class ClientApplication {
                     CommandNameId commandNameId = view.readCommand();
                     client.addMove(userId, gameId, commandNameId.getCommandName());
                     model = client.getMap(gameId);
+                    ((TerminalView) view).updateModel(model);
                     for (int i = 0; i < model.getRows(); i++) {
                         for (int j = 0; j < model.getCols(); j++) {
                             view.showChanges(new Point(i, j));

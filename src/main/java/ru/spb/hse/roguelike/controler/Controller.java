@@ -57,7 +57,7 @@ public class Controller {
      */
     public void runGame() throws IOException, InterruptedException, UnknownObjectException, GameCellException {
         GameStateSaver.setSavedState(gameModel);
-        while (executeCommand() && moveMobs()) {
+        while (executeCommand()) {
             GameStateSaver.setSavedState(gameModel);
         }
         view.end();
@@ -103,13 +103,15 @@ public class Controller {
         return true;
     }
 
-    boolean executeCommand() throws ViewException, UnknownObjectException {
+    boolean executeCommand() throws ViewException, UnknownObjectException, GameCellException {
         CommandNameId commandNameId = view.readCommand();
         if (commandNameId == null || commandNameId.getCommandName() == null || commandNameId.getCommandName() == SKIP) {
             return true;
         }
         System.out.println("executeCommand");
-        return invoker.executeCommand(commandNameId.getCommandName(), commandNameId.getId());
+        boolean result = invoker.executeCommand(commandNameId.getCommandName(), commandNameId.getId());
+        moveMobs();
+        return result;
     }
 
     boolean applyItem(int playerId) {

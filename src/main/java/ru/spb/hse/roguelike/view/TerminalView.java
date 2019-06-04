@@ -232,4 +232,8 @@ public class TerminalView extends View {
             terminalScreen.setCharacter(i, 0, new TextCharacter(array[i]));
         }
     }
+
+    public void updateModel(GameModel gameModel) {
+        this.gameModel = gameModel;
+    }
 }
