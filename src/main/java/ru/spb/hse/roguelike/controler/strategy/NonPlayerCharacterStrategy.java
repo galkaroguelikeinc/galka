@@ -8,6 +8,8 @@ import ru.spb.hse.roguelike.model.object.alive.GameCharacter;
 import ru.spb.hse.roguelike.model.object.alive.NonPlayerCharacter;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.List;
 
 abstract class NonPlayerCharacterStrategy {
     static boolean hasNoNonPlayerCharacter(Point point, GameModel gameModel) {
@@ -31,24 +33,31 @@ abstract class NonPlayerCharacterStrategy {
 
     boolean isInvalid(@Nonnull GameModel gameModel,
                       @Nonnull Point mobPoint) throws UnknownObjectException {
-        Point gameCharacterPoint = gameModel.getAliveObjectPoint(gameModel.getCharacter());
-        if (isOutsideOfMap(gameCharacterPoint, gameModel)) {
-            System.out.println(1);
-            return true;
+        List<GameCharacter> gameCharacters = gameModel.getCharacters();
+        List<Point> gameCharacterPoints = new ArrayList<>();
+        for (GameCharacter gameCharacter : gameCharacters) {
+            Point aliveObjectPoint = gameModel.getAliveObjectPoint(gameCharacter);
+            gameCharacterPoints.add(aliveObjectPoint);
         }
-        if (isOutsideOfMap(mobPoint, gameModel)) {
-            System.out.println(2);
-            return true;
-        }
-        AliveObject gameCharacter = gameModel.getCell(gameCharacterPoint).getAliveObject();
-        if (!(gameCharacter instanceof GameCharacter)) {
-            System.out.println(3);
-            return true;
-        }
-        AliveObject aliveObject = gameModel.getCell(mobPoint).getAliveObject();
-        if (!(aliveObject instanceof NonPlayerCharacter)) {
-            System.out.println(4);
-            return true;
+        for (Point gameCharacterPoint : gameCharacterPoints) {
+            if (isOutsideOfMap(gameCharacterPoint, gameModel)) {
+                System.out.println(1);
+                return true;
+            }
+            if (isOutsideOfMap(mobPoint, gameModel)) {
+                System.out.println(2);
+                return true;
+            }
+            AliveObject gameCharacter = gameModel.getCell(gameCharacterPoint).getAliveObject();
+            if (!(gameCharacter instanceof GameCharacter)) {
+                System.out.println(3);
+                return true;
+            }
+            AliveObject aliveObject = gameModel.getCell(mobPoint).getAliveObject();
+            if (!(aliveObject instanceof NonPlayerCharacter)) {
+                System.out.println(4);
+                return true;
+            }
         }
         return false;
     }
