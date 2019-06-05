@@ -1,5 +1,8 @@
 package ru.spb.hse.roguelike.view;
 
+/**
+ * Command name and id pf a player who calls it.
+ */
 public class CommandNameId {
     private final CommandName commandName;
     private final int id;

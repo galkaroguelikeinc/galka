@@ -16,7 +16,6 @@ import ru.spb.hse.roguelike.view.View;
 import ru.spb.hse.roguelike.view.ViewException;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
@@ -42,7 +41,6 @@ public class Controller {
     public Controller(View view, GameModel gameModel) {
         this.gameModel = gameModel;
         this.view = view;
-        Map<Integer, GameCharacter>  characters = gameModel.getGameCharacters();
         invoker.setCommand(CommandName.UP, new UpMoveCommand(this));
         invoker.setCommand(CommandName.DOWN, new DownMoveCommand(this));
         invoker.setCommand(CommandName.LEFT, new LeftMoveCommand(this));
@@ -115,7 +113,6 @@ public class Controller {
         try {
             gameModel.makeCharacterApplyItem(playerId);
         } catch (CannotPickItemException | CannotApplyFoodMultipleTimesException ignored) {
-            // TODO: APPLY_ITEM or DROP_WEARABLE should not count as a move if it didn't succeed
         }
         return true;
     }

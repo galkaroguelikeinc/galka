@@ -11,6 +11,9 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Abstract class representing mob strategy.
+ */
 abstract class NonPlayerCharacterStrategy {
     static boolean hasNoNonPlayerCharacter(Point point, GameModel gameModel) {
         if (!gameModel.getCell(point).hasAliveObject()) {
@@ -20,6 +23,14 @@ abstract class NonPlayerCharacterStrategy {
         return !(aliveObject instanceof NonPlayerCharacter);
     }
 
+    /**
+     * Method to move mob according to the stategy.
+     * @param gameModel model where the game goes
+     * @param mobPoint point where mob stands
+     * @return point where mob moved
+     * @throws StrategyException if strategy is unknown
+     * @throws UnknownObjectException in fo mob in the point
+     */
     abstract Point move(@Nonnull GameModel gameModel,
                         @Nonnull Point mobPoint) throws StrategyException, UnknownObjectException;
 

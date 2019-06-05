@@ -4,13 +4,15 @@ import ru.spb.hse.roguelike.Point;
 import ru.spb.hse.roguelike.model.GameModel;
 import ru.spb.hse.roguelike.model.UnknownObjectException;
 import ru.spb.hse.roguelike.model.map.Direction;
-import ru.spb.hse.roguelike.model.object.alive.GameCharacter;
 
 import javax.annotation.Nonnull;
 import java.util.*;
 
 import static ru.spb.hse.roguelike.model.map.GameMapCellType.EMPTY;
 
+/**
+ * Methods for working with graph.
+ */
 public class Graph {
     private final Map<Point, List<Point>> adjacencyList;
 
@@ -18,6 +20,11 @@ public class Graph {
         this.adjacencyList = adjacencyList;
     }
 
+    /**
+     * Creates a graph from a given game model.
+     * @param gameModel game model to transform to graph
+     * @return created graph
+     */
     @Nonnull
     public static Graph of(GameModel gameModel) {
         final Map<Point, List<Point>> adjacencyList = new HashMap<>();
@@ -43,8 +50,8 @@ public class Graph {
         return new Graph(adjacencyList);
     }
 
-    public int bfs(@Nonnull Point start,
-                   @Nonnull List<Point> characters) throws StrategyException, UnknownObjectException {
+    int bfs(@Nonnull Point start,
+            @Nonnull List<Point> characters) throws StrategyException, UnknownObjectException {
         Point finish;
         if (characters.size() == 1) {
             finish = characters.get(0);

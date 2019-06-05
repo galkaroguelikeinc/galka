@@ -7,7 +7,6 @@ import ru.spb.hse.roguelike.controler.Controller;
 import ru.spb.hse.roguelike.model.GameModel;
 import ru.spb.hse.roguelike.model.Generator;
 import ru.spb.hse.roguelike.model.MapGeneratorException;
-import ru.spb.hse.roguelike.model.UnknownObjectException;
 import ru.spb.hse.roguelike.model.map.GameCellException;
 import ru.spb.hse.roguelike.view.CommandName;
 import ru.spb.hse.roguelike.view.ServerView;
@@ -38,6 +37,9 @@ public class RoguelikeServer {
         logger.info("Server started, listening on " + port);
     }
 
+    /**
+     * run the server.
+     */
     public void start() {
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             System.err.println("*** shutting down gRPC server since JVM is shutting down");
@@ -70,7 +72,7 @@ public class RoguelikeServer {
         return gameId;
     }
 
-    int createNewGame(int userId) throws MapGeneratorException, GameCellException, InterruptedException, UnknownObjectException, IOException {
+    int createNewGame(int userId) throws MapGeneratorException, GameCellException {
         Generator generator = new Generator();
         GameModel model = generator.generateModel(3, 20, 20, userId);
         ServerView serverView = new ServerView();
@@ -98,7 +100,6 @@ public class RoguelikeServer {
         }
         games.get(gameId).userIds.add(userId);
         games.get(gameId).gameModel.addCharacter(userId);
-        //TODO как то добавить в мапку нового игрока и сказать об этом контроллеру
         return true;
     }
 
@@ -115,7 +116,7 @@ public class RoguelikeServer {
                 : GameModel.toString(games.get(gameId).gameModel);
     }
 
-    public void addMove(int userId,
+    void addMove(int userId,
                         int gameId,
                         CommandName commandName) {
         if (!games.containsKey(gameId)) {
@@ -126,8 +127,7 @@ public class RoguelikeServer {
         }
         ServerView serverView = games.get(gameId).serverView;
         serverView.addCommand(commandName, userId);
-        while (serverView.getcommandNameIdsSize() != 0) {
-        }
+        while (serverView.getcommandNameIdsSize() != 0);
         games.get(gameId).incCurUser();
     }
 
@@ -160,7 +160,7 @@ public class RoguelikeServer {
             return userIds.get(curUser);
         }
 
-        public void incCurUser() {
+        void incCurUser() {
             if (userIds.size() == 0) {
                 throw new IllegalArgumentException("Failed to get curUser. There are no players");
             }

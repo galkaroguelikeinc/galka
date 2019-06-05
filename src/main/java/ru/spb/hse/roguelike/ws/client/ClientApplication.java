@@ -19,8 +19,10 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Optional;
 
+/**
+ * Client application. Client can chose single or multi mode and play the game.
+ */
 public class ClientApplication {
-
     public static void main(String[] args) throws Exception {
         TerminalScreen terminalScreen;
         DefaultTerminalFactory defaultTerminalFactory = new DefaultTerminalFactory();

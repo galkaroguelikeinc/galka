@@ -8,7 +8,7 @@ import ru.spb.hse.roguelike.model.object.alive.GameCharacter;
 public abstract class Wearable extends Item {
     private final int powerDiff;
 
-    public Wearable(int powerDiff) {
+    Wearable(int powerDiff) {
         this.powerDiff = powerDiff;
     }
 

@@ -8,8 +8,6 @@ import ru.spb.hse.roguelike.model.map.GameCell;
 import ru.spb.hse.roguelike.model.map.GameMapCellType;
 import ru.spb.hse.roguelike.model.object.alive.GameCharacter;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 
 import static org.junit.Assert.assertEquals;
@@ -54,7 +52,6 @@ public class GraphTest {
         map[5][3] = new GameCell(GameMapCellType.ROOM, null, null);
         map[5][4] = new GameCell(GameMapCellType.ROOM, null, null);
         GameModel gameModel = new GameModel(map,
-                new ArrayList<>(),
                 new GameCharacter(),
                 10, 0);
         Graph graph = Graph.of(gameModel);

@@ -12,6 +12,9 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * Implementation of random mob strategy: move in random direction.
+ */
 public class RandomStrategy extends NonPlayerCharacterStrategy {
     private static boolean isNonEmptyCell(@Nonnull GameModel gameModel, @Nonnull Point point) {
         GameCell cell = gameModel.getCell(point);

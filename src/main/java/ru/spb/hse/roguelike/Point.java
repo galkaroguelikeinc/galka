@@ -5,6 +5,9 @@ import ru.spb.hse.roguelike.model.map.Direction;
 import java.io.Serializable;
 import java.util.Objects;
 
+/**
+ * class representing two-dimensional point.
+ */
 public class Point implements Serializable {
     private final int row;
     private final int col;

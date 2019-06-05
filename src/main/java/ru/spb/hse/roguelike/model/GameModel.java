@@ -8,6 +8,7 @@ import ru.spb.hse.roguelike.model.object.alive.ConfusedNonPlayerCharacter;
 import ru.spb.hse.roguelike.model.object.alive.GameCharacter;
 import ru.spb.hse.roguelike.model.object.alive.NonPlayerCharacter;
 import ru.spb.hse.roguelike.model.object.items.CannotApplyFoodMultipleTimesException;
+import ru.spb.hse.roguelike.model.object.items.Food;
 import ru.spb.hse.roguelike.model.object.items.Item;
 import ru.spb.hse.roguelike.model.object.items.Wearable;
 
@@ -28,17 +29,13 @@ import static ru.spb.hse.roguelike.model.map.GameMapCellType.EMPTY;
  */
 public class GameModel implements Serializable {
     private final GameCell[][] gameMap;
-    private final List<Item> characterInventory;  // TODO: remove either this or GameCharacter's internal wearableStack
     private final Map<Integer, GameCharacter> gameCharacters;
     private final int maxInventorySize;
-    // TODO: separate all alive objects into the game character and non-player characters
     private final Map<AliveObject, Point> aliveObjectToPoint = new HashMap<>();
     private boolean isEnd = false;
 
-    public GameModel(@Nonnull final GameCell[][] gameMap,
-                     @Nonnull final List<Item> characterInventory, GameCharacter character, int maxInventorySize, int playerId) {
+    public GameModel(@Nonnull final GameCell[][] gameMap, GameCharacter character, int maxInventorySize, int playerId) {
         this.gameMap = gameMap;
-        this.characterInventory = characterInventory;
         this.gameCharacters = new HashMap<>();
         gameCharacters.put(playerId, character);
         this.maxInventorySize = maxInventorySize;
@@ -56,10 +53,16 @@ public class GameModel implements Serializable {
         }
     }
 
+    /**
+     * @return game characters with their ids
+     */
     public Map<Integer, GameCharacter> getGameCharacters() {
         return gameCharacters;
     }
 
+    /**
+     * make mobs confused.
+     */
     public void confuseMobs() {
         Map<AliveObject, Point> newAliveObjectToPoint = new HashMap<>();
 
@@ -79,6 +82,9 @@ public class GameModel implements Serializable {
         aliveObjectToPoint.putAll(newAliveObjectToPoint);
     }
 
+    /**
+     * @return mobs
+     */
     public Set<NonPlayerCharacter> getNonGameCharacters() {
         List<Point> gameCharacterPoints = gameCharacters.values().stream().map(aliveObjectToPoint::get).collect(Collectors.toList());
         return aliveObjectToPoint.
@@ -89,58 +95,73 @@ public class GameModel implements Serializable {
                 collect(Collectors.toSet());
     }
 
+    /**
+     * @return game characters
+     */
     public List<GameCharacter> getCharacters() {
-        List<GameCharacter> answer = new ArrayList<>();
-        answer.addAll(gameCharacters.values());
-        return answer;
+        return new ArrayList<>(gameCharacters.values());
     }
 
+    /**
+     * @param point point ot check
+     * @return true if such cell exists
+     */
     public boolean hasCell(Point point) {
         return (point.getRow() >= 0 && point.getRow() < gameMap.length &&
                 point.getCol() >= 0 && point.getCol() < gameMap[0].length);
     }
 
+    /**
+     * @param point to find the cell
+     * @return cell of the given point
+     */
     public GameCell getCell(Point point) {
-        // TODO: throw an error
         return hasCell(point) ? gameMap[point.getRow()][point.getCol()] : null;
     }
 
+    /**
+     * @return number of rows
+     */
     public int getRows() {
         return gameMap.length;
     }
 
+    /**
+     * @return number of columns
+     */
     public int getCols() {
         return getRows() == 0 ? 0 : gameMap[0].length;
     }
 
-    public List<Item> getCharacterInventory() {
-        return characterInventory;
-    }
-
-    public void addItem(Item item) {
-        characterInventory.add(item);
-    }
-
+    /**
+     * find the item from the cell
+     * @param point point to check item
+     * @return itme in the cell
+     */
     public Item takeCellItem(Point point) {
         return gameMap[point.getRow()][point.getCol()].takeCellItem();
     }
 
-    public Item getItemFromInventory(int index) {
-        return characterInventory.get(index);
-    }
-
+    /**
+     * end the game
+     */
     public void end() {
         isEnd = true;
     }
 
+    /**
+     * @return true if the game ended
+     */
     public boolean isEnd() {
         return isEnd;
     }
 
-    public int getMaxInventorySize() {
-        return maxInventorySize;
-    }
-
+    /**
+     * Get position of the alive object
+     * @param aliveObject object with unknown position
+     * @return point where the object is
+     * @throws UnknownObjectException if no such object
+     */
     public Point getAliveObjectPoint(AliveObject aliveObject) throws UnknownObjectException {
         if (!aliveObjectToPoint.containsKey(aliveObject)) {
             throw new UnknownObjectException("This game model doesn't contain any information on the alive object.");
@@ -148,11 +169,25 @@ public class GameModel implements Serializable {
         return aliveObjectToPoint.get(aliveObject);
     }
 
+    /**
+     * Change alive object position of some difference.
+     * @param aliveObject mob or character
+     * @param diff difference between new and old points
+     * @return true if success
+     * @throws GameCellException if problems with game cell objects
+     */
     public boolean moveAliveObjectDiff(AliveObject aliveObject, Point diff) throws GameCellException {
         Point point = aliveObjectToPoint.get(aliveObject);
         return moveAliveObject(aliveObject, point.add(diff));
     }
 
+    /**
+     * Change alive object position.
+     * @param aliveObject mob or character
+     * @param newPoint point to move
+     * @return true if success
+     * @throws GameCellException if problems with game cell objects
+     */
     public boolean moveAliveObject(AliveObject aliveObject, Point newPoint) throws GameCellException {
         if (!aliveObjectToPoint.containsKey(aliveObject) ||
                 getCell(newPoint) == null ||
@@ -164,13 +199,23 @@ public class GameModel implements Serializable {
         Point point = aliveObjectToPoint.get(aliveObject);
         removeAliveObject(point);
         addAliveObject(newPoint, aliveObject);
-        if (hasItem(newPoint) &&
-                getCharacterInventory().size() != getMaxInventorySize()) {
-            addItem(takeCellItem(point));
+        if (hasItem(newPoint)) {
+            Item item = takeCellItem(newPoint);
+            if (item.getClass().equals(Food.class)
+                    && ((GameCharacter) aliveObject).getFoodFullness() != ((GameCharacter) aliveObject).getMaxFoodFullness()) {
+                ((GameCharacter) aliveObject).setFoodFullness(((GameCharacter) aliveObject).getFoodFullness()
+                        + ((Food)takeCellItem(newPoint)).getPower());
+            } else if (item.getClass().equals(Wearable.class) && !((GameCharacter)aliveObject).hasWearable()) {
+                ((GameCharacter) aliveObject).pushWearable((Wearable) item);
+            }
         }
         return true;
     }
 
+    /**
+     * Remove mob or game character from the cell.
+     * @param point point of the cell to remove alive object.
+     */
     public void removeAliveObject(Point point) {
         aliveObjectToPoint.remove(gameMap[point.getRow()][point.getCol()].getAliveObject());
         gameMap[point.getRow()][point.getCol()].removeAliveObject();
@@ -185,6 +230,10 @@ public class GameModel implements Serializable {
         return gameMap[point.getRow()][point.getCol()].hasItem();
     }
 
+    /**
+     * Use the item.
+     * @param characterId id of a character to use the item in the cell
+     */
     public void makeCharacterApplyItem(int characterId) throws CannotPickItemException, CannotApplyFoodMultipleTimesException {
         GameCell cell = getCell(aliveObjectToPoint.get(gameCharacters.get(characterId)));
         if (!cell.hasItem()) {
@@ -194,6 +243,11 @@ public class GameModel implements Serializable {
         item.apply(gameCharacters.get(characterId));
     }
 
+    /**
+     * Do not use item anymore.
+     * @param characterId id of a character to drop item
+     * @throws CannotDropWearableException if not possible to drop
+     */
     public void makeCharacterDropTopWearable(int characterId) throws CannotDropWearableException {
         if (!gameCharacters.get(characterId).hasWearable()) {
             throw new CannotDropWearableException("The character doesn't have any items to drop");
@@ -210,8 +264,12 @@ public class GameModel implements Serializable {
 
     private static final Random RANDOM = new Random();
 
+    /**
+     * Adds new character to the game.
+     * @param id new player id
+     * @throws GameCellException if problems with choosing new cell.
+     */
     public void addCharacter(int id) throws GameCellException {
-        System.out.println("add character");
         gameCharacters.put(id, new GameCharacter());
         while (true) {
             int row = RANDOM.nextInt(gameMap.length);
@@ -223,6 +281,12 @@ public class GameModel implements Serializable {
         }
     }
 
+    /**
+     * Transforms string to the game model
+     * @param s string representing game model
+     * @return created game model
+     * @throws IOException in problems with streams
+     */
     public static GameModel fromString(String s) throws IOException,
             ClassNotFoundException {
         byte[] data = Base64.getDecoder().decode(s);
@@ -233,10 +297,16 @@ public class GameModel implements Serializable {
         return o;
     }
 
-    public static String toString(GameModel o) throws IOException {
+    /**
+     * Transforms the mode to string
+     * @param model game model
+     * @return string representing the model
+     * @throws IOException in problems with streams
+     */
+    public static String toString(GameModel model) throws IOException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         ObjectOutputStream oos = new ObjectOutputStream(baos);
-        oos.writeObject(o);
+        oos.writeObject(model);
         oos.close();
         return Base64.getEncoder().encodeToString(baos.toByteArray());
     }

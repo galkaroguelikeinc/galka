@@ -11,6 +11,9 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Implementation of aggressive mob strategy: mob follows game character, closest to him
+ */
 public class AggressiveStrategy extends NonPlayerCharacterStrategy {
     @Override
     public Point move(@Nonnull GameModel gameModel,
@@ -31,7 +34,6 @@ public class AggressiveStrategy extends NonPlayerCharacterStrategy {
         }
     }
 
-
     private Point getNewPosition(@Nonnull GameModel gameModel,
                                  @Nonnull Point mobPoint,
                                  @Nonnull List<Point> gameCharacters) throws StrategyException {
@@ -46,7 +48,7 @@ public class AggressiveStrategy extends NonPlayerCharacterStrategy {
         }
         for (Direction d : Direction.values()) {
             Point curPoint = new Point(mobPoint.getRow() + d.dRow, mobPoint.getCol() + d.dCol);
-            int curDistance = 0;
+            int curDistance;
             try {
                 curDistance = graph.bfs(curPoint,gameCharacters);
                 if (hasNoNonPlayerCharacter(curPoint, gameModel) && curDistance < minDistance) {

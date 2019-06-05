@@ -6,6 +6,9 @@ import javax.annotation.Nonnull;
 import java.io.*;
 import java.util.Optional;
 
+/**
+ * Class for saving game state after each move. Needed to continue the game if paused.
+ */
 public class GameStateSaver {
     private static final String filenameForSaveGameState = "galka";
 
@@ -27,7 +30,7 @@ public class GameStateSaver {
         }
     }
 
-    public static boolean setSavedState(@Nonnull GameModel gameModel) {
+    static void setSavedState(@Nonnull GameModel gameModel) {
         try {
             Thread thread = new Thread(() -> {
                 File fileForSaveGameState = new File(filenameForSaveGameState);
@@ -48,15 +51,13 @@ public class GameStateSaver {
             });
             thread.start();
             thread.join();
-            return true;
         } catch (InterruptedException e) {
             e.printStackTrace();
-            return false;
         }
 
     }
 
-    public static void deleteState() {
+    static void deleteState() {
         File fileForSaveGameState = new File(filenameForSaveGameState);
         fileForSaveGameState.deleteOnExit();
     }

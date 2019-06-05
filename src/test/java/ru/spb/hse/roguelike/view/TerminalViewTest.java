@@ -6,11 +6,12 @@ import ru.spb.hse.roguelike.model.map.GameCell;
 import ru.spb.hse.roguelike.model.map.GameMapCellType;
 import ru.spb.hse.roguelike.model.object.alive.GameCharacter;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class TerminalViewTest {
     @Test
-    public void simpleUsage() throws ViewException, InterruptedException {
+    public void simpleUsage() throws IOException, InterruptedException {
         GameCell[][] gameMap = new GameCell[2][3];
         gameMap[0][0] = new GameCell(GameMapCellType.ROOM, null, null);
         gameMap[0][1] = new GameCell(GameMapCellType.ROOM, null, null);
@@ -18,12 +19,12 @@ public class TerminalViewTest {
         gameMap[1][0] = new GameCell(GameMapCellType.EMPTY, null, null);
         gameMap[1][1] = new GameCell(GameMapCellType.ROOM, null, null);
         gameMap[1][2] = new GameCell(GameMapCellType.ROOM, new GameCharacter(), null);
-        GameModel gameModel = new GameModel(gameMap, new ArrayList<>(), new GameCharacter(), 10, 0);
+        GameModel gameModel = new GameModel(gameMap, new GameCharacter(), 10, 0);
         // should print in the upper-left corner:
         // ..#
         //  .&
         // And stats to the right of the map
-        //TerminalView terminalView = new TerminalView(gameModel);
+        TerminalView terminalView = new TerminalView(gameModel);
         Thread.sleep(1000);
     }
 }

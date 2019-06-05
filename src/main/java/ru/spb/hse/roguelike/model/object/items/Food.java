@@ -21,4 +21,8 @@ public abstract class Food extends Item {
         gameCharacter.setFoodFullness(gameCharacter.getFoodFullness() + foodFullnessImprover);
         used = true;
     }
+
+    public int getPower() {
+        return foodFullnessImprover;
+    }
 }

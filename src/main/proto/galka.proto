@@ -39,7 +39,7 @@ message ConnectToExistingGameResponse {
 message AddMoveRequest {
     int32 userId = 1;
     int32 gameId = 2;
-    string commandName = 3; //строка как енам
+    string commandName = 3;
 }
 
 message AddMoveResponse {
@@ -47,11 +47,11 @@ message AddMoveResponse {
 }
 
 message GetMapResponse {
-    string mapString = 1; // сериализованная карта TODO поговорить с Наташей о формате
+    string mapString = 1;
 }
 
 message GetMapRequest {
-    int32 gameId = 1; // сериализованная карта TODO поговорить с Наташей о формате
+    int32 gameId = 1;
 }
 
 message Empty {

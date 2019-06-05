@@ -34,8 +34,6 @@ public class Generator {
     private final int maxCountMobsInRoom = 2;
     private final int numItems = 3;
 
-    // TODO: generate items on the map
-
     public GameModel generateModel(int roomCount,
                                    int width,
                                    int height, int playerId) throws MapGeneratorException, GameCellException {
@@ -45,10 +43,9 @@ public class Generator {
         GameCharacter gameCharacter = generateCharacter(map,
                 characterRoom.row + RANDOM.nextInt(characterRoom.height),
                 characterRoom.col + RANDOM.nextInt(characterRoom.width));
-        List<Item> inventories = generateInventories();
         generateMobs(rooms, map);
         generateItemsOntoMap(map, numItems);
-        return new GameModel(map, inventories, gameCharacter, 10, playerId);
+        return new GameModel(map, gameCharacter, 10, playerId);
     }
 
     public GameModel generateModel(String fileName, Function<Character, GameMapCellType> decoder, int playerId)
@@ -77,9 +74,8 @@ public class Generator {
         GameCharacter gameCharacter = generateCharacter(map,
                 pointForGameCharacter.getRow(),
                 pointForGameCharacter.getCol());
-        List<Item> inventories = generateInventories();
         generateMobs(findRooms(map), map);
-        return new GameModel(map, inventories, gameCharacter, 10, playerId);
+        return new GameModel(map, gameCharacter, 10, playerId);
 
     }
 
@@ -115,7 +111,6 @@ public class Generator {
         return new Point(row, col);
     }
 
-    // TODO: add handling when no empty cells left (max retry cnt and then throw cannot generate error)
     private GameCell getFirstEmptyRandomCell(GameCell[][] map) {
         while (true) {
             Point point = generateRandomPointOnMap(map);
@@ -266,10 +261,6 @@ public class Generator {
                 curMobsCount++;
             }
         }
-    }
-
-    private List<Item> generateInventories() {
-        return new ArrayList<>();
     }
 
     private void markRooms(int width,

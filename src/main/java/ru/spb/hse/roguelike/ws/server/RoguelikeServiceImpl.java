@@ -8,11 +8,14 @@ import ru.spb.hse.roguelike.view.CommandName;
 
 import java.io.IOException;
 
+/**
+ * grcp service implementation for roguelike
+ */
 public class RoguelikeServiceImpl extends RoguelikeServiceGrpc.RoguelikeServiceImplBase {
 
     private final RoguelikeServer server;
 
-    public RoguelikeServiceImpl(RoguelikeServer server) {
+    RoguelikeServiceImpl(RoguelikeServer server) {
         this.server = server;
     }
 
