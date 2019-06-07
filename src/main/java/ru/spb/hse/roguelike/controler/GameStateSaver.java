@@ -23,9 +23,7 @@ public class GameStateSaver {
             in.close();
             fis.close();
             return Optional.of(gameModel);
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.out.println(e.getMessage());
+        } catch (IOException | ClassNotFoundException e) {
             return Optional.empty();
         }
     }
